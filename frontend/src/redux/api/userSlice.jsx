@@ -23,8 +23,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
     }),
 
     profile: builders.mutation({
-      query: data => ({
-        url: `${USER_URL}/profile`,
+      query: (data) => ({
+        url: `${USER_URL}/edit/${data.id}`,
         method: "GET",
         body: data
       })

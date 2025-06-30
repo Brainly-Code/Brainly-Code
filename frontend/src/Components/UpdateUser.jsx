@@ -1,78 +1,76 @@
-import React, { useState } from 'react'
-import { useUpdateUserMutation } from '../redux/api/userSlice';
-import { toast } from 'react-toastify';
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { toast } from "react-toastify"
+import { Link } from "react-router-dom"
+import { useProfileMutation } from "../redux/api/userSlice"
+import { setCredentials } from "../redux/Features/authSlice"
+import { jwtDecode } from "jwt-decode"
 
-const UpdateUser = () => {
-  const [image, setImage] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+const Profile = () => {
+  const [username, setUserName]=useState('')
+  const [email, setEmail]=useState('')
+  const [password, setPassword]=useState("")
+  const [confirmPassword, setConfirmPassword]=useState("")
+   
+  const {userInfo}=useSelector(state=>state.auth)
+  const token = jwtDecode(userInfo.access_token);
+  const [updateProfile, {isLoading: loadingUpdateProfile}]= useProfileMutation()
+ 
+  useEffect(()=>{
+    setUserName(token.username)
+    setEmail(token.email)
+},[token.email,  token.username])
 
-  // const { data: user } = useProfileMutation();
-  
-  const [ UpdateUser ]  = useUpdateUserMutation();
+  const dispatch = useDispatch()
 
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
+  const submitHandler = async (e)=>{
+    e.preventDefault()
 
-    if(!file) {
-      toast.error("No image provided")
-      return 
-    }
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      const res = await UpdateUser({image: image, username: username, email: email});
-
-      console.log("Upload Response:", res); // Debugging
-      console.log("Image URL:", res.image); // Debugging
-      
-      if(!res.image){
-         toast.error("Image upload failed");
+    if(userInfo.password !== userInfo.confirmPassword){
+      toast.error("Passwords do not match")
+    }else{
+      try {
+        const res = await updateProfile({_id: token.sub, username, email, password}).unwrap()
+        dispatch(setCredentials({...res}))
+        toast.success("User profile updated successfully")
+      } catch (error) {
+        toast.error(error?.data?.message || error.message)
       }
-
-      toast.success(res.message);
-
-      setImage(file);
-      setImageUrl(res.image);
-    } catch (error) {
-      console.error("Upload Error:", error);
-      toast.error(error?.data?.message || "Image upload failed")
     }
   }
- 
+
   return (
-    <div className='bg-[#250f47] h-screen'>
-       <div className="h-70 mx-auto text-center font-bold py-5">Create Product</div>
-            {imageUrl && (
-              <div className="text-center h-[30%] w-[100%] m-0">
-                <img src={imageUrl}  alt="product" className="my-0 rounded-lg mx-auto w-[100%] h-[100%]" />
-              </div>
-            )}
-
-            <div className="mb-3 w-[70%] mx-auto">
-              <label htmlFor='image' className="border my-0 text-white px-4 block w-full text-center rounded-lg cursor-pointer font-bold py-11">
-                { image ? image.name : "Upload Image" }
-              </label>
-              <input 
-              type="file" 
-              id='image'
-              name='image'
-              accept='image/*'
-              onChange={uploadFileHandler}
-              className={!image ? "this din't work" : 
-              "hidden"} />
+    <div className="container h-screen w-full bg-[#250f47] p-4">
+      <div className="flex justify-center align-center md:flex md:space-x-4 mt-20">
+        <div className="md:w-1/3">
+          <h1 className="text-xl font-bold mb-7">Update Profile</h1>
+          <form onSubmit={submitHandler}>
+            <div className="mb-4">
+              <label className="block text-white mb-2">Name</label>
+              <input type="text" className="form-input p-2 bg-gray-400 rounded-sm w-full" value={username}  placeholder="Enter name" onChange={e=>setUserName(e.target.value)} />
             </div>
-
-            <div className="m-5 mb-[4rem] ml-[16rem] text-gray-500">
-              <input type="text" name='username' className='ml-[3rem] text-center w-[20rem]  bg-[#1d0d3a] p-2 text-md' placeholder="Enter username" onChange={e => setUsername(e.target.value)} />  
-              <input type="email" name='email' className='ml-[3rem] text-center w-[20rem]  bg-[#1d0d3a] p-2 text-md' placeholder="Email" onChange={e => setEmail(e.target.value)} />
+            <div className="mb-4">
+              <label className="block text-white mb-2">Email</label>
+              <input type="email" className="form-input p-2 bg-gray-400 rounded-sm w-full" value={email}  placeholder="Enter email" onChange={e=>setEmail(e.target.value)} />
             </div>
-            <button type='submit' className='mx-[37rem] px-5 py-2 rounded  bg-[#271476]'>Update</button>
+            <div className="mb-4">
+              <label className="block text-white mb-2">Change password</label>
+              <input type="password" className="form-input p-2 bg-gray-400 rounded-sm w-full" value={password}  placeholder="Enter new password" onChange={e=>setPassword(e.target.value)} />
+            </div>
+            <div className="mb-4">
+              <label className="block text-white mb-2">Confirm new password</label>
+              <input type="password" className="form-input p-2 bg-gray-400 rounded-sm w-full" value={confirmPassword}  placeholder="Confirm password" onChange={e=>setConfirmPassword(e.target.value)} />
+            </div>
+            <div className="flex justify-between">
+              <button type="submit" className="bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-600">Update</button>
+              <Link to="/order-list" className="bg-pink-500 text-white py-2 px-4 rounded hover:bg-pink-600">My Orders</Link>
+            </div>
+          </form>
+        </div>
+        {loadingUpdateProfile && <Loader />}
+      </div>
     </div>
   )
 }
 
-export default UpdateUser
+export default Profile
