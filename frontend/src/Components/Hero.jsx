@@ -5,6 +5,7 @@ import Introductory from "./ui/Introductory";
 import TextGenerateEffect from "./ui/TextGenerate";
 // import Loader from "./ui/Loader";
 import { FaArrowRight } from "react-icons/fa";
+import Footer from "./ui/Footer";
 
 export const Hero = () => {
   const navItems = [
@@ -12,7 +13,6 @@ export const Hero = () => {
     { name: "Courses", link: "/", icon: "📚" },
     { name: "Playground", link: "/playground", icon: "🎮" },
     { name: "Challenges", link: "/challenges", icon: "🏆" },
-    { name: "Users", link: "/teacher/users", icon: "👤"}
   ];
 
   return (
@@ -68,23 +68,23 @@ export const Hero = () => {
             <div className="rounded-xl bg-[#3D31A7] ml-[2rem] mr-[3rem] w-[20rem] p-6">
               <h2 className=" text-md font-bold text-center mt-11 mb-6 ">Interactive Learning</h2>
               <p className="text-center text-xs">Live code editor with real-time  
-feedback. Practice what you 
-learn immediately.
-</p>
+                    feedback. Practice what you 
+                   learn immediately.
+              </p>
             </div>
             <div className="rounded-xl bg-[#3D31A7] ml-[2rem] mr-[3rem] w-[20rem] p-6">
               <h2 className=" text-md font-bold text-center mt-11 mb-6 ">Interactive Learning</h2>
               <p className="text-center text-xs">Live code editor with real-time  
-feedback. Practice what you 
-learn immediately.
-</p>
+                feedback. Practice what you 
+                learn immediately.
+              </p>
             </div>
             <div className="rounded-xl bg-[#3D31A7] ml-[2rem] mr-[3rem] w-[20rem] p-6">
               <h2 className=" text-md font-bold text-center mt-11 mb-6 ">Interactive Learning</h2>
               <p className="text-center text-xs">Live code editor with real-time  
-feedback. Practice what you 
-learn immediately.
-</p>
+                feedback. Practice what you 
+                learn immediately.
+              </p>
             </div>
            </div>
          </div>
@@ -94,21 +94,22 @@ learn immediately.
       <section>
         <div>
           <h1 className="text-2xl my-9 text-center  font-bold">Learning Paths</h1>
-          <div className="flex">
-            <div className="">
-              <div className="rounded-md bg-gradient-to-r from-green-800 pt-2 pl- to-purple-950 w-[16rem] ml-[4rem] h-[10rem]">
-                <div className="rounded-full items-center bg-blue-900 mt-[2rem] w-[4rem] h-[4rem] ">
-                  <p className="items-center font-bold text-lg">{"</>"}</p>
+          <div className="grid grid-cols-3">
+            <div className="grid grid-rows-2 w-[10%]">
+              <div className="rounded-md bg-gradient-to-r block from-green-800 pt-2 pl- to-purple-950 w-[16rem] ml-[4rem] h-[10rem]">
+                <div className="rounded-full mx-auto items-center bg-blue-900 mt-[2rem] w-[4rem] h-[4rem] ">
+                  <p className="items-center ml-4 font-bold text-lg">{"</>"}</p>
                 </div>
               </div>
-              <div className="rounded-xl bg-[#120b46] h-[16rem] ml-[2rem] -mt-5 w-[20rem]">
-                  <span className="text-xl mt-[4rem] mx-auto font-bold text-green-300 bg-green-400 p-2 rounded-xl">Begginer</span>
-                  <div className="mt-7 ml-5">
+              <div className="rounded-xl bg-[#120b46] block h-[18rem] p-[1.5rem] ml-[2rem] -mt-20 w-[20rem]">
+                  <span className="text-xl mx-auto font-bold text-[#00CED1] bg-[#00CED1] p-2 bg-opacity-70 rounded-full">Begginer</span>
+                  <div className="mt-7">
                     <h3 className="text-sm mb-5 font-bold">Web Development Basics</h3>
               
-                    <p className="w-[9rem] text-sm ">Learn HTML,CSS and
-              JavaScript fundamentals
-              through interactive lessons.</p>
+                    <p className="w-[9rem] text-sm ">
+                      Learn HTML,CSS and
+                      JavaScript fundamentals
+                      through interactive lessons.</p>
                    <div className="mt-5 flex">
                     <div className="text-sm justify-start w-[7rem]">
                       <p>8 modules</p>
@@ -123,21 +124,22 @@ learn immediately.
                    </div>
                   </div>
               </div>
-
-              <div className="">
-              <div className="rounded-md bg-gradient-to-r from-green-800 pt-2 pl- to-purple-950 w-[16rem] ml-[4rem] h-[10rem]">
-                <div className="rounded-full items-center bg-blue-900 mt-[2rem] w-[4rem] h-[4rem] ">
-                  <p className="items-center font-bold text-lg">{"</>"}</p>
+              </div>
+            <div className="grid grid-rows-2 w-[10%]">
+              <div className="rounded-md bg-gradient-to-r block from-green-800 pt-2 pl- to-purple-950 w-[16rem] ml-[4rem] h-[10rem]">
+                <div className="rounded-full mx-auto items-center bg-blue-900 mt-[2rem] w-[4rem] h-[4rem] ">
+                  <p className="items-center ml-4 font-bold text-lg">{"</>"}</p>
                 </div>
               </div>
-              <div className="rounded-xl bg-[#120b46] h-[16rem] ml-[2rem] -mt-5 w-[20rem]">
-                  <span className="text-xl mt-[4rem] mx-auto font-bold text-green-300 bg-green-400 p-2 rounded-xl">Begginer</span>
-                  <div className="mt-7 ml-5">
+              <div className="rounded-xl bg-[#120b46] block h-[18rem] p-[1.5rem] ml-[2rem] -mt-20 w-[20rem]">
+                  <span className="text-xl mx-auto font-bold text-[#00CED1] bg-[#00CED1] p-2 bg-opacity-70 rounded-full">Begginer</span>
+                  <div className="mt-7">
                     <h3 className="text-sm mb-5 font-bold">Web Development Basics</h3>
               
-                    <p className="w-[9rem] text-sm ">Learn HTML,CSS and
-              JavaScript fundamentals
-              through interactive lessons.</p>
+                    <p className="w-[9rem] text-sm ">
+                      Learn HTML,CSS and
+                      JavaScript fundamentals
+                      through interactive lessons.</p>
                    <div className="mt-5 flex">
                     <div className="text-sm justify-start w-[7rem]">
                       <p>8 modules</p>
@@ -152,21 +154,22 @@ learn immediately.
                    </div>
                   </div>
               </div>
-
-              <div className="">
-              <div className="rounded-md bg-gradient-to-r from-green-800 pt-2 pl- to-purple-950 w-[16rem] ml-[4rem] h-[10rem]">
-                <div className="rounded-full items-center bg-blue-900 mt-[2rem] w-[4rem] h-[4rem] ">
-                  <p className="items-center font-bold text-lg">{"</>"}</p>
+              </div>
+            <div className="grid grid-rows-2 w-[10%]">
+              <div className="rounded-md bg-gradient-to-r block from-green-800 pt-2 pl- to-purple-950 w-[16rem] ml-[4rem] h-[10rem]">
+                <div className="rounded-full mx-auto items-center bg-blue-900 mt-[2rem] w-[4rem] h-[4rem] ">
+                  <p className="items-center ml-4 font-bold text-lg">{"</>"}</p>
                 </div>
               </div>
-              <div className="rounded-xl bg-[#120b46] h-[16rem] ml-[2rem] -mt-5 w-[20rem]">
-                  <span className="text-xl mt-[4rem] mx-auto font-bold text-green-300 bg-green-400 p-2 rounded-xl">Begginer</span>
-                  <div className="mt-7 ml-5">
+              <div className="rounded-xl bg-[#120b46] block h-[18rem] p-[1.5rem] ml-[2rem] -mt-20 w-[20rem]">
+                  <span className="text-xl mx-auto font-bold text-[#00CED1] bg-[#00CED1] p-2 bg-opacity-70 rounded-full">Begginer</span>
+                  <div className="mt-7">
                     <h3 className="text-sm mb-5 font-bold">Web Development Basics</h3>
               
-                    <p className="w-[9rem] text-sm ">Learn HTML,CSS and
-              JavaScript fundamentals
-              through interactive lessons.</p>
+                    <p className="w-[9rem] text-sm ">
+                      Learn HTML,CSS and
+                      JavaScript fundamentals
+                      through interactive lessons.</p>
                    <div className="mt-5 flex">
                     <div className="text-sm justify-start w-[7rem]">
                       <p>8 modules</p>
@@ -180,13 +183,16 @@ learn immediately.
                     </div>
                    </div>
                   </div>
+              </div>
               </div>
               </div>
             </div>
-          </div>
-        </div>
-        </div>
+            <Link to="/login">
+            <button className="bg-blue-400 px-8 hover:bg-gradient-to-l hover:from-blue-700 hover:to-blue-500 bg-gradient-to-l to-[#00FFFF] rounded-full ml-[40%] mt-[2rem] from-[#8F57EF] py-2">View All Courses</button>
+            </Link>
       </section>
+
+      <Footer />
     </div>
   )
 }

@@ -18,7 +18,7 @@ const Home = () => {
 
   if (!role) {
     // Not authenticated
-    return <Navigate to="/welcome/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (role !== "USER") {
