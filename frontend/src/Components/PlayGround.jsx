@@ -32,8 +32,8 @@ const PlayGround = () => {
   }
 
   return (
-    <div>
-      <div className='bg-[#070045] opacity-90 h-screen'>
+    <div className='h-[100%] bg-[#070045] m-0'>
+      <div className=' opacity-90 h-[100%]'>
       <nav className=' border-gray-300 py-6 rounded-none border-b-2'>
         <header className="flex text-white justify-between">
               <FloatingNav navItems={navItems} />
@@ -67,9 +67,8 @@ const PlayGround = () => {
         </div>
       </section>
       <section className="editor m-10">
-        <div className="bg-blue-400">
-           <CodeEditor className="grid grid-cols-2" />
-           
+        <div>
+           <CodeEditor/>
         </div>
       </section>
     </div>
