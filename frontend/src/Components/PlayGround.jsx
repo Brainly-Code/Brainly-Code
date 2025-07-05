@@ -10,6 +10,12 @@ import TextGenerateEffect from './ui/TextGenerate';
 import CodeEditor from './CodeEditor';
 
 const PlayGround = () => {
+
+  const projects = [
+    { title: "A function that prints the words of a string backwards" , descrption: "" },
+    { title: "palindrome checker" , descrption: "" },
+    { title: "Build a cat website" , descrption: "" },
+  ]
   
   const navItems = [
     { name: "Courses", link: "/", icon: "📚" },
@@ -32,7 +38,7 @@ const PlayGround = () => {
   }
 
   return (
-    <div className='h-[100%] bg-[#070045] m-0'>
+    <div className='bg-[#070045] m-0'>
       <div className=' opacity-90 h-[100%]'>
       <nav className=' border-gray-300 py-6 rounded-none border-b-2'>
         <header className="flex text-white justify-between">
@@ -69,6 +75,16 @@ const PlayGround = () => {
       <section className="editor m-10">
         <div>
            <CodeEditor/>
+        </div>
+      </section>
+      <section className='text-gray-100 mt-[5rem] shadow-md mx-[20rem]'>
+        <h1 className='text-center text-2xl font-bold'>Here are some projects you might want to try out in the playground</h1>
+        <div className='bg-[#161077] py-8 rounded-xl mt-[2rem]'>
+          { projects.map((project) => (
+            <div className="text-center">
+              <h2 className='text-xl font-semibold'>{project.title}</h2>
+            </div>
+          )) }
         </div>
       </section>
     </div>

@@ -1,17 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 const CodeEditor = () => {
-  const [code, setCode] = useState(`<!-- Write your HTML here -->
-<h1>Hello World</h1>
-<style>
-  h1 {
-    color: #00DEDE;
-    text-align: center;
-  }
-</style>
-<script>
-  console.log("JS is running...");
-</script>`);
+  const [code, setCode] = useState(`<!-- Write your HTML here -->`);
 
   const [srcDoc, setSrcDoc] = useState("");
   const [consoleOutput, setConsoleOutput] = useState([]);
@@ -20,21 +10,25 @@ const CodeEditor = () => {
 
   const runCode = () => {
     const codeWithConsoleCapture = `
+      <!-- Write your HTML here -->
+      <h1>Hello World</h1>
+      <style>
+        h1 {
+          color: #00DEDE;
+          text-align: center;
+          font-family: sans-serif;
+        }
+      </style>
       <script>
-        const originalLog = console.log;
-        console.log = function (...args) {
-          window.parent.postMessage({ type: 'console', data: args }, '*');
-          originalLog.apply(console, args);
-        };
+        console.log("JS is running...");
       </script>
       ${code}
     `;
 
-    setConsoleOutput([]); // clear before running again
+    setConsoleOutput([]);
     setSrcDoc(codeWithConsoleCapture);
   };
 
-  // 🛠 Set up listener only once
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data?.type === "console") {
@@ -45,7 +39,6 @@ const CodeEditor = () => {
     window.addEventListener("message", handleMessage);
 
     return () => {
-      // Cleanup to avoid duplicate listeners
       window.removeEventListener("message", handleMessage);
     };
   }, []);
@@ -63,7 +56,7 @@ const CodeEditor = () => {
           />
         </div>
 
-        <div className="bg-white h-[100%] w-[50%] p-1 rounded">
+        <div className="bg-white h-[100%] w-[50%] p-1">
           <h1 className="text-gray-800 text-center font-semibold">Output</h1>
           <iframe
             ref={iframeRef}
