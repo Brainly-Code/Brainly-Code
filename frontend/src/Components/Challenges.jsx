@@ -7,8 +7,26 @@ import { toast } from 'react-toastify';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import TextGenerateEffect from './ui/TextGenerate';
+import Loader from './ui/Loader';
+import { useGetChallengesQuery } from '../redux/api/challengeSlice';
+import { BackgroundGradient } from './ui/BgGradient';
 
 export const Challenges = () => {
+  
+  let { data: challenges, error, isLoading } = useGetChallengesQuery();
+  console.log(challenges);
+  
+  if(error){
+    toast.error(error);
+  }
+
+  const [filterLevel, setFilterLevel] = React.useState('ALL');
+
+  const filteredChallenges = filterLevel === 'ALL' 
+  ? challenges
+  : challenges?.filter(challenge => challenge.difficulty === filterLevel);
+
+
   const navItems = [
     { name: "Courses", link: "/", icon: "📚" },
     { name: "Playground", link: "/playground", icon: "🎮" },
@@ -27,6 +45,10 @@ export const Challenges = () => {
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
+  }
+
+  if(isLoading) {
+    return <Loader />
   }
 
   return (
@@ -61,6 +83,59 @@ export const Challenges = () => {
               Test your skills, solve problems and compete with others through our interactive
               coding challenges..
             </p>
+        </div>
+      </section>
+
+      <section className="m-10">
+        <div className="m-10">
+          <button
+            onClick={() => setFilterLevel('Easy')}
+            className='py-2 px-5 hover:bg-opacity-65 inline border bg-[#19cf56] bg-opacity-50 text-[#20ec3b] mr-[10rem] border-gray-500 rounded-md'>
+            Easy
+          </button>
+          <button
+            onClick={() => setFilterLevel('Medium')}
+            className='py-2 px-5 hover:bg-opacity-65 inline border bg-[#FFA500] bg-opacity-50 text-[#FFa500] mr-[10rem] rounded-md'>
+            Medium
+          </button>
+          <button
+            onClick={() => setFilterLevel('Hard')}
+            className='py-2 px-5 hover:bg-opacity-65 inline border bg-[#F59898] bg-opacity-50 text-[#FF0000]  mr-[10rem] rounded-md'>
+            Hard
+          </button>
+        </div>
+      </section>
+
+      <section>
+
+      <div>
+        
+      </div>
+
+      <div className=" mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-[5rem]">
+            {filteredChallenges?.map((challenge) => (
+              <div className='' key={challenge._id || challenge.id}>
+                <BackgroundGradient className="h-[40%] rounded-[22px] p-4 sm:p-8 bg-white dark:bg-zinc-900" animate="true">
+                  <div className="flex justify-between items-center mb-4">
+                    {}
+                    <span className="text-[#A241E9] font-bold">{challenge.difficulty}</span>
+                  </div>
+
+                  <h1 className="text-2xl font-bold text-neutral-300 dark:text-neutral-200">
+                    {challenge.title}
+                  </h1>
+                  <p className="text-gray-600">{challenge.description}</p>
+
+                  <button
+                    className="rounded-full ml-[30%] bg-gradient-to-r from-[#00ffee] to-purple-500 px-5 py-2 text-white font-bold text-sm mt-4">
+                    Start
+                  </button>
+                </BackgroundGradient>
+              </div>
+            ))}
+          </div>
+
         </div>
       </section>
     </div>

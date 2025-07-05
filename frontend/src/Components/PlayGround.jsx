@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import TextGenerateEffect from './ui/TextGenerate';
+import CodeEditor from './CodeEditor';
 
 const PlayGround = () => {
   
@@ -63,6 +64,12 @@ const PlayGround = () => {
               Experiment with code, test your ideas and learn by doing in our interactive
               playground.
             </p>
+        </div>
+      </section>
+      <section className="editor m-10">
+        <div className="bg-blue-400">
+           <CodeEditor className="grid grid-cols-2" />
+           
         </div>
       </section>
     </div>

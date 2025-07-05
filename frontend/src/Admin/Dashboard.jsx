@@ -70,6 +70,12 @@ const Dashboard = () => {
                 <p className="text-xs m-[1rem] text-gray-300  font-normal">Click to edit, update and remove courses</p>
               </Link>
             </div>
+            <div className='border-gray-500 w-[30%] border'>
+              <Link className='text-xl font-semibold' to="/admin/challenges">
+                <p className='hover:text-[#8b92bb] text-[#bcc4f5] m-4 '>Challenges</p>
+                <p className="text-xs m-[1rem] text-gray-300  font-normal">Click to edit, update and remove challenges</p>
+              </Link>
+            </div>
         </div>
     </div>
   )
