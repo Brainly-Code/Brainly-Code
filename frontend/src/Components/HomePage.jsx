@@ -80,6 +80,20 @@ export default function HomePage() {
         <header className="flex text-white justify-between">
             <FloatingNav navItems={navItems} />
             <BrainlyCodeIcon className="ml-7"/>
+                <div className="hidden md:flex lg:gap-20 gap-10 flex-wrap justify-center mx-auto">
+                <Link to="/user">
+                  <button className="text-sm text-gray-300 hover:text-white">Courses</button>
+                </Link>
+                <Link to="/user/playground">
+                  <button className="text-sm text-gray-300 hover:text-white">Playground</button>
+                </Link>
+                <Link to="/user/challenges">
+                  <button className="text-sm text-gray-300 hover:text-white">Challenges</button>
+                </Link>
+                <Link to="/user/community">
+                  <button className="text-sm text-gray-300 hover:text-white">Community</button>
+                </Link>
+              </div>
             <ul className="ml-auto">
               <li className="font-semibold inline text-gray-300">
                   <Link to="/user/profile">
@@ -96,14 +110,14 @@ export default function HomePage() {
             </ul>
         </header>
       </div>
-      
-      <section>
-        <div className=' mt-[2rem] w-[50%] ml-[24rem]'>
-          <div className='text-center'>
-            <span className='text-[#00ffee] ml-5 text-5xl font-bold'>Interactive </span>
-            <TextGenerateEffect className="text-gray-500 text-4xl font-bold inline" words={' Coding Courses'} />
+
+            <section>
+        <div className=' mt-[2rem] w-[50%] m-auto'>
+          <div className='text-center md:flex md:flex-nowrap md:justify-center gap-5 m-auto mb-4'>
+            <span className='text-[#00ffee] lg:text-4xl text-xl font-bold'>Interactive</span>
+            <TextGenerateEffect className="text-white lg:text-4xl text-xl font-bold align-middle whitespace-nowrap" words={' Coding Courses'} />
           </div>
-          <div className="text-center text-gray-500">
+          <div className="text-center text-white">
             <p>
               Learn to code through hands-on projects, interactive exercises, and real-world applications. 
               Start your programming journey today!
@@ -112,61 +126,83 @@ export default function HomePage() {
         </div>
       </section>
       
-      <section className='mt-[3rem]'>
-        <div className='mb-7 text-gray-300 pl-[15rem]'>
-          <button
-            onClick={() => setFilterLevel('ALL')}
-            className='p-2 border hover:border-green-200 mr-[10rem] grid-cols-3 border-gray-500 rounded-md'>
-            All Courses
-          </button>
-          <button
-            onClick={() => setFilterLevel('BEGINNER')}
-            className='p-2 hover:border mr-[10rem] grid-cols-3 rounded-md'>
-            Beginner
-          </button>
-          <button
-            onClick={() => setFilterLevel('INTERMEDIATE')}
-            className='p-2 hover:border mr-[10rem] grid-cols-3 rounded-md'>
-            Intermediate
-          </button>
-          <button
-            onClick={() => setFilterLevel('ADVANCED')}
-            className='p-2 hover:border mr-[10rem] grid-cols-3 rounded-md'>
-            Advanced
-          </button>
-        </div>
+<section className="mt-[3rem]">
+  <div className="mb-7 text-gray-300 px-4 sm:px-10 md:px-20 lg:px-[15rem] flex flex-wrap justify-center gap-4">
+    <button
+      onClick={() => setFilterLevel('ALL')}
+      className={`p-2 rounded-md ${
+        filterLevel === 'ALL' ? 'border border-white' : 'border-none'
+      }`}>
+      All Courses
+    </button>
 
-        {/* <AllCourses courses={filteredCourses} /> */}
+    <button
+      onClick={() => setFilterLevel('BEGINNER')}
+      className={`p-2 rounded-md ${
+        filterLevel === 'BEGINNER' ? 'border border-white' : 'border-none'
+      }`}>
+      Beginner
+    </button>
+
+    <button
+      onClick={() => setFilterLevel('INTERMEDIATE')}
+      className={`p-2 rounded-md ${
+        filterLevel === 'INTERMEDIATE' ? 'border border-white' : 'border-none'
+      }`}>
+      Intermediate
+    </button>
+
+    <button
+      onClick={() => setFilterLevel('ADVANCED')}
+      className={`p-2 rounded-md ${
+        filterLevel === 'ADVANCED' ? 'border border-white' : 'border-none'
+      }`}>
+      Advanced
+    </button>
+  </div>
 
 
 
-        <div className=" mt-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-[5rem]">
-            {filteredCourses?.map((course) => (
-              <div className='' key={course._id || course.id}>
-                <BackgroundGradient className="h-[40%] rounded-[22px] p-4 sm:p-8 bg-white dark:bg-zinc-900" animate="true">
-                  <div className="flex justify-between items-center mb-4">
-                    {getIconForCourse(course.title)}
-                    <span className="text-[#A241E9] font-bold">{course.level}</span>
-                  </div>
 
-                  <h1 className="text-2xl font-bold text-neutral-300 dark:text-neutral-200">
-                    {course.title}
-                  </h1>
-                  <p className="text-gray-600">{course.description}</p>
+  <div className="mt-14 mb-14 px-4 sm:px-8 lg:px-[5rem]">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-14">
+      {filteredCourses?.map((course) => (
+        <div key={course._id || course.id}>
+          <div className="h-full rounded-[22px] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_0px_4px_10px_rgba(33,111,184,0.25)]">
+            <div className="flex justify-between items-center mb-4">
+              {getIconForCourse(course.title)}
+              <span
+              className={`font-bold ${
+                course.level === 'BEGINNER'
+                  ? 'text-blue-400'
+                  : course.level === 'INTERMEDIATE'
+                  ? 'text-purple-400'
+                  : course.level === 'ADVANCED'
+                  ? 'text-green-400'
+                  : 'text-gray-400'
+              }`}
+            >
+              {course.level}
+            </span>
+            </div>
 
-                  <button
-                    className="rounded-full ml-[30%] bg-gradient-to-r from-[#00ffee] to-purple-500 px-5 py-2 text-white font-bold text-sm mt-4">
-                    Enroll now
-                  </button>
-                </BackgroundGradient>
-              </div>
-            ))}
+            <h1 className="text-xl sm:text-2xl font-bold text-neutral-300 dark:text-neutral-200">
+              {course.title}
+            </h1>
+            <p className="text-gray-400 text-sm sm:text-base">{course.description}</p>
+
+            <div className="flex justify-center mt-6">
+              <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm">
+                Enroll now
+              </button>
+            </div>
           </div>
-
         </div>
-      </section>
-      <Footer />
+      ))}
+    </div>
+  </div>
+</section>
+<Footer />
     </div>
   )
 }
