@@ -18,10 +18,10 @@ const PlayGround = () => {
   ]
   
   const navItems = [
-    { name: "Courses", link: "/", icon: "📚" },
-    { name: "Playground", link: "/playground", icon: "🎮" },
-    { name: "Challenges", link: "/challenges", icon: "🏆" },
-    { name: "Community", link: "/community", icon: "👤"}
+    { name: "Courses", link: "/user", icon: "📚" },
+    { name: "Playground", link: "/user/playground", icon: "🎮" },
+    { name: "Challenges", link: "/user/challenges", icon: "🏆" },
+    { name: "Community", link: "/user/community", icon: "👤"}
   ];
 
   const dispatch = useDispatch();
@@ -44,6 +44,20 @@ const PlayGround = () => {
         <header className="flex text-white justify-between">
               <FloatingNav navItems={navItems} />
               <BrainlyCodeIcon className="ml-7"/>
+              <div className="hidden md:flex lg:gap-20 gap-10 flex-wrap justify-center mx-auto">
+              <Link to="/user">
+                <button className="text-sm text-gray-300 hover:text-white">Courses</button>
+              </Link>
+              <Link to="/user/playground">
+                <button className="text-sm text-gray-300 hover:text-white">Playground</button>
+              </Link>
+              <Link to="/user/challenges">
+                <button className="text-sm text-gray-300 hover:text-white">Challenges</button>
+              </Link>
+              <Link to="/user/community">
+                <button className="text-sm text-gray-300 hover:text-white">Community</button>
+              </Link>
+            </div>
               <ul className="ml-auto">
                 <li className="font-semibold inline text-gray-300">
                     <Link to="/profile">
@@ -60,33 +74,34 @@ const PlayGround = () => {
               </ul>
           </header>
       </nav>
-      <section>
-        <div className='w-[30%] mt-[2rem]  text-center mx-auto'>
-          <h1 className="text-4xl ml-[3rem] text-center font-bold flex text-gray-300">
-          <span className='mr-4 text-[#8F57EF] mt-0.5'>Code</span>
-            <TextGenerateEffect className={"font-bold text-[#00DEDE]"} words={"Playground"} />
-            </h1>
-            <p className="text-gray-400">
-              Experiment with code, test your ideas and learn by doing in our interactive
-              playground.
-            </p>
-        </div>
-      </section>
-      <section className="editor m-10">
-        <div>
-           <CodeEditor/>
-        </div>
-      </section>
-      <section className='text-gray-100 mt-[5rem] shadow-md mx-[20rem]'>
-        <h1 className='text-center text-2xl font-bold'>Here are some projects you might want to try out in the playground</h1>
-        <div className='bg-[#161077] py-8 rounded-xl mt-[2rem]'>
-          { projects.map((project) => (
-            <div className="text-center">
-              <h2 className='text-xl font-semibold'>{project.title}</h2>
-            </div>
-          )) }
-        </div>
-      </section>
+          <section>
+      <div className='w-full max-w-xl mt-8 text-center mx-auto px-4'>
+        <h1 className="text-3xl md:text-4xl font-bold flex justify-center text-gray-300">
+          <span className='mr-3 text-[#8F57EF]'>Code</span>
+          <TextGenerateEffect className={"font-bold text-[#00DEDE]"} words={"Playground"} />
+        </h1>
+        <p className="text-gray-400 mt-4">
+          Experiment with code, test your ideas and learn by doing in our interactive playground.
+        </p>
+      </div>
+    </section>
+
+    <section className="editor my-8 px-4 md:px-10">
+      <CodeEditor />
+    </section>
+
+    <section className='text-gray-100 mt-16 mx-4 md:mx-10 lg:mx-32'>
+      <h1 className='text-center text-xl md:text-2xl font-bold'>
+        Here are some projects you might want to try out in the playground
+      </h1>
+      <div className='bg-[#161077] py-8 rounded-xl mt-8'>
+        {projects.map((project, index) => (
+          <div key={index} className="text-center py-2">
+            <h2 className='text-lg md:text-xl font-semibold'>{project.title}</h2>
+          </div>
+        ))}
+      </div>
+    </section>
     </div>
     </div>
   )
