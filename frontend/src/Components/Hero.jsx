@@ -65,24 +65,28 @@ export const Hero = () => {
     <Introductory />
   </div>
 
-  {/* TextGenerateEffect Section */}
-  <div className="bg-[#121022] rounded-md p-4 w-full md:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl overflow-auto">
-    <div className="bg-black rounded overflow-x-auto max-h-72 sm:max-h-96 overflow-y-auto">
-      <TextGenerateEffect
-        words={` // Welcome to fun
-        // function learnToCode() {
-            const skills = ["HTML", "CSS"];
-            const fun = true;
-            if (fun) {
-                return "Learning to code is amazing.";
-            }
-        }
-        // Start your code
-        learnToCode();`}
-        className="text-xs sm:text-sm md:text-base lg:text-lg w-full h-full bg-black"
-      />
-    </div>
+ {/* TextGenerateEffect Section */}
+<div className="bg-[#121022] rounded-md p-4 w-full md:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl min-h-[300px] sm:min-h-[400px] md:min-h-[500px] flex flex-col">
+
+<div className="bg-black rounded overflow-x-auto overflow-y-auto flex-grow flex flex-col h-full">
+
+    <TextGenerateEffect
+      words={` // Welcome to fun
+      // function learnToCode() {
+          const skills = ["HTML", "CSS"];
+          const fun = true;
+          if (fun) {
+              return "Learning to code is amazing.";
+          }
+      }
+      // Start your code
+      learnToCode();`}
+        className="text-xs sm:text-sm md:text-base lg:text-lg w-full h-full whitespace-pre-wrap mt-auto mb-auto"
+    />
   </div>
+
+</div>
+
 </div>
       </section>
 
