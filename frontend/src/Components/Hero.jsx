@@ -57,34 +57,32 @@ export const Hero = () => {
 </header>
 
        {/* Hero Section */}
+{/* Hero Section */}
 <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-8 py-16">
-  
+
   {/* Introductory Section */}
   <div className="flex-1 min-w-[300px]">
     <Introductory />
   </div>
 
   {/* TextGenerateEffect Section */}
-  <div className="bg-[#0b0c33] rounded-md p-6 flex-1 max-w-lg">
-    <div className="bg-[#121022] rounded-md p-4">
-      <div className="bg-[#36368b] rounded">
-        <TextGenerateEffect
-          words={` // Welcome to fun
-          // function learnToCode() {
-              const skills = ["HTML", "CSS"];
-              const fun = true;
-              if (fun) {
-                  return "Learning to code is amazing.";
-              }
-          }
-          // Start your code
-          learnToCode();`}
-          className="text-sm w-full h-40 bg-black"
-        />
-      </div>
+  <div className="bg-[#121022] rounded-md p-4 w-full md:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl overflow-auto">
+    <div className="bg-black rounded overflow-x-auto max-h-72 sm:max-h-96 overflow-y-auto">
+      <TextGenerateEffect
+        words={` // Welcome to fun
+        // function learnToCode() {
+            const skills = ["HTML", "CSS"];
+            const fun = true;
+            if (fun) {
+                return "Learning to code is amazing.";
+            }
+        }
+        // Start your code
+        learnToCode();`}
+        className="text-xs sm:text-sm md:text-base lg:text-lg w-full h-full bg-black"
+      />
     </div>
   </div>
-
 </div>
       </section>
 
