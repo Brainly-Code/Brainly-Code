@@ -16,7 +16,7 @@ export const Hero = () => {
 
   return (
     <div className="bg-[#070045] text-gray-50 min-h-screen">
-      {/* Header */}
+      {/* Header */} 
       <section id="header" className="max-w-7xl mx-auto px-6 py-6">
 <header className="flex flex-wrap justify-between items-center gap-4 py-4">
             <FloatingNav navItems={navItems} />
