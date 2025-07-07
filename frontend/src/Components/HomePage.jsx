@@ -80,20 +80,6 @@ export default function HomePage() {
         <header className="flex text-white justify-between">
             <FloatingNav navItems={navItems} />
             <BrainlyCodeIcon className="ml-7"/>
-                <div className="hidden md:flex lg:gap-20 gap-10 flex-wrap justify-center mx-auto">
-                <Link to="/user">
-                  <button className="text-sm text-gray-300 hover:text-white">Courses</button>
-                </Link>
-                <Link to="/user/playground">
-                  <button className="text-sm text-gray-300 hover:text-white">Playground</button>
-                </Link>
-                <Link to="/user/challenges">
-                  <button className="text-sm text-gray-300 hover:text-white">Challenges</button>
-                </Link>
-                <Link to="/user/community">
-                  <button className="text-sm text-gray-300 hover:text-white">Community</button>
-                </Link>
-              </div>
             <ul className="ml-auto">
               <li className="font-semibold inline text-gray-300">
                   <Link to="/user/profile">

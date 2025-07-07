@@ -25,24 +25,6 @@ export const Hero = () => {
     <BrainlyCodeIcon className="ml-2 sm:ml-7" />
   </div>
 
-
-  {/* Center: Navigation Links */}
-  <div className="hidden md:flex lg:gap-20 gap-10 flex-wrap justify-center mx-auto">
-    <Link to="/">
-      <button className="text-sm text-gray-300 hover:text-white">Courses</button>
-    </Link>
-    <Link to="/">
-      <button className="text-sm text-gray-300 hover:text-white">Playground</button>
-    </Link>
-    <Link to="/">
-      <button className="text-sm text-gray-300 hover:text-white">Challenges</button>
-    </Link>
-    <Link to="/">
-      <button className="text-sm text-gray-300 hover:text-white">Community</button>
-    </Link>
-  </div>
-
-  {/* Right: Auth Buttons */}
   <ul className="flex gap-4 items-center">
     <li className="font-semibold text-gray-300 text-sm">
       <Link to="/login">
