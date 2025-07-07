@@ -10,6 +10,7 @@ import TextGenerateEffect from './ui/TextGenerate';
 import Loader from './ui/Loader';
 import { useGetChallengesQuery } from '../redux/api/challengeSlice';
 import { BackgroundGradient } from './ui/BgGradient';
+import profile from '../assets/profile.png';
 
 export const Challenges = () => {
   
@@ -54,24 +55,24 @@ export const Challenges = () => {
   return (
     <div className='bg-[#070045] opacity-90 h-screen'>
       <nav className=' border-gray-300 py-6 rounded-none border-b-2'>
-        <header className="flex text-white justify-between">
-              <FloatingNav navItems={navItems} />
-              <BrainlyCodeIcon className="ml-7"/>
-              <ul className="ml-auto">
-                <li className="font-semibold inline text-gray-300">
-                    <Link to="/profile">
-                      <button >Profile</button>
-                    </Link>
-                </li>
-                <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-md ml-5 to-purple-400 px-5 py-2 text-gray-300">
-                  <button onClick={logoutHandler}>
-                    <Link to="">
-                     Sign out
-                     </Link>
-                  </button>
-                </li>
-              </ul>
-          </header>
+        <header className="flex items-center mx-auto text-white w-5/6 justify-between">
+            <FloatingNav navItems={navItems} className=""/>
+            <BrainlyCodeIcon className="ml-7"/>
+            <ul className=" flex items-center h-1/4">
+              <li className="">
+                  <Link to="/user/profile">
+                    <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 md:w-3/4' />
+                  </Link>
+              </li>
+              <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
+                <button onClick={logoutHandler} className=''>
+                  <Link to="">
+                   Sign out
+                   </Link>
+                </button>
+              </li>
+            </ul>
+        </header>
       </nav>
       <section>
         <div className='w-[30%] mt-[2rem]  text-center mx-auto'>
