@@ -1,7 +1,8 @@
 import React from 'react'
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGetCoursesQuery, useLogoutMutation } from '../redux/api/userSlice';
+import { useGetCoursesQuery } from '../redux/api/coursesSlice'
+import { useLogoutMutation } from '../redux/api/userSlice';
 import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
@@ -77,12 +78,12 @@ export default function HomePage() {
 
   return (
     <div className='bg-[#070045] opacity-90'>
-      <div className=' border-gray-300 py-6 rounded-none border-b-2'>
-        <header className="flex items-center mx-auto text-white w-5/6 justify-between">
-            <FloatingNav navItems={navItems} className=""/>
+      <div className=' border-gray-300 py-6 rounded-none border-b-[1px]'>
+        <header className="flex text-white justify-between">
+            <FloatingNav navItems={navItems} />
             <BrainlyCodeIcon className="ml-7"/>
-            <ul className=" flex items-center h-1/4">
-              <li className="">
+            <ul className="ml-auto">
+              <li className="font-semibold inline text-gray-300">
                   <Link to="/user/profile">
                     <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 md:w-3/4' />
                   </Link>
@@ -98,7 +99,7 @@ export default function HomePage() {
         </header>
       </div>
 
-            <section>
+      <section>
         <div className=' mt-[2rem] w-[50%] m-auto'>
           <div className='text-center md:flex md:flex-nowrap md:justify-center gap-5 m-auto mb-4'>
             <span className='text-[#00ffee] lg:text-4xl text-xl font-bold'>Interactive</span>

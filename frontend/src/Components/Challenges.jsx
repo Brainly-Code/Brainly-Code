@@ -29,10 +29,10 @@ export const Challenges = () => {
 
 
   const navItems = [
-    { name: "Courses", link: "/", icon: "📚" },
-    { name: "Playground", link: "/playground", icon: "🎮" },
-    { name: "Challenges", link: "/challenges", icon: "🏆" },
-    { name: "Community", link: "/community", icon: "👤"}
+    { name: "Courses", link: "/user", icon: "📚" },
+    { name: "Playground", link: "/user/playground", icon: "🎮" },
+    { name: "Challenges", link: "/user/challenges", icon: "🏆" },
+    { name: "Community", link: "/user/community", icon: "👤"}
   ];
 
   const dispatch = useDispatch();

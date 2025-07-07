@@ -72,7 +72,7 @@ const Login = () => {
         <div className="mt-[0.2rem] w-[30%] m-auto">
            <h1 className="text-center heading font-bold text-2xl font-fredoka">Welcome Back</h1>
            <p className="text-center text-xs">Sign in to your Brainly code account</p>
-           <div className="rounded bg-opacity-30 bg-[#1c1a30] pb-[1rem] text-gray-300 mt-2  m-auto items-center text-center md:w-[75%] sm:w-[100%]">
+           <div className="rounded bg-opacity-50 bg-[#1c1a30] pb-[1rem] text-gray-300 mt-2  m-auto items-center text-center md:w-[75%] sm:w-[100%]">
                <form action="" onSubmit={submitHandler} className="items-center p-5">
                 <input type="email" id="email" name="email" onChange={e => setEmail(e.target.value)} className="block mt-2 text-md w-full m-auto border-blue-300 text-gray-300 required border-b-2  bg-transparent p-1 focus:pl-2  focus:border-blue-700 focus:outline-none focus:active:border-blue-400 " placeholder="Email" />
                 <input type="password" id="password" name="password" onChange={e => setPassword(e.target.value)} className="block mb-5 mt-3 w-full m-auto border-blue-300 required text-gray-300 border-b-2 bg-transparent text-md p-1 focus:pl-2  focus:border-blue-700 focus:outline-none focus:active:border-blue-400 " placeholder="Password" />

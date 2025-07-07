@@ -7,7 +7,7 @@ const Footer = () => {
         
         <div>
           <BrainlyCodeIcon />
-          <p className="text-xs text-gray-400 mt-3">
+          <p className="text-xs text-gray-400 mt-6">
             Making coding fun and accessible for the next generation of developers.
           </p>
         </div>
