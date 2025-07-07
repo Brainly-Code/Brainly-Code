@@ -1,7 +1,8 @@
 import React from 'react'
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import { Link, useNavigate } from 'react-router-dom';
-import { useGetCoursesQuery, useLogoutMutation } from '../redux/api/userSlice';
+import { useGetCoursesQuery } from '../redux/api/coursesSlice'
+import { useLogoutMutation } from '../redux/api/userSlice';
 import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
@@ -76,24 +77,10 @@ export default function HomePage() {
 
   return (
     <div className='bg-[#070045] opacity-90'>
-      <div className=' border-gray-300 py-6 rounded-none border-b-2'>
+      <div className=' border-gray-300 py-6 rounded-none border-b-[1px]'>
         <header className="flex text-white justify-between">
             <FloatingNav navItems={navItems} />
             <BrainlyCodeIcon className="ml-7"/>
-                <div className="hidden md:flex lg:gap-20 gap-10 flex-wrap justify-center mx-auto">
-                <Link to="/user">
-                  <button className="text-sm text-gray-300 hover:text-white">Courses</button>
-                </Link>
-                <Link to="/user/playground">
-                  <button className="text-sm text-gray-300 hover:text-white">Playground</button>
-                </Link>
-                <Link to="/user/challenges">
-                  <button className="text-sm text-gray-300 hover:text-white">Challenges</button>
-                </Link>
-                <Link to="/user/community">
-                  <button className="text-sm text-gray-300 hover:text-white">Community</button>
-                </Link>
-              </div>
             <ul className="ml-auto">
               <li className="font-semibold inline text-gray-300">
                   <Link to="/user/profile">
@@ -111,7 +98,7 @@ export default function HomePage() {
         </header>
       </div>
 
-            <section>
+      <section>
         <div className=' mt-[2rem] w-[50%] m-auto'>
           <div className='text-center md:flex md:flex-nowrap md:justify-center gap-5 m-auto mb-4'>
             <span className='text-[#00ffee] lg:text-4xl text-xl font-bold'>Interactive</span>

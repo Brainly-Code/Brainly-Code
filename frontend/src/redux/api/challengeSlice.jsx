@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice";
 
-const CHALLENGE_URL = "challenge/"
+const CHALLENGE_URL = "/challenges"
 
 const challengeApiSlice = apiSlice.injectEndpoints({
   endpoints: builders => ({

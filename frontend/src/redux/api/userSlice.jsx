@@ -2,7 +2,6 @@ import { apiSlice } from "./apiSlice";
 
 const USER_URL = "/users";
 const AUTH_URL = "/auth";
-const COURSE_URL = "/courses";
 
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: builders => ({
@@ -51,15 +50,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         body: data,
         method: "PUT"
       }),
-    }),
-
-    getCourses: builders.query({
-      query: () => ({
-        url: `${COURSE_URL}`,
-        method: "GET"
-      })
     })
-
   })
 })
 
