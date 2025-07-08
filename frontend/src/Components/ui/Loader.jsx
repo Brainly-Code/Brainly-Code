@@ -2,8 +2,10 @@ import React from 'react'
 
 const Loader = () => {
   return (
-    <div className='mt-[4rem] p-[5rem] border-t-2 rounded-full animate-spin border-blue-500 w-[1rem] h-[1rem]'>
+    <div className='h-screen pt-[10rem]  bg-[#070045]'>
+      <div className='p-[5rem] mx-auto border-t-2 rounded-full animate-spin border-blue-500 w-[1rem] h-[1rem]'>
       
+      </div>
     </div>
   )
 }

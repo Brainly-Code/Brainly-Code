@@ -51,7 +51,7 @@ const Profile = () => {
             </div>
             <div className="mb-4">
               <label className="block text-[rgba(255,255,255,0.7)] font-bold mb-2">Name:</label>
-              <input type="text" className="form-input p-2 bg-[rgba(217,217,217,0.2)] rounded-md w-full text-[rgba(255,255,255,0.7)]" value={username}  placeholder="Enter name" onChange={e=>setUserName(e.target.value)} />
+              <input type="text" className="form-input p-2 bg-[rgba(217,217,217,0.2)] rounded-md w-full text-[rgba(255,255,255,0.7)]" value={username}  placeholder="Enter New Name" onChange={e=>setUserName(e.target.value)} />
             </div>
             <div className="mb-4">
               <label className="block text-[rgba(255,255,255,0.7)] font-bold mb-2">Email:</label>

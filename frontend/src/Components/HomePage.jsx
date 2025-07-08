@@ -78,14 +78,14 @@ export default function HomePage() {
 
   return (
     <div className='bg-[#070045] opacity-90'>
-      <div className=' border-gray-300 py-6 rounded-none border-b-2'>
+      <div className=' border-gray-300 py-6 rounded-none border-b-[1px]'>
         <header className="flex items-center mx-auto text-white w-5/6 justify-between">
             <FloatingNav navItems={navItems} className=""/>
-            <BrainlyCodeIcon className="ml-7"/>
+            <BrainlyCodeIcon className="ml-7 sm:ml-1"/>
             <ul className=" flex items-center h-1/4">
               <li className="">
                   <Link to="/user/profile">
-                    <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 md:w-3/4' />
+                    <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 sm:w-1/2 md:w-2/4' />
                   </Link>
               </li>
               <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">

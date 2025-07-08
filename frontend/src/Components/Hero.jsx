@@ -17,59 +17,59 @@ export const Hero = () => {
   return (
     <div className="bg-[#070045] text-gray-50 min-h-screen">
       {/* Header */} 
-      <section id="header" className="max-w-7xl mx-auto px-6 py-6">
-<header className="flex flex-wrap justify-between items-center gap-4 py-4">
-            <FloatingNav navItems={navItems} />
-  {/* Left: Logo */}
-  <div className="flex-shrink-0">
-    <BrainlyCodeIcon className="ml-2 sm:ml-7" />
-  </div>
+      <section id="header" className="max-w-7xl mx-auto">
+        <header className="flex flex-wrap border-b-[1px] justify-between items-center gap-4 py-4">
+          <FloatingNav navItems={navItems} />
+          {/* Left: Logo */}
+          <div className="flex-shrink-0">
+            <BrainlyCodeIcon className="ml-2 sm:ml-7" />
+          </div>
 
-  <ul className="flex gap-4 items-center">
-    <li className="font-semibold text-gray-300 text-sm">
-      <Link to="/login">
-        <button>Login</button>
-      </Link>
-    </li>
-    <li className="font-semibold bg-gradient-to-r from-[#00ffff] to-purple-400 rounded-3xl px-5 py-2 text-gray-900 hover:opacity-90 transition text-sm">
-      <Link to="/register">Signup</Link>
-    </li>
-  </ul>
+          <ul className="flex gap-4 items-center">
+            <li className="font-semibold text-gray-300 text-sm">
+              <Link to="/login">
+                <button>Login</button>
+              </Link>
+            </li>
+            <li className="font-semibold bg-gradient-to-r from-[#00ffff] to-purple-400 rounded-3xl px-5 py-2 text-gray-900 hover:opacity-90 transition text-sm">
+              <Link to="/register">Signup</Link>
+            </li>
+          </ul>
 
-</header>
+        </header>
 
-       {/* Hero Section */}
-{/* Hero Section */}
-<div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-8 py-16">
+              {/* Hero Section */}
+        {/* Hero Section */}
+        <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-8 py-16">
 
-  {/* Introductory Section */}
-  <div className="flex-1 min-w-[300px]">
-    <Introductory />
-  </div>
+          {/* Introductory Section */}
+          <div className="flex-1 min-w-[300px]">
+            <Introductory />
+          </div>
 
- {/* TextGenerateEffect Section */}
-<div className="bg-[#121022] rounded-md p-4 w-full md:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl min-h-[300px] sm:min-h-[400px] md:min-h-[500px] flex flex-col">
+        {/* TextGenerateEffect Section */}
+        <div className="bg-[#121022] rounded-2xl p-4 w-full md:w-auto max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl min-h-[300px] sm:min-h-[400px] md:min-h-[500px] flex flex-col">
 
-<div className="bg-black rounded overflow-x-auto overflow-y-auto flex-grow flex flex-col h-full">
+        <div className="bg-black rounded-xl bg-opacity-30 overflow-x-auto overflow-y-auto flex-grow flex flex-col h-full">
 
-    <TextGenerateEffect
-      words={` // Welcome to fun
-      // function learnToCode() {
-          const skills = ["HTML", "CSS"];
-          const fun = true;
-          if (fun) {
-              return "Learning to code is amazing.";
-          }
-      }
-      // Start your code
-      learnToCode();`}
-        className="text-xs sm:text-sm md:text-base lg:text-lg w-full h-full whitespace-pre-wrap mt-auto mb-auto"
-    />
-  </div>
+            <TextGenerateEffect
+              words={` // Welcome to fun
+              // function learnToCode() {
+                  const skills = ["HTML", "CSS"];
+                  const fun = true;
+                  if (fun) {
+                      return "Learning to code is amazing.";
+                  }
+              }
+              // Start your code
+              learnToCode();`}
+                className="text-xs sm:text-sm md:text-base lg:text-lg w-full h-full whitespace-pre-wrap my-[5rem]"
+            />
+          </div>
 
-</div>
+        </div>
 
-</div>
+        </div>
       </section>
 
       {/* Why Brainly Code */}

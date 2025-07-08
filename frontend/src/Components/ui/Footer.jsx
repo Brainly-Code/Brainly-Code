@@ -3,8 +3,9 @@ import BrainlyCodeIcon from "../BrainlyCodeIcon";
 const Footer = () => {
   return (
     <footer className="mt-8">
-      <div className="bg-[#6B5EDD] bg-opacity-40 rounded-lg px-6 py-8 w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-gray-100">
+      <div className="bg-[#6B5EDD] bg-opacity-40 rounded-lg px-6 py-8 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 text-gray-100">
         
+        {/* Logo and description */}
         <div>
           <BrainlyCodeIcon />
           <p className="text-xs text-gray-400 mt-6">
@@ -12,28 +13,37 @@ const Footer = () => {
           </p>
         </div>
 
-        <div>
+        {/* Learn Section */}
+        <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Learn</h1>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Courses</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Playgrounds</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Challenges</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Projects</a></p>
+          <ul className="space-y-1">
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Courses</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Playgrounds</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Challenges</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Projects</a></li>
+          </ul>
         </div>
 
-        <div>
+        {/* Resources Section */}
+        <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Resources</h1>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Blog</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Documentation</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">FAQ</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Support</a></p>
+          <ul className="space-y-1">
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Blog</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Documentation</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">FAQ</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Support</a></li>
+          </ul>
         </div>
 
-        <div>
+        {/* Company Section */}
+        <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Company</h1>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">About us</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Careers</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Privacy Policy</a></p>
-          <p><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Terms of service</a></p>
+          <ul className="space-y-1">
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">About us</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Careers</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Privacy Policy</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Terms of service</a></li>
+          </ul>
         </div>
       </div>
 
