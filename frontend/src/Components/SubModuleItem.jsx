@@ -7,7 +7,8 @@ import { useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
 const SubModuleItem = ({ title, steps }) => {
   const [open, setOpen] = useState(false);
 
-  const {data: lessons} = useGetLessonsForSubModuleQuery();
+  const {data: lessons} = useGetLessonsForSubModuleQuery(2);
+  console.log("Lesson:" , lessons)
   
   return (
     <div className="bg-[#1E20B7] rounded-lg w-full max-w-4xl mx-auto p-4 sm:p-5">
@@ -42,9 +43,11 @@ const SubModuleItem = ({ title, steps }) => {
             ))}
           </div>
           <div className="flex justify-end w-full">
-            <button className="bg-[#6B5EDD] hover:bg-[#4d3eb0] text-sm py-1 px-6 sm:px-10 mt-5 rounded-lg border">
-              Start
-            </button>
+            <Link to={`/user/lesson/${1}`}>
+              <button className="bg-[#6B5EDD] hover:bg-[#4d3eb0] text-sm py-1 px-6 sm:px-10 mt-5 rounded-lg border">
+                Start
+              </button>
+            </Link>
           </div>
         </div>
       )}
