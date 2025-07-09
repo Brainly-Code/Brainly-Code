@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import { Link, useNavigate } from 'react-router-dom';
@@ -18,16 +18,16 @@ const Modules = () => {
   const [logoutApiCall] = useLogoutMutation();
   const dispatch = useDispatch();
 
-  const [openSections, setOpenSections] = useState({
-    intro: false,
-    basic: true,
-    intermediate: false,
-    advanced: false,
-  });
+  // const [openSections, setOpenSections] = useState({
+  //   intro: false,
+  //   basic: true,
+  //   intermediate: false,
+  //   advanced: false,
+  // });
 
-  const toggleSection = (section) => {
-    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
+  // const toggleSection = (section) => {
+  //   setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  // };
 
   const navItems = [
     { name: "Courses", link: "/user", icon: "📚" },
@@ -71,7 +71,7 @@ const Modules = () => {
       {/* Course Header */}
               <h3 className='text-2xl font-bold mb-20 mt-12 text-center'>HTML & CSS Mastery</h3>
 
-      <section className='bg-[#0A1C2B] mt-12 w-1/2 mx-auto rounded-xl border border-8 border-[rgba(33,111,184,0.25)]'>
+      <section className='bg-[#0A1C2B] mt-12 w-1/2 mx-auto rounded-xl border-8 border-[rgba(33,111,184,0.25)]'>
 
         <div className='bg-[#0A1C2B] w-full mx-auto p-6 rounded-xl border border-gray-400 flex flex-row sm:flex-col justify-between items-center gap-6'>
           <div className='flex flex-row sm:flex-col items-center gap-3'>

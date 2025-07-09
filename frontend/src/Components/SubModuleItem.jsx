@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import upArrow from '../assets/upArrow.png';
 import downArrow from '../assets/downArrow.png';
+import { Link } from 'react-router-dom';
+import { useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
 
 const SubModuleItem = ({ title, steps }) => {
   const [open, setOpen] = useState(false);
 
+  const {data: lessons} = useGetLessonsForSubModuleQuery();
+  
   return (
     <div className="bg-[#1E20B7] rounded-lg w-full max-w-4xl mx-auto p-4 sm:p-5">
       <button
@@ -27,13 +31,14 @@ const SubModuleItem = ({ title, steps }) => {
         <div className="mt-3 bg-[#1E20B7] p-3 sm:p-4 rounded-lg">
           {/* Responsive grid: changes number of columns based on screen size */}
           <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-15 gap-2 mb-4">
-            {[...Array(steps)].map((_, i) => (
-              <button
-                key={i}
-                className="bg-white font-bold text-[#6B5EDD] text-center rounded text-xs sm:text-sm py-1"
-              >
-                {i + 1}
-              </button>
+            {lessons?.map((lesson, i) => (
+                <Link 
+                  key={lesson.id}
+                  to={`/user/lesson/${lesson.id}`}
+                  className='bg-white font-bold text-[#6B5EDD] text-center rounded text-xs sm:text-sm py-1'  
+                >
+                    {i + 1}
+                </Link>
             ))}
           </div>
           <div className="flex justify-end w-full">

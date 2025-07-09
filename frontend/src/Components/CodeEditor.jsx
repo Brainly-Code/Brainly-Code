@@ -93,7 +93,7 @@ const CodeEditor = () => {
       <div className="flex justify-center">
         <button
           onClick={runCode}
-          className="mt-2 px-6 items-center py-2 bg-gradient-to-r from-[#00FFFF] to-[#8F57EF] text-white rounded-lg"
+          className="mt-2 px-6 items-center py-2 bg-gradient-to-r hover:from-[#00ffffa2] hover:to-[#8342f3] from-[#00FFFF] to-[#8F57EF] text-white rounded-lg"
         >
           Check out output
         </button>
