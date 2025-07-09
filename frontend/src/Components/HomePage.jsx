@@ -2,15 +2,12 @@ import React from 'react'
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGetCoursesQuery } from '../redux/api/coursesSlice'
-import { useLogoutMutation } from '../redux/api/userSlice';
 import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
 import { FloatingNav } from './ui/FloatingNav';
 import Loader from './ui/Loader';
-import { useDispatch } from 'react-redux';
 import { BackgroundGradient } from './ui/BgGradient';
-import profile from '../assets/profile.png'
 import {
   FaJs,
   FaReact,
@@ -20,6 +17,7 @@ import {
   FaAccessibleIcon,
 } from 'react-icons/fa';
 import Footer from './ui/Footer';
+import Header from './ui/Header';
 
 export default function HomePage() {
   
@@ -49,28 +47,7 @@ export default function HomePage() {
   ? courses 
   : courses?.filter(course => course.level === filterLevel);
 
-
-
-   const navItems = [
-    { name: "Courses", link: "/user", icon: "📚" },
-    { name: "Playground", link: "/user/playground", icon: "🎮" },
-    { name: "Challenges", link: "/user/challenges", icon: "🏆" },
-    { name: "Community", link: "/user/community", icon: "👤"}
-  ];
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [ logoutApiCall ] = useLogoutMutation();
-
-  const logoutHandler = async () => {
-    try {
-      await logoutApiCall().unwrap();
-      dispatch(Logout());
-      navigate('/login');
-    } catch (error) {
-      toast.error(error?.data?.message || error.message);
-    }
-  }
+  const navigate = useNavigate()
 
   if(isLoading) {
     return <Loader/>
@@ -78,26 +55,7 @@ export default function HomePage() {
 
   return (
     <div className='bg-[#070045] opacity-90'>
-      <div className=' border-gray-300 py-6 rounded-none border-b-[1px]'>
-        <header className="flex items-center mx-auto text-white w-5/6 justify-between">
-            <FloatingNav navItems={navItems} className=""/>
-            <BrainlyCodeIcon className="ml-7 sm:ml-1"/>
-            <ul className=" flex items-center h-1/4">
-              <li className="">
-                  <Link to="/user/profile">
-                    <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 sm:w-1/2 md:w-2/4' />
-                  </Link>
-              </li>
-              <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
-                <button onClick={logoutHandler} className=''>
-                  <Link to="">
-                   Sign out
-                   </Link>
-                </button>
-              </li>
-            </ul>
-        </header>
-      </div>
+      <Header />
 
       <section>
         <div className=' mt-[2rem] w-[50%] m-auto'>
@@ -114,85 +72,85 @@ export default function HomePage() {
         </div>
       </section>
       
-<section className="mt-[3rem]">
-  <div className="mb-7 text-gray-300 px-4 sm:px-10 md:px-20 lg:px-[15rem] flex flex-wrap justify-center gap-4">
-    <button
-      onClick={() => setFilterLevel('ALL')}
-      className={`p-2 rounded-md ${
-        filterLevel === 'ALL' ? 'border border-white' : 'border-none'
-      }`}>
-      All Courses
-    </button>
+      <section className="mt-[3rem]">
+        <div className="mb-7 text-gray-300 px-4 sm:px-10 md:px-20 lg:px-[15rem] flex flex-wrap justify-center gap-4">
+          <button
+            onClick={() => setFilterLevel('ALL')}
+            className={`p-2 rounded-md ${
+              filterLevel === 'ALL' ? 'border border-white' : 'border-none'
+            }`}>
+            All Courses
+          </button>
 
-    <button
-      onClick={() => setFilterLevel('BEGINNER')}
-      className={`p-2 rounded-md ${
-        filterLevel === 'BEGINNER' ? 'border border-white' : 'border-none'
-      }`}>
-      Beginner
-    </button>
+          <button
+            onClick={() => setFilterLevel('BEGINNER')}
+            className={`p-2 rounded-md ${
+              filterLevel === 'BEGINNER' ? 'border border-white' : 'border-none'
+            }`}>
+            Beginner
+          </button>
 
-    <button
-      onClick={() => setFilterLevel('INTERMEDIATE')}
-      className={`p-2 rounded-md ${
-        filterLevel === 'INTERMEDIATE' ? 'border border-white' : 'border-none'
-      }`}>
-      Intermediate
-    </button>
+          <button
+            onClick={() => setFilterLevel('INTERMEDIATE')}
+            className={`p-2 rounded-md ${
+              filterLevel === 'INTERMEDIATE' ? 'border border-white' : 'border-none'
+            }`}>
+            Intermediate
+          </button>
 
-    <button
-      onClick={() => setFilterLevel('ADVANCED')}
-      className={`p-2 rounded-md ${
-        filterLevel === 'ADVANCED' ? 'border border-white' : 'border-none'
-      }`}>
-      Advanced
-    </button>
-  </div>
-
-
+          <button
+            onClick={() => setFilterLevel('ADVANCED')}
+            className={`p-2 rounded-md ${
+              filterLevel === 'ADVANCED' ? 'border border-white' : 'border-none'
+            }`}>
+            Advanced
+          </button>
+        </div>
 
 
-  <div className="mt-14 mb-14 px-4 sm:px-8 lg:px-[5rem]">
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-14">
-      {filteredCourses?.map((course) => (
-        <div key={course._id || course.id}>
-          <div className="h-full rounded-[22px] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_0px_4px_10px_rgba(33,111,184,0.25)]">
-            <div className="flex justify-between items-center mb-4">
-              {getIconForCourse(course.title)}
-              <span
-              className={`font-bold ${
-                course.level === 'BEGINNER'
-                  ? 'text-blue-400'
-                  : course.level === 'INTERMEDIATE'
-                  ? 'text-purple-400'
-                  : course.level === 'ADVANCED'
-                  ? 'text-green-400'
-                  : 'text-gray-400'
-              }`}
-            >
-              {course.level}
-            </span>
-            </div>
+        <div className="mt-14 mb-14 px-4 sm:px-8 lg:px-[5rem]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-14">
+            {filteredCourses?.map((course) => (
+              <div key={course._id || course.id}>
+                <div className="h-full rounded-[22px] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_0px_4px_10px_rgba(33,111,184,0.25)]">
+                  <div className="flex justify-between items-center mb-4">
+                    {getIconForCourse(course.title)}
+                    <span
+                    className={`font-bold ${
+                      course.level === 'BEGINNER'
+                        ? 'text-blue-400'
+                        : course.level === 'INTERMEDIATE'
+                        ? 'text-purple-400'
+                        : course.level === 'ADVANCED'
+                        ? 'text-green-400'
+                        : 'text-gray-400'
+                    }`}
+                  >
+                    {course.level}
+                  </span>
+                  </div>
 
-            <h1 className="text-xl sm:text-2xl font-bold text-neutral-300 dark:text-neutral-200">
-              {course.title}
-            </h1>
-            <p className="text-gray-400 text-sm sm:text-base">{course.description}</p>
+                  <h1 className="text-xl sm:text-2xl font-bold text-neutral-300 dark:text-neutral-200">
+                    {course.title}
+                  </h1>
+                  <p className="text-gray-400 text-sm sm:text-base">{course.description}</p>
 
-            <div className="flex justify-center mt-6">
-              <Link to={`/user/module/${course.id}`}>
-                <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm"  onClick={()=>navigate(`/user/module/${course.id}`)}>
-                  Enroll now
-                </button>
-              </Link>
-            </div>
+                  <div className="flex justify-center mt-6">
+                    <Link to={`/user/module/${course.id}`}>
+                      <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm"  onClick={()=>navigate(`/user/module/${course.id}`)}>
+                        Enroll now
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
-<Footer />
+      </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }
