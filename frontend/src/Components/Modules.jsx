@@ -11,7 +11,8 @@ import { toast } from 'react-toastify';
 import { Logout } from '../redux/Features/authSlice';
 import { useLogoutMutation } from '../redux/api/userSlice';
 import { useDispatch } from 'react-redux';
-import ModuleItem from './ModuleItem';
+import { ModuleItem } from './ModuleItem';
+import { useGetModulesForCourseQuery } from '../redux/api/moduleSlice';
 
 const Modules = () => {
   const navigate = useNavigate();
@@ -29,6 +30,8 @@ const Modules = () => {
   //   setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   // };
 
+  const { data: modules } = useGetModulesForCourseQuery(1);
+  
   const navItems = [
     { name: "Courses", link: "/user", icon: "📚" },
     { name: "Playground", link: "/user/playground", icon: "🎮" },
@@ -56,7 +59,7 @@ const Modules = () => {
           <ul className="flex items-center">
             <li>
               <Link to="/user/profile">
-                <img src={profile} alt="Profile" className='h-8 w-8 md:h-12 md:w-12 rounded-full' />
+                <img src={profile} alt="Profile" className='h-5 w-5 md:h-12 md:w-12 rounded-full' />
               </Link>
             </li>
             <li className="font-semibold bg-gradient-to-r from-[#00ffff] to-purple-400 rounded-3xl ml-5 px-5 py-2 text-gray-300">
@@ -69,7 +72,7 @@ const Modules = () => {
       </nav>
 
       {/* Course Header */}
-              <h3 className='text-2xl font-bold mb-20 mt-12 text-center'>HTML & CSS Mastery</h3>
+      <h3 className='text-2xl font-bold mb-20 mt-12 text-center'>HTML & CSS Mastery</h3>
 
       <section className='bg-[#0A1C2B] mt-12 w-1/2 mx-auto rounded-xl border-8 border-[rgba(33,111,184,0.25)]'>
 
@@ -99,38 +102,16 @@ const Modules = () => {
 
   {/* Example Module */}
   <div className='w-full mx-auto mt-10 space-y-4'>
-  {[
-    {
-      key: 'basic',
-      label: 'BASIC HTML',
-      submodules: [
-        {
-          key: 'htmlStructure',
-          label: 'HTML Structure',
-          steps: 18,
-        },
-        { key: 'htmlTags', label: 'HTML Tags', steps: 0 },
-        { key: 'doctypeTag', label: 'DOCTYPE tag', steps: 0 },
-        { key: 'metaTag', label: 'META tag', steps: 0 },
-      ]
-    },
-    {
-      key: 'intermediate',
-      label: 'INTERMEDIATE HTML',
-      submodules: []
-    },
-    {
-      key: 'advanced',
-      label: 'ADVANCED HTML',
-      submodules: []
-    }
-  ].map(({ key, label, submodules }) => (
-    <ModuleItem
-      key={key}
-      title={label}
-      submodules={submodules}
-    />
-  ))}
+  {modules?.map((module) => { // <-- Check if miniModules exists
+    return (
+      <ModuleItem
+        key={module.id}
+        title={module.title}
+        submodules={module.miniModules} // Could be undefined here
+      />
+    );
+})}
+
 </div>
 
 

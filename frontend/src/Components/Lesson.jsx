@@ -11,15 +11,12 @@ import BrainlyCodeIcon from './BrainlyCodeIcon';
 import CodeEditor from './CodeEditor';
 import Footer from './ui/Footer';
 import Progress from './ui/Progress';
-import { useGetLessonByIdQuery, useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
+import { useGetLessonByIdQuery } from '../redux/api/LessonSlice';
 
 const Lesson = () => {
   const { id } = useParams();
 
-  const { data: lesson } = useGetLessonByIdQuery(id);
-
-  let { data: lessons, error, isLoading } = useGetLessonsForSubModuleQuery();
-  console.log(lessons);
+  const { data: lesson, error, isLoading } = useGetLessonByIdQuery(id);
 
   if(error){
     toast.error(error);
@@ -97,9 +94,9 @@ const Lesson = () => {
         </div>
       </div>
 
-      <div className="mt-[10rem] ml-[10rem]">
-        <h2 className='text-gray-300 text-center font-bold'>Assignment:</h2>
-        <div className='mx-[10rem] '>
+      <div className="mt-[10rem] ml-[5rem]">
+        <h2 className='text-gray-300 text-start ml-[10rem] mb-2 font-bold'>Assignment:</h2>
+        <div className='mx-[10rem]'>
           <p className="text-gray-400 text-start font-md">
             {lesson.assignment}
           </p>

@@ -6,26 +6,27 @@ import downArrow from '../assets/downArrow.png';
 const ModuleItem = ({ title, submodules }) => {
   const [open, setOpen] = useState(false);
 
+  console.log(submodules)
+
   return (
     <div className='bg-[#6B5EDD] rounded-xl p-3 sm:p-4 md:p-6'>
-            <button
-             onClick={() => setOpen(!open)}
-             className="flex items-center justify-between w-full text-left"
-             >
-             <div className="flex items-center space-x-2">
-                 <input type="radio" className='mr-3'/>
-                 <span className=" font-bold">{title}</span>
-             </div>
-             <span className="text-xl block w-4 h-4">
-                 {open ? <img src={upArrow} /> : <img src={downArrow} />}
-             </span>
-             </button>
-     
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center justify-between w-full text-left"
+        >
+        <div className="flex items-center space-x-2">
+            <input type="radio" className='mr-3'/>
+            <span className=" font-bold">{title}</span>
+        </div>
+        <span className="text-xl block w-4 h-4">
+            {open ? <img src={upArrow} /> : <img src={downArrow} />}
+        </span>
+      </button>
 
-      {open && submodules.length > 0 && (
+      {open && Array.isArray(submodules) && submodules.length > 0 && (
         <div className='mt-2 sm:mt-3 space-y-2'>
-          {submodules.map(({ key, label, steps }) => (
-            <SubModuleItem key={key} title={label} steps={steps} />
+          {submodules.map(( submodule ) => (
+            <SubModuleItem key={submodule.id} title={submodule.title} steps={submodule.lessons} />
           ))}
         </div>
       )}
@@ -33,4 +34,4 @@ const ModuleItem = ({ title, submodules }) => {
   );
 };
 
-export default ModuleItem;
+export { ModuleItem };

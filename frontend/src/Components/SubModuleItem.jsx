@@ -8,7 +8,7 @@ const SubModuleItem = ({ title, steps }) => {
   const [open, setOpen] = useState(false);
 
   const {data: lessons} = useGetLessonsForSubModuleQuery(2);
-  console.log("Lesson:" , lessons)
+  console.log(steps);
   
   return (
     <div className="bg-[#1E20B7] rounded-lg w-full max-w-4xl mx-auto p-4 sm:p-5">
@@ -28,7 +28,7 @@ const SubModuleItem = ({ title, steps }) => {
         </span>
       </button>
 
-      {open && steps > 0 && (
+      {open && lessons && lessons.length > 0 && (
         <div className="mt-3 bg-[#1E20B7] p-3 sm:p-4 rounded-lg">
           {/* Responsive grid: changes number of columns based on screen size */}
           <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-15 gap-2 mb-4">
@@ -38,7 +38,7 @@ const SubModuleItem = ({ title, steps }) => {
                   to={`/user/lesson/${lesson.id}`}
                   className='bg-white font-bold text-[#6B5EDD] text-center rounded text-xs sm:text-sm py-1'  
                 >
-                    {i + 1}
+                  {i + 1}
                 </Link>
             ))}
           </div>

@@ -180,9 +180,11 @@ export default function HomePage() {
             <p className="text-gray-400 text-sm sm:text-base">{course.description}</p>
 
             <div className="flex justify-center mt-6">
-              <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm"  onClick={()=>navigate('/user/modules')}>
-                Enroll now
-              </button>
+              <Link to={`/user/module/${course.id}`}>
+                <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm"  onClick={()=>navigate(`/user/module/${course.id}`)}>
+                  Enroll now
+                </button>
+              </Link>
             </div>
           </div>
         </div>

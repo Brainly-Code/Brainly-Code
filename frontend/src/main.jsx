@@ -50,7 +50,7 @@ const router = createBrowserRouter (
         <Route path='lesson/:id' element={<Lesson />}/>
         <Route path='challenges' element={<Challenges />} />
         <Route path='playground' element={<PlayGround />} />
-        <Route path='modules' element={<Modules />} />
+        <Route path='module/:id' element={<Modules />} />
       </Route>
 
     </Route>
