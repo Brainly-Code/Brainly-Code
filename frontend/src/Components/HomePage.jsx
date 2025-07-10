@@ -59,8 +59,8 @@ export default function HomePage() {
       <Header />
 
       <section>
-        <div className=' mt-[2rem] w-[50%] m-auto'>
-          <div className='text-center md:flex md:flex-nowrap md:justify-center gap-5 m-auto mb-4'>
+        <div className=' mt-[2rem] w-[50%] m-auto '>
+          <div className='text-center md:flex md:flex-nowrap md:justify-center items-center gap-5 m-auto mb-4'>
             <span className='text-[#00ffee] lg:text-4xl text-xl font-bold'>Interactive</span>
             <TextGenerateEffect className="text-white lg:text-4xl text-xl font-bold align-middle whitespace-nowrap" words={' Coding Courses'} />
           </div>
