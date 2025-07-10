@@ -1,4 +1,4 @@
-import { apiSlice } from "./apiSlice.tsx";
+import { apiSlice } from "./apiSlice.jsx";
 
 const COURSE_URL = "/courses";
 

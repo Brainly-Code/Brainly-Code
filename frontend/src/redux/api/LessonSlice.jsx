@@ -1,4 +1,4 @@
-import { apiSlice } from "./apiSlice";
+import { apiSlice } from "./apiSlice.jsx";
 
 const LESSONS_URL = "/lesson"
 const lessonApiSlice = apiSlice.injectEndpoints({
