@@ -50,7 +50,7 @@ const Modules = () => {
 
       <section className='bg-[#0A1C2B] mt-12 w-1/2 mx-auto rounded-3xl border-8 border-[rgba(33,111,184,0.5)]'>
 
-        <div className='bg-[#0A1C2B] border-4 border-[#6B5EDD] w-full mx-auto p-6 rounded-xl border border-gray-400 flex flex-row flex-col sm:flex-col justify-between items-center gap-6'>
+        <div className='bg-[#0A1C2B] border-4 border-[#6B5EDD] w-full mx-auto p-6 rounded-xl flex flex-row  sm:flex-col justify-between items-center gap-6'>
           <div className='flex flex-col items-center gap-3'>
             <img src={paint} alt="Paint" className='w-6 h-6' />
             <span>{course?.description}</span>

@@ -16,12 +16,12 @@ import Challenges from './Components/Challenges'
 import PlayGround from './Components/PlayGround'
 import Dashboard from './Admin/Dashboard'
 import AdminRoutes from './AdminRoutes'
-import Courses from './Admin/Courses'
 import CreateCourse from './Admin/CreateCourse'
 import Modules from './Components/Modules'
 import Lesson from './Components/Lesson'
 import VideoPlayer from './Components/VideoPlayer'
 import AllChallenges from './Admin/AllChallenges'
+import AllCourses from './Admin/AllCourses'
 // import { GoogleOAuthProvider} from '@react-oauth/google'
 
 const router = createBrowserRouter (
@@ -39,7 +39,7 @@ const router = createBrowserRouter (
         <Route path='' element={<Dashboard />} />
         <Route path='challenges' element={<AllChallenges />} /> 
         <Route path='profile' element={<UpdateUser />} />
-        <Route path='courses' element={<Courses />}> 
+        <Route path='courses' element={<AllCourses />}> 
           
         </Route>
         <Route path='create' element={<CreateCourse />} />

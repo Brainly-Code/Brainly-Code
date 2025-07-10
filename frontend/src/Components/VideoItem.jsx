@@ -10,7 +10,7 @@ const VideoItem = ({ id,title}) => {
         <input type="radio" className='mr-3' />
         <span className="font-bold">{title}</span>
       </div>
-        <img src={videoImg} className='w-8 h-8'/>
+        <img src={videoImg} className='w-8 hover:cursor-pointer h-8'/>
     </div>
   );
 };
