@@ -33,6 +33,7 @@ export default function HomePage() {
     return <FaAccessibleIcon color="gray" size={30} />; // Default icon
   };
   
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
   let { data: courses, error, isLoading } = useGetCoursesQuery();
   console.log(courses);
@@ -112,7 +113,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-14">
             {filteredCourses?.map((course) => (
               <div key={course._id || course.id}>
-                <div className="h-full rounded-[22px] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_0px_4px_10px_rgba(33,111,184,0.25)]">
+                <div className="h-full rounded-[22px] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_4px_4px_10px_rgba(33,111,184,0.25)]">
                   <div className="flex justify-between items-center mb-4">
                     {getIconForCourse(course.title)}
                     <span
@@ -126,7 +127,7 @@ export default function HomePage() {
                         : 'text-gray-400'
                     }`}
                   >
-                    {course.level}
+                    {capitalize(course.level)}
                   </span>
                   </div>
 
