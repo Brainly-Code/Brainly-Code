@@ -46,7 +46,7 @@ const Modules = () => {
       <Header />
 
       {/* Course Header */}
-      <h3 className='text-2xl font-bold mb-20 mt-12 text-center'>{course?.title}</h3>
+      <h3 className='text-2xl font-bold  mt-12 text-center'>{course?.title}</h3>
 
       <section className='bg-[#0A1C2B] mt-12 w-1/2 mx-auto rounded-xl border-8 border-[rgba(33,111,184,0.25)]'>
 
