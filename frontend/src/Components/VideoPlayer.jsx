@@ -16,7 +16,7 @@ import Header from './ui/Header';
 
 
 const VideoPlayer = () => {
-  const { videoId } = useParams();
+  const { moduleId,videoId } = useParams();
   const { data: video, error, isLoading } = useGetVideoByIdQuery(videoId);
 
   const navigate = useNavigate();
@@ -71,7 +71,7 @@ const VideoPlayer = () => {
 
         <div className='mx-auto flex flex-col gap-2 bg-[#0A1C2B] py-6 px-40 rounded-2xl'>
           <span className='text-white'>You are {progress}% there!</span>
-          <button className='text-white bg-[rgba(33,111,182,0.25)] rounded-2xl p-1'>Continue</button>
+          <button className='text-white bg-[rgba(33,111,182,0.25)] rounded-2xl p-1' onClick={() => navigate(`/user/module/${moduleId}`)}>Continue</button>
         </div>
       </section>
 

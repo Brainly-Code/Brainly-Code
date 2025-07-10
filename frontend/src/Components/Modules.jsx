@@ -81,7 +81,7 @@ const Modules = () => {
           <>
             <div className='w-full mx-auto'>
               {videos.map(video => (
-                <VideoItem key={video.id} id={video.id} title={video.title} />
+                <VideoItem key={video.id} moduleId={id} id={video.id} title={video.title} />
               ))}
             </div>
           </>
