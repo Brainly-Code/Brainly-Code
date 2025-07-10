@@ -42,7 +42,7 @@ const Modules = () => {
   }
   
   return (
-    <div className='bg-[#0D0056] min-h-screen text-white flex flex-col justify-between'>
+    <div className='bg-[#0D0056] h-full text-white flex flex-col justify-between'>
       <Header />
 
       {/* Course Header */}

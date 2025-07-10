@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux';
 import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
+import Header from './ui/Header';
 
 
 
@@ -48,24 +49,9 @@ const VideoPlayer = () => {
   }
 
   return (
-    <div className='bg-[#070045]'>
+    <div className='bg-[#070045] w-full'>
       {/* Header */}
-      <nav className='border-gray-300 py-6 rounded-none border-b-2'>
-        <header className="flex items-center mx-auto text-white w-5/6 justify-between">
-          <FloatingNav navItems={[/* same nav items */]} />
-          <BrainlyCodeIcon className="ml-7" />
-          <ul className="flex items-center h-1/4">
-            <li>
-              <Link to="/user/profile">
-                <img src={profile} className='h-1/2 w-1/2 md:h-3/4 md:w-3/4' />
-              </Link>
-            </li>
-            <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
-              <button onClick={logoutHandler}>Sign out</button>
-            </li>
-          </ul>
-        </header>
-      </nav>
+     <Header />
 
       {/* Video */}
       <section className='flex flex-col gap-10 w-full'>
