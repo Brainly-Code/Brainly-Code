@@ -26,7 +26,7 @@ const ModuleItem = ({ title, submodules }) => {
       {open && Array.isArray(submodules) && submodules.length > 0 && (
         <div className='mt-2 sm:mt-3 space-y-2'>
           {submodules.map(( submodule ) => (
-            <SubModuleItem key={submodule.id} title={submodule.title} steps={submodule.lessons} />
+            <SubModuleItem key={submodule.id} title={submodule.title} id={submodule.id} steps={submodule.lessons} />
           ))}
         </div>
       )}

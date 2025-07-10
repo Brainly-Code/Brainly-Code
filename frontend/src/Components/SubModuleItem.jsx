@@ -4,11 +4,12 @@ import downArrow from '../assets/downArrow.png';
 import { Link } from 'react-router-dom';
 import { useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
 
-const SubModuleItem = ({ title, steps }) => {
+const SubModuleItem = ({ title,id, steps }) => {
   const [open, setOpen] = useState(false);
 
-  const {data: lessons} = useGetLessonsForSubModuleQuery(2);
+  const {data: lessons} = useGetLessonsForSubModuleQuery(id);
   console.log(steps);
+
   
   return (
     <div className="bg-[#1E20B7] rounded-lg w-full max-w-4xl mx-auto p-4 sm:p-5">
