@@ -12,6 +12,8 @@ import Header from './ui/Header';
 import { useGetCourseByIdQuery } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
 import Loader from './ui/Loader';
+import VideoItem from './VideoItem'; // import the new component
+import { useGetVideosForCourseQuery } from '../redux/api/videoApi'; // hypothetical API slice
 
 const Modules = () => {
   // const [openSections, setOpenSections] = useState({
@@ -29,6 +31,7 @@ const Modules = () => {
   const { data: course, error, isLoading } = useGetCourseByIdQuery(id);
 
   const { data: modules } = useGetModulesForCourseQuery(id);
+  const { data: videos } = useGetVideosForCourseQuery(id);
 
   if(error) {
     toast.error(error?.data?.message);
@@ -68,9 +71,22 @@ const Modules = () => {
           <h5 className='text-xl font-semibold mb-4 text-center'>Modules</h5>
           </div>
 
+
+
         {/* Modules */}
        <div className='w-full mx-auto mt-10 space-y-4'>
 
+         {/* Videos Section */}
+        {videos && videos.length > 0 && (
+          <>
+            <div className='w-full mx-auto'>
+              {videos.map(video => (
+                <VideoItem key={video.id} id={video.id} title={video.title} />
+              ))}
+            </div>
+          </>
+        )}
+        
   {/* Example Module */}
   <div className='w-full mx-auto mt-10 space-y-4'>
   {modules?.map((module) => { // <-- Check if miniModules exists
