@@ -5,9 +5,6 @@ import Loader from './ui/Loader';
 import Footer from './ui/Footer';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
-import profile from '../assets/profile.png';
-import { useLogoutMutation } from '../redux/api/userSlice';
-import { useDispatch } from 'react-redux';
 import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
@@ -20,20 +17,8 @@ const VideoPlayer = () => {
   const { data: video, error, isLoading } = useGetVideoByIdQuery(videoId);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [logoutApiCall] = useLogoutMutation();
   
   const [progress, setProgress] = useState(0); 
-
-  const logoutHandler = async () => {
-    try {
-      await logoutApiCall().unwrap();
-      dispatch(Logout());
-      navigate('/login');
-    } catch (error) {
-      toast.error(error?.data?.message || error.message);
-    }
-  };
 
   const handleTimeUpdate = (e) => {
     const currentTime = e.target.currentTime;
