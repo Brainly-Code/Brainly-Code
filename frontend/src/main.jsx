@@ -21,6 +21,7 @@ import CreateCourse from './Admin/CreateCourse'
 import Modules from './Components/Modules'
 import Lesson from './Components/Lesson'
 import VideoPlayer from './Components/VideoPlayer'
+import LessonVideoPlayer from './Components/LessonVideoPlayer'
 import AllChallenges from './Admin/AllChallenges'
 // import { GoogleOAuthProvider} from '@react-oauth/google'
 
@@ -55,6 +56,7 @@ const router = createBrowserRouter (
         <Route path='playground' element={<PlayGround />} />
         <Route path='module/:id' element={<Modules />} />
         <Route path="/user/course/module/:moduleId/video/:videoId" element={<VideoPlayer />} />
+        <Route path="/user/:moduleId/:lessonVideoId" element={<LessonVideoPlayer />} />
       </Route>
 
     </Route>
