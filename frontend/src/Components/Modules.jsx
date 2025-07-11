@@ -33,6 +33,14 @@ const Modules = () => {
   const { data: modules } = useGetModulesForCourseQuery(id);
   const { data: videos } = useGetVideosForCourseQuery(id);
 
+  const combinedItems = [
+  ...(videos?.map(video => ({ ...video, type: 'video' })) || []),
+  ...(modules?.map(module => ({ ...module, type: 'module' })) || []),
+  ];
+
+// Sort by the number field
+  combinedItems.sort((a, b) => a.number - b.number);
+
   if(error) {
     toast.error(error?.data?.message);
   }
@@ -73,36 +81,32 @@ const Modules = () => {
 
 
 
-        {/* Modules */}
-       <div className='w-full mx-auto mt-10 space-y-4'>
+        <div className='w-full mx-auto mt-10 space-y-4'>
+          {combinedItems?.length > 0 ? combinedItems.map(item => {
+            if (item.type === 'video') {
+              return (
+                <VideoItem
+                  key={`video-${item.id}`}
+                  moduleId={id}
+                  id={item.id}
+                  title={item.title}
+                />
+              );
+            }
 
-         {/* Videos Section */}
-        {videos && videos.length > 0 && (
-          <>
-            <div className='w-full mx-auto'>
-              {videos.map(video => (
-                <VideoItem key={video.id} moduleId={id} id={video.id} title={video.title} />
-              ))}
-            </div>
-          </>
-        )}
-        
-  {/* Example Module */}
-  <div className='w-full mx-auto mt-10 space-y-4'>
-  {modules?.map((module) => { // <-- Check if miniModules exists
-    return (
-      <ModuleItem
-        key={module.id}
-        title={module.title}
-        submodules={module.miniModules} // Could be undefined here
-      />
-    );
-})}
+            if (item.type === 'module') {
+              return (
+                <ModuleItem
+                  key={`module-${item.id}`}
+                  title={item.title}
+                  submodules={item.miniModules}
+                />
+              );
+            }
 
-</div>
-
-
-</div>
+            return null;
+          }) : <h2 className='text-center mb-6'>No modules in this course!</h2>}
+        </div>
 
       </section>
 
