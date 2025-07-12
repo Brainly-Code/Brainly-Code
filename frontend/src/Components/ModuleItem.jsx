@@ -3,7 +3,7 @@ import SubModuleItem from './SubModuleItem';
 import upArrow from '../assets/upArrow.png';
 import downArrow from '../assets/downArrow.png';
 
-const ModuleItem = ({ title, submodules }) => {
+const ModuleItem = ({ moduleId,title, submodules }) => {
   const [open, setOpen] = useState(false);
 
   console.log(submodules)
@@ -26,7 +26,7 @@ const ModuleItem = ({ title, submodules }) => {
       {open && Array.isArray(submodules) && submodules.length > 0 && (
         <div className='mt-2 sm:mt-3 space-y-2'>
           {submodules.map(( submodule ) => (
-            <SubModuleItem key={submodule.id} title={submodule.title} id={submodule.id} steps={submodule.lessons} />
+            <SubModuleItem key={submodule.id} title={submodule.title} id={submodule.id} moduleId={moduleId} steps={submodule.lessons} />
           ))}
         </div>
       )}
