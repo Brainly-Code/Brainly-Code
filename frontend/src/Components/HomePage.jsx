@@ -36,7 +36,7 @@ export default function HomePage() {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
   let { data: courses, error, isLoading } = useGetCoursesQuery();
-  console.log(courses);
+
   
   if(error){
     toast.error(error);
