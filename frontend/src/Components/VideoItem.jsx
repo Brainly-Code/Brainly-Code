@@ -1,17 +1,16 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import videoImg from '../assets/video.png';
 
 const VideoItem = ({ id,moduleId,title}) => {
-  const navigate = useNavigate();
   return (
-    <div className='bg-[#6B5EDD] rounded-xl p-3 sm:p-4 md:p-6 mb-4 flex justify-between items-center hover:cursor-pointer' onClick={() => navigate(`/user/course/module/${moduleId}/video/${id}`)}>
+      <Link to={`/user/course/module/${moduleId}/video/${id}`} className='bg-[#6B5EDD] rounded-xl p-3 sm:p-4 md:p-6 mb-4 flex justify-between items-center hover:cursor-pointer' replace>
       <div className="flex items-center space-x-2">
         <input type="radio" className='mr-3' />
         <span className="font-bold">{title}</span>
       </div>
-        <img src={videoImg} className='w-8 hover:cursor-pointer h-8'/>
-    </div>
+        <img src={videoImg} className='w-8 h-8'/>
+      </Link>
   );
 };
 

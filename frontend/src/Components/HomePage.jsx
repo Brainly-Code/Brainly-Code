@@ -1,6 +1,6 @@
 import React from 'react'
 import BrainlyCodeIcon from './BrainlyCodeIcon';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useGetCoursesQuery } from '../redux/api/coursesSlice'
 import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
@@ -36,7 +36,7 @@ export default function HomePage() {
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
   let { data: courses, error, isLoading } = useGetCoursesQuery();
-  console.log(courses);
+
   
   if(error){
     toast.error(error);
@@ -48,7 +48,6 @@ export default function HomePage() {
   ? courses 
   : courses?.filter(course => course.level === filterLevel);
 
-  const navigate = useNavigate()
 
   if(isLoading) {
     return <Loader/>
@@ -113,7 +112,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-14">
             {filteredCourses?.map((course) => (
               <div key={course._id || course.id}>
-                <div className="h-full rounded-[22px] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_4px_4px_10px_rgba(33,111,184,0.25)]">
+                <div className="h-full rounded-[22px] hover:shadow-[0_5px_5px_10px_rgba(33,111,184,0.75)] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_4px_4px_10px_rgba(33,111,184,0.25)]">
                   <div className="flex justify-between items-center mb-4">
                     {getIconForCourse(course.title)}
                     <span
@@ -138,7 +137,7 @@ export default function HomePage() {
 
                   <div className="flex justify-center mt-6">
                     <Link to={`/user/module/${course.id}`}>
-                      <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm"  onClick={()=>navigate(`/user/module/${course.id}`)}>
+                      <button className="rounded-full hover:from-[#30c7bd] hover:to-purple-600 bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm">
                         Enroll now
                       </button>
                     </Link>

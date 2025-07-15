@@ -31,10 +31,6 @@ const Dashboard = () => {
 
         <main className="flex-1 p-8">
           {/* ... chart and rates */}
-          {/* Dashboard Title */}
-          <h1 className="text-center text-3xl font-bold text-white mb-4">
-            ADMIN DASHBOARD
-          </h1>
 
           {/* Chart */}
           <div className="flex justify-center mb-12">

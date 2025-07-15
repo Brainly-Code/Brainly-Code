@@ -5,13 +5,13 @@ import { Link } from 'react-router-dom';
 import { useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
 import { useGetLessonVideosByMiniModuleQuery } from '../redux/api/lessonVideoApi';
 
-const SubModuleItem = ({ title, moduleId,id, steps }) => {
-  console.log(steps)
+const SubModuleItem = ({ title, moduleId,id }) => {
+
   const [open, setOpen] = useState(false);
 
   const { data: lessons } = useGetLessonsForSubModuleQuery(id);
   const { data: lessonVideos } = useGetLessonVideosByMiniModuleQuery(id);
-  console.log(lessonVideos);
+
 
   // Combine lessons and videos, adding a type field for each
   const combinedItems = [
@@ -75,7 +75,7 @@ const SubModuleItem = ({ title, moduleId,id, steps }) => {
             })}
           </div>
           <div className="flex justify-end w-full">
-            <Link to={`/user/lesson/${combinedItems[0]?.id || 1}`}>
+            <Link to={combinedItems[0].type === "lesson" ? `/user/lesson/${combinedItems[0]?.id}` : `/user/${moduleId}/${combinedItems[0]?.id}`}>
               <button className="bg-[#6B5EDD] hover:bg-[#4d3eb0] text-sm py-1 px-6 sm:px-10 mt-5 rounded-lg border">
                 Start
               </button>

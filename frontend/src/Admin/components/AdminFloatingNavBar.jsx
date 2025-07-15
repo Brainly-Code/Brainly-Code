@@ -37,6 +37,10 @@ const Header = () => {
         <header className="flex items-center mx-auto text-white w-5/6 justify-between">
             <FloatingNav navItems={navItems} className=""/>
             <BrainlyCodeIcon className="ml-7 sm:ml-1"/>
+            <h1 className="text-center text-xl font-bold mr-[3rem] text-white ">
+              ADMIN DASHBOARD
+            </h1>
+            
             <ul className=" flex items-center h-1/4">
               <li className="">
                   <Link to="/admin/profile">
