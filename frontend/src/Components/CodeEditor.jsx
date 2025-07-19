@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 
 const CodeEditor = () => {
-  const [code, setCode] = useState(`<!-- Write your HTML here -->`);
+  const [html, setHtml] = useState("");
+  const [css, setCss] = useState("");
+  const [js, setJs] = useState("");
 
   const [srcDoc, setSrcDoc] = useState("");
   const [consoleOutput, setConsoleOutput] = useState([]);
@@ -10,19 +12,28 @@ const CodeEditor = () => {
 
   const runCode = () => {
     const codeWithConsoleCapture = `
-      <!-- Write your HTML here -->
-      <h1>Hello World</h1>
-      <style>
-        h1 {
-          color: #00DEDE;
-          text-align: center;
-          font-family: sans-serif;
-        }
-      </style>
-      <script>
-        console.log("JS is running...");
-      </script>
-      ${code}
+      <html>
+        <head>
+          <style>${css}</style>
+        </head>
+        <body>
+          ${html}
+          <script>
+            // Intercept console.log
+            const log = console.log;
+            console.log = function(...args) {
+              window.parent.postMessage({ type: 'console', data: args }, '*');
+              log.apply(console, args);
+            };
+            
+            try {
+              ${js}
+            } catch (err) {
+              console.log(err);
+            }
+          </script>
+        </body>
+      </html>
     `;
 
     setConsoleOutput([]);
@@ -46,21 +57,48 @@ const CodeEditor = () => {
   return (
     <div className="p-4 h-[120%]">
       <div className="flex h-[35rem]">
-        <div className="grid grid-cols-2 p-[1rem] h-[100%] w-[50%] bg-[#1C2526]">
-          <textarea
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            rows="10"
-            className="text-gray-300 m-5 w-[200%] bg-[#1C2526] p-2 text-sm rounded"
-            cols="60"
-          />
+        {/* Editors */}
+        <div className="bg-[#1C2526]">
+          <div className="border-b-2">
+            <h1 className="text-gray-300 mt-[1rem] text-center">Editor</h1>
+          </div>
+          <div className="flex gap-1 p-[3rem] h-[30rem] w-[90%]">
+            <div>
+              <h2 className="text-gray-500 text-sm text-center">index.html</h2>
+              <textarea
+                value={html}
+                onChange={(e) => setHtml(e.target.value)}
+                placeholder="HTML"
+                className="text-gray-300 m-1 bg-[#1C2526] p-2 text-sm rounded h-full"
+              />
+            </div>
+            <div>
+              <h2 className="text-gray-500 text-sm text-center">index.css</h2>
+              <textarea
+                value={css}
+                onChange={(e) => setCss(e.target.value)}
+                placeholder="CSS"
+                className="text-gray-300 m-1 bg-[#1C2526] p-2 text-sm rounded h-full"
+              />
+            </div>
+            <div>
+              <h2 className="text-gray-500 text-sm text-center">index.js</h2>
+              <textarea
+                value={js}
+                onChange={(e) => setJs(e.target.value)}
+                placeholder="JavaScript"
+                className="text-gray-300 m-1 bg-[#1C2526] p-2 text-sm rounded h-full"
+              />
+            </div>
+          </div>
         </div>
 
+        {/* Output */}
         <div className="bg-white h-[100%] w-[50%] p-1">
           <h1 className="text-gray-800 text-center font-semibold">Output</h1>
           <iframe
             ref={iframeRef}
-            title="Live HTML Preview"
+            title="Live Preview"
             className="w-full h-64 mt-2 rounded border"
             sandbox="allow-scripts"
             srcDoc={srcDoc}

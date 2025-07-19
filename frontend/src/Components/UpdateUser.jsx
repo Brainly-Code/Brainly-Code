@@ -2,25 +2,31 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "react-toastify"
 import { Link } from "react-router-dom"
-import { useProfileMutation } from "../redux/api/userSlice"
+import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateUserMutation } from "../redux/api/userSlice"
 import { setCredentials } from "../redux/Features/authSlice"
 import { jwtDecode } from "jwt-decode"
-import user from '../assets/user.png'
+import UserProfile from '../assets/user.png'
 
 const Profile = () => {
+
+  const {userInfo}=useSelector(state=>state.auth);
+  const token = jwtDecode(userInfo.access_token);
+
+  const { data: user } = useGetCurrentUserQuery(token.sub);
+
   const [username, setUserName]=useState('')
   const [email, setEmail]=useState('')
   const [password, setPassword]=useState("")
   const [confirmPassword, setConfirmPassword]=useState("")
    
-  const {userInfo}=useSelector(state=>state.auth)
-  const token = jwtDecode(userInfo.access_token);
-  const [updateProfile, {isLoading: loadingUpdateProfile}]= useProfileMutation()
+  const [updateProfile, {isLoading: loadingUpdateProfile}]= useUpdateUserMutation();
+  const { data: image } = useGetProfileImageQuery(token.sub);
+  console.log(image)
  
   useEffect(()=>{
-    setUserName(token.username)
-    setEmail(token.email)
-},[token.email,  token.username])
+    setUserName(user?.username || "")
+    setEmail(user?.email || "")
+  },[user])
 
   const dispatch = useDispatch()
 
@@ -39,6 +45,8 @@ const Profile = () => {
       }
     }
   }
+  
+  const imagePath = `http://localhost:3000/uploads/profile-images/${image?.path}`;
 
   return (
     <div className=" h-full w-full bg-[#110167] p-4">
@@ -47,7 +55,7 @@ const Profile = () => {
           <h1 className="text-xl font-bold mb-7 text-[#989898] text-center">Update Profile</h1>
           <form onSubmit={submitHandler}>
             <div className="w-48 h-48 bg-white rounded-full mx-auto flex items-center">
-              <img src={user} className="w-5/6 m-auto"/>
+              <img src={image?.path ? imagePath : UserProfile} alt="profile-pic" className="w-5/6 m-auto"/>
             </div>
             <div className="mb-4">
               <label className="block text-[rgba(255,255,255,0.7)] font-bold mb-2">Name:</label>

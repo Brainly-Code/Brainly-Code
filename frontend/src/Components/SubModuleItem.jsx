@@ -5,10 +5,11 @@ import { Link } from 'react-router-dom';
 import { useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
 
 const SubModuleItem = ({ title,id, steps }) => {
+  console.log(steps)
   const [open, setOpen] = useState(false);
 
   const {data: lessons} = useGetLessonsForSubModuleQuery(id);
-  console.log(steps);
+  console.log(lessons);
 
   
   return (
@@ -29,7 +30,7 @@ const SubModuleItem = ({ title,id, steps }) => {
         </span>
       </button>
 
-      {open && lessons && lessons.length > 0 && (
+      {open && lessons && lessons?.length > 0 && (
         <div className="mt-3 bg-[#1E20B7] p-3 sm:p-4 rounded-lg">
           {/* Responsive grid: changes number of columns based on screen size */}
           <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-15 gap-2 mb-4">

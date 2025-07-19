@@ -9,6 +9,7 @@ import { useGetChallengesQuery } from '../redux/api/challengeSlice';
 import { BackgroundGradient } from './ui/BgGradient';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
+import { useNavigate } from 'react-router-dom';
 
 export const Challenges = () => {
   
@@ -18,6 +19,8 @@ export const Challenges = () => {
   if(error){
     toast.error(error);
   }
+
+  const navigate = useNavigate();
 
   const [filterLevel, setFilterLevel] = React.useState('ALL');
 
@@ -97,7 +100,7 @@ export const Challenges = () => {
                   <p className="text-gray-400 text-sm sm:text-base">{challenge.description}</p>
 
                   <div className="flex justify-end h-1/6 mt-6">
-                    <button className="rounded-md bg-[#06325B] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] px-6 text-white font-bold text-sm">
+                    <button onClick={navigate('/user/challenge')} className="rounded-md bg-[#06325B] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] px-6 text-white font-bold text-sm">
                       Start
                     </button>
                   </div>

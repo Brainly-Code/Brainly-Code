@@ -2,6 +2,7 @@ import { apiSlice } from "./apiSlice.jsx";
 
 const USER_URL = "/users";
 const AUTH_URL = "/auth";
+const PROFILE_URL = "/profile-image";
 
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: builders => ({
@@ -21,11 +22,10 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    profile: builders.mutation({
-      query: (data) => ({
-        url: `${USER_URL}/edit/${data.id}`,
+    getCurrentUser: builders.query({
+      query: (id) => ({
+        url: `${USER_URL}/${id}`,
         method: "GET",
-        body: data
       })
     }),
 
@@ -44,6 +44,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })    
     }),
 
+    getProfileImage: builders.query({
+      query: id => ({
+        url: `${PROFILE_URL}/${id}`,
+        method: "GET",
+      })
+    }),
+
     UpdateUser: builders.mutation({
       query: (data, id) => ({
         url: `${USER_URL}/edit/${id}`,
@@ -57,9 +64,10 @@ export const userApiSlice = apiSlice.injectEndpoints({
 export const {
   useRegisterMutation,
   useLoginMutation,
-  useProfileMutation,
   useLogoutMutation,
+  useGetCurrentUserQuery,
   useGetUsersQuery,
   useUpdateUserMutation,
+  useGetProfileImageQuery,
   useGetCoursesQuery,
 } = userApiSlice;
