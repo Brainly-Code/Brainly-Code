@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
+import { ErrorBoundary } from './ErrorBoundary'
 import './index.css'
 import Login from './auth/Login'
 import Register from './auth/Register'
@@ -65,7 +66,9 @@ const router = createBrowserRouter (
 )
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <Provider store={store}>
+ <ErrorBoundary>
+   <Provider store={store}>
     <RouterProvider router={router} />
   </Provider>
+ </ErrorBoundary>
 )

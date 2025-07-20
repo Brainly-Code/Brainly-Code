@@ -1,78 +1,142 @@
-import React from 'react';
+// Import necessary libraries
+import React, { useEffect, useState } from "react";
+
+import Skeleton from "./Skeleton";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   Legend,
-  Tooltip
-} from 'chart.js';
-import { Chart } from 'react-chartjs-2';
+  ComposedChart,
+} from "recharts";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Legend,
-  Tooltip
-);
+const GrapshSection = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const UserChart = () => {
-  const data = {
-    labels: ['2023/05', '2023/06', '2023/07', '2023/08'],
-    datasets: [
-      {
-        type: 'bar',
-        label: 'Basics',
-        data: [2000, 2200, 2500, 2400],
-        backgroundColor: '#647ff7'
-      },
-      {
-        type: 'bar',
-        label: 'Web Dev',
-        data: [1800, 2000, 2100, 2300],
-        backgroundColor: '#00ffff'
-      },
-      {
-        type: 'line',
-        label: 'Average',
-        data: [1900, 2100, 2300, 2500],
-        borderColor: '#ffffff',
-        borderWidth: 2,
-        tension: 0.3,
-        fill: false
+  // Fallback data in case backend is not ready
+  const fallbackData = [
+    { month: "Jan", Users: 50, revenue: 400 },
+    { month: "Feb", Users: 45, revenue: 350 },
+    { month: "Mar", Users: 60, revenue: 500 },
+    { month: "Apr", Users: 80, revenue: 650 },
+    { month: "May", Users: 60, revenue: 600 },
+    { month: "Jun", Users: 40, revenue: 300 },
+    { month: "Jul", Users: 50, revenue: 400 },
+    { month: "Aug", Users: 75, revenue: 700 },
+    { month: "Sep", Users: 65, revenue: 620 },
+    { month: "Oct", Users: 70, revenue: 690 },
+    { month: "Nov", Users: 55, revenue: 450 },
+  ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/course-overview");
+        // Ensure the data is in the correct format
+        const formattedData = Array.isArray(response.data)
+          ? response.data
+          : fallbackData;
+        setData(formattedData);
+      } catch (error) {
+        console.error(
+          "Failed to fetch data from backend, using fallback",
+          error
+        );
+        setData(fallbackData);
+      } finally {
+        setLoading(false);
       }
-    ]
-  };
+    };
+    fetchData();
+  }, []);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        labels: {
-          color: '#ffffff'
-        }
-      }
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: '#ffffff'
-        }
-      },
-      y: {
-        ticks: {
-          color: '#ffffff'
-        }
-      }
-    }
-  };
+  if (loading) {
+    return (
+      <div className="w-full h-[270px] p-4 rounded-xl">
+        <Skeleton width="w-full" height="h-[270px]" rounded="rounded-xl" />
+      </div>
+    );
+  }
 
-  return <Chart type='bar' data={data} options={options} />;
+  return (
+  <div className="overflow-visible rounded-xl bg-[#FFFFFF10] w-full md:w-[90%]">
+      <div className="w-full md:ml-10 md:mt-10 bg-[#090048] h-[370px] p-4 rounded-xl">
+      <h2 className="text-lg font-semibold text-white mb-6">Users Overview</h2>
+      <ResponsiveContainer width="100%" height="80%">
+        <ComposedChart
+          data={data}
+          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        >
+          <CartesianGrid strokeDasharray="1 5" vertical={false} />
+          <XAxis
+            dataKey="month"
+            tick={{ fontSize: 13, fill: "#888" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            yAxisId="left"
+            orientation="left"
+            tick={{ fontSize: 12, fill: "#888" }}
+            axisLine={false}
+            tickLine={false}
+            label={{
+              value: "Users",
+              angle: -90,
+              position: "insideLeft",
+              offset: 20,
+              fontWeight: "normal",
+              fill: "#fff",
+              fontSize: 12,
+            }}
+          />
+
+          <Tooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
+          <Legend
+            iconType="circle"
+            iconSize={8}
+            layout="horizontal"
+            verticalAlign="top"
+            align="right"
+            wrapperStyle={{
+              top: -45,
+              left: 200,
+              fontSize: 14,
+              fontWeight: 500,
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          />
+          <Bar
+            yAxisId="left"
+            dataKey="Users"
+            fill="#19179B"
+            name="Users"
+            radius={[1, 1, 0, 0]}
+            barSize={30}
+          />
+          <Line
+            yAxisId="right"
+            type="natural"
+            dataKey="Users"
+            stroke="#fff"
+            strokeWidth={2}
+            dot={{ r: 0, stroke: "#0f172a", strokeWidth: 0, fill: "#fff" }}
+            
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+  );
 };
 
-export default UserChart;
+export default GrapshSection;

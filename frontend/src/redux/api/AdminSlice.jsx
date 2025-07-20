@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice.jsx";
 
-const COURSE_URL = "/courses";
+const COURSE_URL = "/courses"; 
 
 const AdminSlice = apiSlice.injectEndpoints({
   endpoints: builders => ({

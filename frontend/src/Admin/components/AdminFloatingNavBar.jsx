@@ -1,64 +1,88 @@
-import React from 'react'
-import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import profile from '../../assets/profile.png';
-import { useLogoutMutation } from '../../redux/api/userSlice';
-import { Logout } from '../../redux/Features/authSlice';
-import { FloatingNav } from '../../Components/ui/FloatingNav';
-import BrainlyCodeIcon from '../../Components/BrainlyCodeIcon';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import profile from "../../assets/profile.png";
+import { useLogoutMutation } from "../../redux/api/userSlice";
+import { Logout } from "../../redux/Features/authSlice";
+import { FloatingNav } from "../../Components/ui/FloatingNav";
+import BrainlyCodeIcon from "../../Components/BrainlyCodeIcon";
+import { FiSearch } from "react-icons/fi";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import {AiOutlineLogout} from "react-icons/ai"
 
 const Header = () => {
-
   const navItems = [
     { name: "Home", link: "/admin", icon: "📚" },
     { name: "Playground", link: "/admin/playground", icon: "🎮" },
     { name: "Challenges", link: "/admin/challenges", icon: "🏆" },
-    { name: "Community", link: "/admin/community", icon: "👤"}
+    { name: "Community", link: "/admin/community", icon: "👤" },
   ];
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [ logoutApiCall ] = useLogoutMutation();
+  const [logoutApiCall] = useLogoutMutation();
 
   const logoutHandler = async () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(Logout());
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
-  }
+  };
 
   return (
     <div>
-      <div className=' border-gray-300 py-6 rounded-none border-b-[1px]'>
-        <header className="flex items-center mx-auto text-white w-5/6 justify-between">
-            <FloatingNav navItems={navItems} className=""/>
-            <BrainlyCodeIcon className="ml-7 sm:ml-1"/>
-            <h1 className="text-center text-xl font-bold mr-[3rem] text-white ">
-              ADMIN DASHBOARD
-            </h1>
-            
-            <ul className=" flex items-center h-1/4">
-              <li className="">
-                  <Link to="/admin/profile">
-                    <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 sm:w-1/2 md:w-2/4' />
-                  </Link>
-              </li>
-              <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
-                <button onClick={logoutHandler} className=''>
-                  <Link to="">
-                   Sign out
-                   </Link>
-                </button>
-              </li>
-            </ul>
+      <div className=" w-full py-6 rounded-none ">
+        <header className="flex items-center mx-auto  text-white sm:w-[97%] w-5/6 justify-between">
+          {/* <FloatingNav navItems={navItems} className=""/> */}
+         <div className="flex">
+         <BrainlyCodeIcon className="  " />
+         </div>
+          <h1 className="text-center text-xl hidden lg:block font-bold mr-[3rem] text-white ">
+            ADMIN DASHBOARD
+          </h1>
+       <div className="flex gap-2 items-center">
+           {/*middle search input*/}
+           <div className="relative w-full md:flex-1 h-full items-center bg-transparent min-w-[180px]  block max-w-md">
+            <input
+              type="text"
+              placeholder="Search anything here..."
+              className="w-full pl-4 pr-10 py-2 text-sm rounded-md border bg-transparent border-gray-200 shadow-sm focus:outline-none"
+            />
+            <FiSearch className="absolute right-3 top-1/2  transform -translate-y-1/2 text-gray-200" />
+          </div>
+          {/* Right: Notification */}
+          <div className="relative h-full sm:block hidden flex-shrink-0 ">
+            <button className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center shadow-sm">
+              <IoMdNotificationsOutline className="text-xl text-gray-200" />
+              <span className="absolute top-2 right-2 block w-1 h-1 rounded-full bg-red-500  "></span>
+            </button>
+          </div>
+       </div>
+
+          <ul className=" flex items-center min-h-1/4">
+            <li className="">
+              <Link to="/admin/profile">
+                <img
+                  src={profile}
+                  className=" h-1/2 w-1/2 md:h-3/4 sm:w-1/2 md:w-2/4"
+                />
+              </Link>
+            </li>
+            <li className="font-semibold inline bg-gradient-to-r  from-[#00ffff] rounded-full sm:rounded-3xl px-2 pt-1 to-purple-400 sm:px-5  sm:py-2 text-gray-300">
+              <button onClick={logoutHandler} className="justify-center items-center">
+                <Link className="sm:block hidden" to="">Sign out </Link>
+                <Link className="sm:hidden block" to=""><AiOutlineLogout size={23}/></Link>
+              </button>
+            </li>
+          </ul>
         </header>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

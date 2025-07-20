@@ -19,7 +19,8 @@ const AdminRoutes = () => {
 
   return (
     <div>
-      {role === "ADMIN" ? <Outlet /> : <Navigate to="/login" replace />}
+      {/* {role === "ADMIN" ? <Outlet /> : <Navigate to="/login" replace />} */}
+      <Outlet/>
     </div>
   );
 };
