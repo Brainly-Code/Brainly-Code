@@ -5,82 +5,76 @@ const AUTH_URL = "/auth";
 const PROFILE_URL = "/profile-image";
 
 export const userApiSlice = apiSlice.injectEndpoints({
-  endpoints: builders => ({
-    register: builders.mutation({
-      query: data => ({
+  endpoints: (builder) => ({
+    register: builder.mutation({
+      query: (data) => ({
         url: `${AUTH_URL}/signup`,
         body: data,
         method: "POST"
       })
     }),
 
-    login: builders.mutation({
-      query: data => ({
+    login: builder.mutation({
+      query: (data) => ({
         url: `${AUTH_URL}/login`,
         body: data,
         method: "POST"
       })
     }),
 
-<<<<<<< HEAD
-    profile: builders.mutation({
-      query: ({id, formData}) => ({
+    profile: builder.mutation({
+      query: ({ id, formData }) => ({
         url: `${USER_URL}/edit/${id}`,
         method: "PUT",
         body: formData
       })
     }),
 
-    getCurrentUser: builders.query({
+    getCurrentUser: builder.query({
       query: () => ({
         url: `${USER_URL}/profile`,
         method: "GET",
       })
     }),
 
-    getUserById: builders.query({
+    getUserById: builder.query({
       query: (id) => ({
         url: `${USER_URL}/user/${id}`,
-=======
-    getCurrentUser: builders.query({
-      query: (id) => ({
-        url: `${USER_URL}/${id}`,
->>>>>>> 55e3e1576d7cd601157cc3a8d87cd33a55bc8491
         method: "GET",
       })
     }),
 
-    logout: builders.mutation({
+    logout: builder.mutation({
       query: () => ({
         url: `${AUTH_URL}/logout`,
         method: "POST",
       })
     }),
 
-    getUsers: builders.query({
-      query: ()=> ({
+    getUsers: builder.query({
+      query: () => ({
         url: `${USER_URL}`,
         method: "GET",
-        keepUnusedDataFor: 5
-      })    
+      }),
+      keepUnusedDataFor: 5
     }),
 
-    getProfileImage: builders.query({
-      query: id => ({
+    getProfileImage: builder.query({
+      query: (id) => ({
         url: `${PROFILE_URL}/${id}`,
         method: "GET",
       })
     }),
 
-    UpdateUser: builders.mutation({
-      query: (data, id) => ({
+    updateUser: builder.mutation({
+      query: ({ data, id }) => ({
         url: `${USER_URL}/edit/${id}`,
         body: data,
         method: "PUT"
       }),
-    })
+    }),
   })
-})
+});
 
 export const {
   useRegisterMutation,
@@ -88,9 +82,8 @@ export const {
   useLogoutMutation,
   useGetCurrentUserQuery,
   useGetUsersQuery,
-  useGetCurrentUserQuery,
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useGetProfileImageQuery,
-  useGetCoursesQuery,
+  useProfileMutation,
 } = userApiSlice;
