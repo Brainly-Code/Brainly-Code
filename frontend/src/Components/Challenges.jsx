@@ -9,18 +9,15 @@ import { useGetChallengesQuery } from '../redux/api/challengeSlice';
 import { BackgroundGradient } from './ui/BgGradient';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const Challenges = () => {
   
   let { data: challenges, error, isLoading } = useGetChallengesQuery();
-  console.log(challenges);
   
   if(error){
     toast.error(error);
   }
-
-  const navigate = useNavigate();
 
   const [filterLevel, setFilterLevel] = React.useState('ALL');
 
@@ -100,9 +97,11 @@ export const Challenges = () => {
                   <p className="text-gray-400 text-sm sm:text-base">{challenge.description}</p>
 
                   <div className="flex justify-end h-1/6 mt-6">
-                    <button onClick={navigate('/user/challenge')} className="rounded-md bg-[#06325B] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] px-6 text-white font-bold text-sm">
-                      Start
-                    </button>
+                    <Link to={`/user/challenge/${challenge.id}`}>
+                      <button className="rounded-lg hover:bg-[#06325b96] bg-[#06325B] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-8 text-white font-bold text-sm">
+                        Start
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

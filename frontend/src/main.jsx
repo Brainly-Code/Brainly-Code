@@ -53,7 +53,7 @@ const router = createBrowserRouter (
         <Route path='' element={<HomePage />} />
         <Route path='lesson/:id' element={<Lesson />}/>
         <Route path='challenges' element={<Challenges />} />
-        <Route path='challenge' element={<Challenge />} />
+        <Route path='challenge/:id' element={<Challenge />} />
         <Route path='playground' element={<PlayGround />} />
         <Route path='module/:id' element={<Modules />} />
         <Route path="/user/course/module/:moduleId/video/:videoId" element={<VideoPlayer />} />
