@@ -36,8 +36,8 @@ const Challenge = () => {
                 instructions?.map((instruction) => (
                   <div
                     key={instruction?.id} 
-                    className=" mx-auto w-[90%] p-[1rem] bg-opacity-80 text-sm">
-                    <p className="text-gray-50 text-start">step {(instruction?.number)+1}:  {instruction?.instruction}</p>
+                    className=" mx-auto w-[90%] p-[1rem] bg-opacity-80">
+                    <p className="text-gray-400 text-md text-start">step {(instruction?.number)+1}:  {instruction?.instruction}</p>
                   </div>
                 ))}
             </div>

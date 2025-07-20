@@ -36,10 +36,12 @@ const Login = () => {
   const sp = new URLSearchParams(search);
   
   let redirect;
-  if(role === "USER"){
-  redirect = sp.get('redirect') || '/user';
+  if(role === "SUPERADMIN"){
+  redirect = sp.get('redirect') || '/super/dashboard';
   } else if(role === "ADMIN") {
     redirect = sp.get('redirect') || '/admin';
+  } else {
+    redirect = sp.get('redirect') || '/user';
   }
 
 
