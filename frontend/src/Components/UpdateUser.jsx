@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -11,6 +12,37 @@ import profile from "../assets/profile.png";
 const Profile = () => { 
   const {userInfo}=useSelector(state=>state.auth);
   const token = jwtDecode(userInfo.access_token);
+=======
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { toast } from "react-toastify"
+import { Link } from "react-router-dom"
+import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateUserMutation } from "../redux/api/userSlice"
+import { setCredentials } from "../redux/Features/authSlice"
+import { jwtDecode } from "jwt-decode"
+import UserProfile from '../assets/user.png'
+
+const Profile = () => {
+
+  const {userInfo}=useSelector(state=>state.auth);
+  const token = jwtDecode(userInfo.access_token);
+
+  const { data: user } = useGetCurrentUserQuery(token.sub);
+
+  const [username, setUserName]=useState('')
+  const [email, setEmail]=useState('')
+  const [password, setPassword]=useState("")
+  const [confirmPassword, setConfirmPassword]=useState("")
+   
+  const [updateProfile, {isLoading: loadingUpdateProfile}]= useUpdateUserMutation();
+  const { data: image } = useGetProfileImageQuery(token.sub);
+  console.log(image)
+ 
+  useEffect(()=>{
+    setUserName(user?.username || "")
+    setEmail(user?.email || "")
+  },[user])
+>>>>>>> 55e3e1576d7cd601157cc3a8d87cd33a55bc8491
 
   const { data: user } = useGetUserByIdQuery(token.sub);
 
@@ -57,6 +89,8 @@ const Profile = () => {
       }
     }
   }
+  
+  const imagePath = `http://localhost:3000/uploads/profile-images/${image?.path}`;
 
 
   return (
@@ -65,6 +99,7 @@ const Profile = () => {
         <div className="md:w-1/3">
           <h1 className="text-xl font-bold mb-7 text-[#989898] text-center">Update Profile</h1>
           <form onSubmit={submitHandler}>
+<<<<<<< HEAD
             
             <div className="w-48 h-48 overflow-hidden hover:cursor-pointer hover:bg-gray-400 bg-white rounded-full mx-auto flex items-center">
 
@@ -91,6 +126,10 @@ const Profile = () => {
             )}
             
               
+=======
+            <div className="w-48 h-48 bg-white rounded-full mx-auto flex items-center">
+              <img src={image?.path ? imagePath : UserProfile} alt="profile-pic" className="w-5/6 m-auto"/>
+>>>>>>> 55e3e1576d7cd601157cc3a8d87cd33a55bc8491
             </div>
             <div className="mb-4">
               <label className="block text-[rgba(255,255,255,0.7)] font-bold mb-2">Name:</label>

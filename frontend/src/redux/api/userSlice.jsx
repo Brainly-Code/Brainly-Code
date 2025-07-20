@@ -2,6 +2,7 @@ import { apiSlice } from "./apiSlice.jsx";
 
 const USER_URL = "/users";
 const AUTH_URL = "/auth";
+const PROFILE_URL = "/profile-image";
 
 export const userApiSlice = apiSlice.injectEndpoints({
   endpoints: builders => ({
@@ -21,6 +22,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
+<<<<<<< HEAD
     profile: builders.mutation({
       query: ({id, formData}) => ({
         url: `${USER_URL}/edit/${id}`,
@@ -39,6 +41,11 @@ export const userApiSlice = apiSlice.injectEndpoints({
     getUserById: builders.query({
       query: (id) => ({
         url: `${USER_URL}/user/${id}`,
+=======
+    getCurrentUser: builders.query({
+      query: (id) => ({
+        url: `${USER_URL}/${id}`,
+>>>>>>> 55e3e1576d7cd601157cc3a8d87cd33a55bc8491
         method: "GET",
       })
     }),
@@ -58,6 +65,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })    
     }),
 
+    getProfileImage: builders.query({
+      query: id => ({
+        url: `${PROFILE_URL}/${id}`,
+        method: "GET",
+      })
+    }),
+
     UpdateUser: builders.mutation({
       query: (data, id) => ({
         url: `${USER_URL}/edit/${id}`,
@@ -71,11 +85,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
 export const {
   useRegisterMutation,
   useLoginMutation,
-  useProfileMutation,
   useLogoutMutation,
+  useGetCurrentUserQuery,
   useGetUsersQuery,
   useGetCurrentUserQuery,
   useGetUserByIdQuery,
   useUpdateUserMutation,
+  useGetProfileImageQuery,
   useGetCoursesQuery,
 } = userApiSlice;

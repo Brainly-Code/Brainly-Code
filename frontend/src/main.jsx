@@ -24,6 +24,9 @@ import VideoPlayer from './Components/VideoPlayer'
 import LessonVideoPlayer from './Components/LessonVideoPlayer'
 import AllChallenges from './Admin/AllChallenges'
 import AllCourses from './Admin/AllCourses'
+import Challenge from './Components/Challenge'
+import SuperAdminDashboard from './SuperAdmin/SuperAdminDashboard'
+import SuperAdminRoutes from './superAdminRoutes'
 // import { GoogleOAuthProvider} from '@react-oauth/google'
 
 const router = createBrowserRouter (
@@ -34,31 +37,34 @@ const router = createBrowserRouter (
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
       </Route>
-      
-      {/* Admin  */}
-      <Route path='admin' element={<AdminRoutes />}>
-        <Route path='users' element={<AllUsers />} />
-        <Route path='' element={<Dashboard />} />
-        <Route path='challenges' element={<AllChallenges />} /> 
-        <Route path='profile' element={<UpdateUser />} />
-        <Route path='courses' element={<AllCourses />}> 
-          
-        </Route>
-        <Route path='create' element={<CreateCourse />} />
+
+      <Route path='super' element={<SuperAdminRoutes />}>
+        <Route path='dashboard' element={<SuperAdminDashboard />} />
       </Route>
-      {/* <Route path='admin' element={<Navbar />}/>
-      <Route path='admin/users' element={<AllUsers />} /> */}
 
       <Route path='user' element={<Home />} >
         <Route path="profile"  element={<UpdateUser />} />
         <Route path='' element={<HomePage />} />
         <Route path='lesson/:id' element={<Lesson />}/>
         <Route path='challenges' element={<Challenges />} />
+        <Route path='challenge/:id' element={<Challenge />} />
         <Route path='playground' element={<PlayGround />} />
         <Route path='module/:id' element={<Modules />} />
         <Route path='course/module/:moduleId/video/:videoId' element={<VideoPlayer />} />
         <Route path=':moduleId/:lessonVideoId' element={<LessonVideoPlayer />} />
       </Route>
+
+      {/* Admin  */}
+      <Route path='admin' element={<AdminRoutes />}>
+        <Route path='users' element={<AllUsers />} />
+        <Route path='' element={<Dashboard />} />
+        <Route path='challenges' element={<AllChallenges />} /> 
+        <Route path='profile' element={<UpdateUser />} />
+        <Route path='courses' element={<AllCourses />} /> 
+        <Route path='create' element={<CreateCourse />} />
+      </Route>
+      {/* <Route path='admin' element={<Navbar />}/>
+      <Route path='admin/users' element={<AllUsers />} /> */}
 
     </Route>
 

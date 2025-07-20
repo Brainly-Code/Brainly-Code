@@ -37,7 +37,7 @@ const Dashboard = () => {
       </div>
   
       {/* Main Content */}
-      <div className="sm:ml-56 ml-10   min-h-screen overflow-x-hidden overflow-y-auto px-8 ">
+      <div className="sm:ml-56 ml-5   min-h-screen overflow-x-hidden overflow-y-auto px-8 ">
         <DashboardStats/>
         {/* Chart */}
         <div className="flex justify-center mb-12">

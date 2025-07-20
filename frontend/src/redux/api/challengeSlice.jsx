@@ -1,6 +1,7 @@
 import { apiSlice } from "./apiSlice.jsx";
 
 const CHALLENGE_URL = "/challenges"
+const CHALLENGE_INSTRUCTIONS_URL = "challenge-instructions"
 
 const challengeApiSlice = apiSlice.injectEndpoints({
   endpoints: builders => ({
@@ -25,11 +26,27 @@ const challengeApiSlice = apiSlice.injectEndpoints({
         method: "GET"
       })
     }),
+
+    getChallengeById: builders.query({
+      query: (id) => ({
+        url: `${CHALLENGE_URL}/${id}`,
+        method: "GET"
+      })
+    }),
+
+    getChallengeInstructions: builders.query({
+      query: (challengeId) => ({
+        url: `${CHALLENGE_INSTRUCTIONS_URL}/${challengeId}`,
+        method: "GET"
+      })
+    }),
   })
 });
 
 export const {
   useCreateChallengeMutation,
   useIncrementChallengeMutation,
-  useGetChallengesQuery
+  useGetChallengesQuery,
+  useGetChallengeByIdQuery,
+  useGetChallengeInstructionsQuery,
 } = challengeApiSlice;

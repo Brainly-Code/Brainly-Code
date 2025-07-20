@@ -7,6 +7,7 @@ import { useGetLessonVideosByMiniModuleQuery } from '../redux/api/lessonVideoApi
 
 const SubModuleItem = ({ title, moduleId,id }) => {
 
+<<<<<<< HEAD
   const [open, setOpen] = useState(false);
 
   const { data: lessons } = useGetLessonsForSubModuleQuery(id);
@@ -22,6 +23,14 @@ const SubModuleItem = ({ title, moduleId,id }) => {
   // Sort by the number field
   combinedItems.sort((a, b) => a.number - b.number);
 
+=======
+const SubModuleItem = ({ title,id, steps }) => {
+  console.log(steps)
+  const [open, setOpen] = useState(false);
+
+  const {data: lessons} = useGetLessonsForSubModuleQuery(id);
+  console.log(lessons);
+>>>>>>> 55e3e1576d7cd601157cc3a8d87cd33a55bc8491
 
   return (
     <div className="bg-[#1E20B7] rounded-lg w-full max-w-4xl mx-auto p-4 sm:p-5">
@@ -45,8 +54,12 @@ const SubModuleItem = ({ title, moduleId,id }) => {
         </span>
       </button>
 
+<<<<<<< HEAD
 
       {open && combinedItems.length > 0 && (
+=======
+      {open && lessons && lessons?.length > 0 && (
+>>>>>>> 55e3e1576d7cd601157cc3a8d87cd33a55bc8491
         <div className="mt-3 bg-[#1E20B7] p-3 sm:p-4 rounded-lg">
           <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-15 gap-2 mb-4">
             {combinedItems.map((item, i) => {
