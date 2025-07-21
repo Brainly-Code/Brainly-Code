@@ -13,9 +13,13 @@ import UpdateUser from './Components/UpdateUser'
 import Home from './Home'
 import HomePage from './Components/HomePage'
 import NewUser from './User'
-import Challenges from './Components/Challenges'
+
+
 import PlayGround from './Components/PlayGround'
 import Dashboard from './Layouts/Dashboard/Components/Dashboard'
+import Challenges from './Layouts/Dashboard/Components/Challenges.jsx'
+import Courses from './Layouts/Dashboard/Components/Courses.jsx'
+import Users from './Layouts/Dashboard/Components/Users.jsx'
 // import AdminRoutes from './AdminRoutes'
 import DashboardLayout from './Layouts/Dashboard/DashboardLayout'
 // import CreateCourse from './Admin/CreateCourse'
@@ -56,6 +60,10 @@ const router = createBrowserRouter (
       <Route path='admin' element={<DashboardLayout />}>
         {/* <Route path='users' element={<AllUsers />} /> */}
         <Route path='' element={<Dashboard />} />
+        <Route path='challenges' element={<Challenges />} />
+        <Route path='courses' element={<Courses />} />
+        <Route path='users' element={<Users />} />
+        <Route path='users' element={<Users />} />
         {/* <Route path='challenges' element={<AllChallenges />} /> 
         <Route path='profile' element={<UpdateUser />} />
         <Route path='courses' element={<AllCourses />} /> 

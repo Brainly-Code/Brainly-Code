@@ -1,32 +1,39 @@
 import React from 'react'
-import Loader from '../Components/ui/Loader'
+import Loader from '../../../Components/ui/Loader'
 import { Link } from 'react-router-dom'
 import { FaEdit, FaPlus, FaTrash, FaUser } from 'react-icons/fa'
-import SideBar from './components/SideBar'
-import Footer from '../Components/ui/Footer'
-import Header from './components/AdminFloatingNavBar'
-import { useGetChallengesQuery } from '../redux/api/challengeSlice'
 
-const AllChallenges = () => {
-  const {data: challenges , isLoading, isError}=useGetChallengesQuery()
+import { useGetChallengesQuery } from '../../../redux/api/challengeSlice'
+
+const  challenges= [
+    {
+      id: "1",
+      difficulty: "Easy",
+      title: "Palindrome Checker",
+      description:
+        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
+      likes: "10",
+    },
+  ]
+
+const Challenges = () => {
+//   const {data: challenges , isLoading, isError}=useGetChallengesQuery()
   
-  if(isLoading){
-    return <div className=' w-screen h-screen m-0 bg-blue-950'>
-      <Loader />
-    </div>
-  }
+//   if(isLoading){
+//     return <div className=' w-screen h-screen m-0 bg-blue-950'>
+//       <Loader />
+//     </div>
+//   }
 
-  if(isError){
-    return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
-  }
+//   if(isError){
+//     return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
+//   }
 
   return (
-     <div className="bg-[#2b1edf] opacity-90">
-      <Header />
+     <div className=" ">
+    
 
-      <div className='flex flex-1'>
-        <SideBar />
-        
+
         <div className="flex-1 m-[4rem]">
           <h1 className='text-gray-300 font-bold text-xl text-center '>All Challenges {`(${challenges.length})`}</h1>
 
@@ -57,7 +64,7 @@ const AllChallenges = () => {
 
                 <div className="flex justify-end h-1/6 mt-6">
                   <button className="rounded-md bg-[#06325B] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] px-6 text-white font-bold text-sm">
-                    Start
+                    View
                   </button>
                 </div>
               </div>
@@ -65,11 +72,10 @@ const AllChallenges = () => {
             ))}
           </div>
         </div>
-      </div>
 
-      <Footer />
+  
      </div>
   ) 
 }
 
-export default AllChallenges;
+export default Challenges;

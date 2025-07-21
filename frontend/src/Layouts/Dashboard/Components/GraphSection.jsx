@@ -31,17 +31,24 @@ const GraphSection = () => {
     { month: "Jul", Users: 50, revenue: 400 },
     { month: "Aug", Users: 75, revenue: 700 },
     { month: "Sep", Users: 65, revenue: 620 },
-    { month: "Oct", Users: 70, revenue: 690 },
+    { month: "Oct", Users: 70, revenue: 690 }, 
     { month: "Nov", Users: 55, revenue: 450 },
   ];
 
+const GrapshSection = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const { data: users } = useGetUsersQuery();
+  console.log(users);
+
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/course-overview");
         // Ensure the data is in the correct format
-        const formattedData = Array.isArray(response.data)
-          ? response.data
+        const formattedData = Array.isArray(users)
+          ? users
           : fallbackData;
         setData(formattedData);
       } catch (error) {
@@ -55,7 +62,7 @@ const GraphSection = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [ users ]);
 
   if (loading) {
     return (
@@ -138,5 +145,7 @@ const GraphSection = () => {
   </div>
   );
 };
+
+}
 
 export default GraphSection;

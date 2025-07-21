@@ -15,7 +15,7 @@ const menu = [
     to: "/admin/challenges",
     icon: <BsGraphUp size={22} />,
   },
-  { name: "Premium", to: "/admin/users/premium", icon: <FaStar size={22} /> },
+  // { name: "Premium", to: "/admin/users/premium", icon: <FaStar size={22} /> },
 ];
 const SideBar = () => {
   return (

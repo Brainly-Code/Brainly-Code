@@ -8,7 +8,7 @@ import Footer from '../Components/ui/Footer'
 import Header from './components/AdminFloatingNavBar'
 
 const AllUsers = () => {
-  const {data: users , isLoading, isError}=useGetUsersQuery()
+  const {data: users , isLoading, isError}=useGetUsersQuery();
   
   if(isLoading){
     return <div className=' w-screen h-screen m-0 bg-blue-950'>
@@ -38,7 +38,7 @@ const AllUsers = () => {
           <div>
             {
               users.map((user) => (
-                <div className="w-[80%] rounded-lg bg-[#1074D2] bg-opacity-35 p-[1rem] my-[0.5rem] flex mx-[3rem]">
+                <div key={user.id} className="w-[80%] rounded-lg bg-[#1074D2] bg-opacity-35 p-[1rem] my-[0.5rem] flex mx-[3rem]">
                   <div>
                     <FaUser color='lightgray' size={32} className='ml-2 mt-2' />
                   </div>
