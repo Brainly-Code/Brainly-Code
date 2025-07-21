@@ -1,5 +1,3 @@
-import { toast } from "react-toastify";
-import { useGetChallengesQuery } from "../redux/api/challengeSlice";
 import SideBar from "./components/SideBar";
 import Loader from "../Components/ui/Loader";
 import GrapshSection from "./components/Chart";
@@ -11,18 +9,7 @@ import Rates from "./components/Rates"
 
 // correct imports stay the same...
 const Dashboard = () => {
-  const { data: challenges, error, isLoading } = useGetChallengesQuery();
 
-  if (error) {
-    toast.error(error);
-  }
-
-  const filteredChallenges = challenges
-    ?.slice()
-    .sort((a, b) => b.likes - a.likes)
-    .slice(0, 1);
-
-  if (isLoading) return <Loader />;
 
   return (
     <div className="w-full bg-[#0D0056] text-white">

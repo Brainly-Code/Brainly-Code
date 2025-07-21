@@ -6,7 +6,6 @@ import RightSidebar from "../../Components/Dashboard/RightSidebar";
 import { UserRoleContext } from "./UserRoleContext.jsx";
 
 const DashboardLayout = () => {
-  const [logout, setLogout]=useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen((open) => !open);
   const closeSidebar = () => setSidebarOpen(false);

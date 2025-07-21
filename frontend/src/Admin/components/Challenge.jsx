@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { FaJs,FaReact,FaNodeJs,FaPython,FaHtml5,FaAccessibleIcon } from "react-icons/fa";
 
 const courses = [
@@ -96,7 +96,7 @@ const Challenge = () => {
             </div>
           ))}
         </div>
-        <div className="flex flex justify-center">
+        <div className="flex justify-center">
         {courses.map(course=>(
           <div key={course._id || course.id} className=''>
             <h1 className="mb-9 text-xl ">Most liked course</h1>
@@ -125,7 +125,7 @@ const Challenge = () => {
 
             <div className="flex justify-center mt-6">
               <Link to={`/user/module/${course.id}`}>
-                <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm"  onClick={()=>navigate(`/user/module/${course.id}`)}>
+                <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm"  onClick={()=>Navigate(`/user/module/${course.id}`)}>
                   Check it out
                 </button>
               </Link>

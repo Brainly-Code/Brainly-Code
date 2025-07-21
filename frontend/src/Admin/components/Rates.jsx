@@ -1,36 +1,39 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaJs,FaReact,FaNodeJs,FaPython,FaHtml5,FaAccessibleIcon } from "react-icons/fa";
+import { useGetCoursesQuery } from "../../redux/api/coursesSlice";
 
-const courses = [
-  {
-    id:"1",
-    level: "BEGGINER",
-    title: "Web Development using python",
-    description:
-      "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-    modules: "0",
-    lessons: "0",
-    viewers: "20",
-    completions:"10",
-    likes:"20"
-  },
-  {
-    id:"1",
-    level: "BEGGINER",
-    title: "Web Development using js",
-    description:
-      "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-    modules: "0",
-    lessons: "0",
-    viewers: "20",
-    completions:"20",
-    likes:"20"
-  },
+// const courses = [
 
-];
+//   {
+//     id:"1",
+//     level: "BEGGINER",
+//     title: "Web Development using python",
+//     description:
+//       "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//     modules: "0",
+//     lessons: "0",
+//     viewers: "20",
+//     completions:"10",
+//     likes:"20"
+//   },
+//   {
+//     id:"1",
+//     level: "BEGGINER",
+//     title: "Web Development using js",
+//     description:
+//       "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//     modules: "0",
+//     lessons: "0",
+//     viewers: "20",
+//     completions:"20",
+//     likes:"20"
+//   },
+
+// ];
 
 const getIconForCourse = (title) => {
+
     const key = title.toLowerCase();
     if (key.includes("js")) return <FaJs color="orange" size={30} />;
     if (key.includes("react")) return <FaReact color="blue" size={30} />;
@@ -52,7 +55,13 @@ const challenges = [
   },
 ];
 
+
 const Challenge = () => {
+
+  const {data: courses} = useGetCoursesQuery();
+
+  const navigate = useNavigate();
+
   return (
     <div>
       {/* Most Liked Challenge */}
@@ -102,8 +111,8 @@ const Challenge = () => {
           ))}
         </div>
         <div className="flex w-fullgrid flex-col lg:flex-row  gap-5">
-        {courses.map(course=>(
-          <div key={course._id || course.id} className='h-full'>
+        {courses.map((course, i)=>(
+          <div key={i} className='h-full'>
             <h1 className="text-xl font-semibold mb-4">Most liked course</h1>
           <div className="mx-auto max-w-sm bg-[#070045] rounded-2xl border border-[#3A3A5A] p-6">
             <div className="flex justify-between items-center mb-4">

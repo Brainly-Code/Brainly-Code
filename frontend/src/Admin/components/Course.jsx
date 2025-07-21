@@ -1,32 +1,34 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaJs,FaReact,FaNodeJs,FaPython,FaHtml5,FaAccessibleIcon } from "react-icons/fa";
+import { useGetCoursesQuery } from "../../redux/api/coursesSlice";
 
-const courses = [
-  {
-    id:"1",
-    level: "BEGGINER",
-    title: "Web Development using python",
-    description:
-      "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-    modules: "0",
-    lessons: "0",
-    viewers: "20",
-  },
-  {
-    id:"1",
-    level: "BEGGINER",
-    title: "Web Development using js",
-    description:
-      "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-    modules: "0",
-    lessons: "0",
-    viewers: "20",
-  },
+// const courses = [
+//   {
+//     id:"1",
+//     level: "BEGGINER",
+//     title: "Web Development using python",
+//     description:
+//       "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//     modules: "0",
+//     lessons: "0",
+//     viewers: "20",
+//   },
+//   {
+//     id:"1",
+//     level: "BEGGINER",
+//     title: "Web Development using js",
+//     description:
+//       "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//     modules: "0",
+//     lessons: "0",
+//     viewers: "20",
+//   },
 
-];
+// ];
 
 const getIconForCourse = (title) => {
+  
     const key = title.toLowerCase();
     if (key.includes("js")) return <FaJs color="orange" size={30} />;
     if (key.includes("react")) return <FaReact color="blue" size={30} />;
@@ -38,6 +40,10 @@ const getIconForCourse = (title) => {
     return <FaAccessibleIcon color="gray" size={30} />; // Default icon
   };
 const Course = () => {
+  const {data: courses} = useGetCoursesQuery();
+
+  const navigate = useNavigate();
+  
   return <div className="flex w-fullgrid flex-col lg:flex-row  gap-8 ">
     {courses.map(course=>(
           <div key={course._id || course.id} className=''>

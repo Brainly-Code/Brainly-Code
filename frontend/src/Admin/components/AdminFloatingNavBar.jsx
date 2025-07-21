@@ -12,12 +12,6 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import {AiOutlineLogout} from "react-icons/ai"
 
 const Header = () => {
-  const navItems = [
-    { name: "Home", link: "/admin", icon: "📚" },
-    { name: "Playground", link: "/admin/playground", icon: "🎮" },
-    { name: "Challenges", link: "/admin/challenges", icon: "🏆" },
-    { name: "Community", link: "/admin/community", icon: "👤" },
-  ];
 
   const dispatch = useDispatch();
   const navigate = useNavigate();

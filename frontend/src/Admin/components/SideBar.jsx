@@ -15,9 +15,11 @@ const menu = [
 const SideBar = () => {
   return (
     <div className="static">
-      <div className=" sm:justify-start justify-center  bg-opacity-60 ml-[2rem] gap-4 w-[50px]  sm:w-[150px] flex flex-col  ">
-        {menu.map((item) => (
-         <Link to={item.to}>
+      <div className=" sm:justify-start justify-center  bg-opacity-60 ml-[2rem] mt-[5rem] gap-4 w-[50px]  sm:w-[150px] flex flex-col  ">
+        {menu.map((item, i) => (
+         <Link
+           key={i}
+          to={item.to}>
           <button
             className="rounded-md w-full justify-center sm:justify-start shadow-xl bg-[#19179B] gap-2 text-white inline-flex items-center px-6 py-4 font-medium cursor-pointer hover:bg-blue-700 transition"
             style={{
