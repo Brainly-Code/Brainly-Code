@@ -1,7 +1,7 @@
 // Import necessary libraries
 import React, { useEffect, useState } from "react";
 
-import Skeleton from "./Skeleton";
+import Skeleton from "./Skeleton.jsx";
 import {
   ResponsiveContainer,
   BarChart,
@@ -16,7 +16,7 @@ import {
   ComposedChart,
 } from "recharts";
 
-const GrapshSection = () => {
+const GraphSection = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,8 +66,8 @@ const GrapshSection = () => {
   }
 
   return (
-  <div className="overflow-visible rounded-xl bg-[#FFFFFF10] w-full md:w-[90%]">
-      <div className="w-full md:ml-10 md:mt-10 bg-[#090048] h-[370px] p-4 rounded-xl">
+  <div className="overflow-visible md:pl-6 md:pt-6 sm:pl-3 lg:pl-8 lg:pt-8 sm:pt-3 rounded-xl bg-[#FFFFFF10]  w-full ">
+      <div className="w-full  bg-[#090048] h-[370px] p-4 rounded-xl">
       <h2 className="text-lg font-semibold text-white mb-6">Users Overview</h2>
       <ResponsiveContainer width="100%" height="80%">
         <ComposedChart
@@ -139,4 +139,4 @@ const GrapshSection = () => {
   );
 };
 
-export default GrapshSection;
+export default GraphSection;

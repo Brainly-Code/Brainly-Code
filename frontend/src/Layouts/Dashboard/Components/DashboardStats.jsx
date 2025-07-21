@@ -77,23 +77,23 @@ const DashboardStats = () => {
       label: "Courses",
       value: `${stats?.revenue ?? "--"} `,
       icon: <FaMoneyBillWave className="text-2xl text-white" />,
-      bg: "bg-indigo-50",
-      iconBg: "bg-indigo-600",
+      
+      iconBg: "[#19179B]",
     },
   ];
 
   return (
-    <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto mb-12">
+    <div className="w-full  max-w-7xl lg:pl-[6%] mx-auto mb-12">
       <div ref={sliderRef} className="keen-slider">
         {statCards.map((card, index) => (
           <div
             key={index}
             className={`keen-slider__slide !w-[180px] sm:!w-[200px] md:!w-[220px] p-4 rounded-xl flex-shrink-0 flex flex-col justify-center  items-center bg-[#07032B]`}
           >
-            <div className={`p-3 rounded-full shadow-inner mb-2 ${card.iconBg}`}>
+            <div className={`p-3 rounded-full shadow-inner mb-2  bg-[#19179B]`}>
               {card.icon}
             </div>
-            <p className="text-sm font-medium text-gray-500">{card.label}</p>
+            <p className="text-sm font-medium text-gray-100">{card.label}</p>
             <p className="text-xl font-bold text-gray-800">{card.value}</p>
           </div>
         ))}

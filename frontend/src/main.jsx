@@ -8,25 +8,25 @@ import Register from './auth/Register'
 import store from './redux/store'
 import App from './App'
 import { Hero } from './Components/Hero'
-import AllUsers from './Admin/AllUsers'
+// import AllUsers from './Admin/AllUsers'
 import UpdateUser from './Components/UpdateUser'
 import Home from './Home'
 import HomePage from './Components/HomePage'
 import NewUser from './User'
 import Challenges from './Components/Challenges'
 import PlayGround from './Components/PlayGround'
-import Dashboard from './Admin/Dashboard'
-import AdminRoutes from './AdminRoutes'
-import CreateCourse from './Admin/CreateCourse'
+import Dashboard from './Layouts/Dashboard/Components/Dashboard'
+// import AdminRoutes from './AdminRoutes'
+import DashboardLayout from './Layouts/Dashboard/DashboardLayout'
+// import CreateCourse from './Admin/CreateCourse'
 import Modules from './Components/Modules'
 import Lesson from './Components/Lesson'
 import VideoPlayer from './Components/VideoPlayer'
 import LessonVideoPlayer from './Components/LessonVideoPlayer'
-import AllChallenges from './Admin/AllChallenges'
-import AllCourses from './Admin/AllCourses'
+// import AllChallenges from './Admin/AllChallenges'
+// import AllCourses from './Admin/AllCourses'
 import Challenge from './Components/Challenge'
-import SuperAdminDashboard from './SuperAdmin/SuperAdminDashboard'
-import SuperAdminRoutes from './superAdminRoutes'
+
 // import { GoogleOAuthProvider} from '@react-oauth/google'
 
 const router = createBrowserRouter (
@@ -38,9 +38,7 @@ const router = createBrowserRouter (
         <Route path="register" element={<Register />} />
       </Route>
 
-      <Route path='super' element={<SuperAdminRoutes />}>
-        <Route path='dashboard' element={<SuperAdminDashboard />} />
-      </Route>
+   
 
       <Route path='user' element={<Home />} >
         <Route path="profile"  element={<UpdateUser />} />
@@ -55,13 +53,13 @@ const router = createBrowserRouter (
       </Route>
 
       {/* Admin  */}
-      <Route path='admin' element={<AdminRoutes />}>
-        <Route path='users' element={<AllUsers />} />
+      <Route path='admin' element={<DashboardLayout />}>
+        {/* <Route path='users' element={<AllUsers />} /> */}
         <Route path='' element={<Dashboard />} />
-        <Route path='challenges' element={<AllChallenges />} /> 
+        {/* <Route path='challenges' element={<AllChallenges />} /> 
         <Route path='profile' element={<UpdateUser />} />
         <Route path='courses' element={<AllCourses />} /> 
-        <Route path='create' element={<CreateCourse />} />
+        <Route path='create' element={<CreateCourse />} /> */}
       </Route>
       {/* <Route path='admin' element={<Navbar />}/>
       <Route path='admin/users' element={<AllUsers />} /> */}
