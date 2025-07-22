@@ -21,11 +21,14 @@ const SideBar = () => {
   return (
     <div className="sticky flex flex-col justify-center top-0">
       <div className="flex justify-center  my-10">
-        <BrainlyCodeIcon className=" mx-auto   " />
+        <BrainlyCodeIcon className=" mx-auto  " />
       </div>
       <div className="  bg-opacity-60 ml-[1rem] md:ml-[2rem] gap-4 w-[50px]  md:w-[150px] flex flex-col  ">
-        {menu.map((item) => (
-          <Link to={item.to}>
+        {menu.map((item, i) => (
+          <Link 
+            key={i}
+            to={item.to}
+            >
             <button
               className="rounded-md w-full justify-center lg:justify-start shadow-xl bg-[#19179B] gap-2 text-white inline-flex items-center px-6 py-4 font-medium cursor-pointer hover:bg-blue-700 transition"
               style={{

@@ -1,19 +1,17 @@
 import { apiSlice } from "./apiSlice.jsx";
 
-const COURSE_URL = "/courses"; 
+const ADMIN_URL = "/admin"; 
 
 const AdminSlice = apiSlice.injectEndpoints({
   endpoints: builders => ({
-    createCourse : builders.mutation({
-      query: data => ({
-        url: `${COURSE_URL}/create`,
-        method: "POST",
-        body: data
-      }),
+    getDashboardStats: builders.query({
+      query: () => ({
+        url: `${ADMIN_URL}/stats`,
+      })
     })
   })
 })
 
 export const {
-  useCreateCourseMutation
+  useGetDashboardStatsQuery,
 } = AdminSlice

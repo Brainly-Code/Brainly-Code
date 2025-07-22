@@ -15,10 +15,9 @@ import {
   Legend,
   ComposedChart,
 } from "recharts";
+import { useGetUsersQuery } from "../../../redux/api/userSlice.jsx";
 
 const GraphSection = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Fallback data in case backend is not ready
   const fallbackData = [

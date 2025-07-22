@@ -1,7 +1,7 @@
 import React from "react";
 import Loader from "../../../Components/ui/Loader";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEdit, FaPlus, FaTrash, FaUser } from "react-icons/fa";
+
 import { CiUndo, CiRedo } from "react-icons/ci";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 
@@ -12,8 +12,8 @@ import {
   FaPython,
   FaHtml5,
   FaAccessibleIcon,
-} from "react-icons/fa";
-// import { useGetCoursesQuery } from '../../../redux/api/coursesSlice'
+} from 'react-icons/fa';
+import { useGetCoursesQuery } from '../../../redux/api/coursesSlice';
 
 const Courses = () => {
   const getIconForCourse = (title) => {
@@ -31,72 +31,18 @@ const Courses = () => {
 
   const navigate = useNavigate();
 
-  //   const {data: courses , isLoading, isError}=useGetCoursesQuery()
+  const {data: courses , isLoading, isError}=useGetCoursesQuery()
+  
+  if(isLoading){
+    return <div className=' w-full h-full  '>
+      <Loader />
+    </div>
+  }
 
-  //   if(isLoading){
-  //     return <div className=' w-screen h-screen m-0 bg-blue-950'>
-  //       <Loader />
-  //     </div>
-  //   }
+  if(isError){
+    return <div className='w-full h-full text-center text-white font-bold text-3xl'>Error loading courses</div>
+  }
 
-  //   if(isError){
-  //     return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
-  //   }
-
-  const courses = [
-    {
-      id: "1",
-      context: "watched",
-      level: "BEGGINER",
-      title: "Web Development using python",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "10",
-      likes: "20",
-    },
-    {
-      id: "2",
-      context: "liked",
-      level: "INTERMEDIATE",
-      title: "Web Development using js",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "20",
-      likes: "20",
-    },
-    {
-      id: "2",
-      context: "liked",
-      level: "INTERMEDIATE",
-      title: "Web Development using js",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "20",
-      likes: "20",
-    },
-    {
-      id: "2",
-      context: "liked",
-      level: "INTERMEDIATE",
-      title: "Web Development using js",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "20",
-      likes: "20",
-    },
-  ];
   return (
     <div className="  ">
       <div className="z-40 sticky  top-24  backdrop-blur-xl   flex place-items-start justify-between p-3 rounded-b-lg shadow-lg">
@@ -121,7 +67,7 @@ const Courses = () => {
       </div>
       <div className="flex-1">
         <h1 className="text-gray-300 font-bold mb-8 text-xl text-center ">
-          All Courses {`(${courses.length})`}
+          All Courses {`(${courses.length|| "--"})`}
         </h1>
 
         <div className="grid lg:grid-cols-3 justify-center text-start md:grid-cols-2 gap-4 ">

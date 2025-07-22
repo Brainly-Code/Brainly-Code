@@ -1,118 +1,27 @@
 import React from 'react'
 import Loader from '../../../Components/ui/Loader'
 import { Link } from 'react-router-dom'
-import { FaEdit, FaPlus, FaTrash, FaUser, FaStopwatch } from 'react-icons/fa'
+import { FaStopwatch } from 'react-icons/fa'
 import { CiUndo, CiRedo } from 'react-icons/ci'
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2'
 
 import { useGetChallengesQuery } from '../../../redux/api/challengeSlice'
 
-const  challenges= [
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-      context:"string",
-      completions: "5",
-      estimatedTime: "20 Minutes",
-    },
-  ]
-
 const Challenges = () => {
-//   const {data: challenges , isLoading, isError}=useGetChallengesQuery()
+  const {data: challenges , isLoading, isError}=useGetChallengesQuery()
   
-//   if(isLoading){
-//     return <div className=' w-screen h-screen m-0 bg-blue-950'>
-//       <Loader />
-//     </div>
-//   }
+  if(isLoading){
+    return <div className='  '>
+      <Loader />
+    </div>
+  }
 
-//   if(isError){
-//     return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
-//   }
+  if(isError){
+    return <div className='w-full h-full text-center text-white font-bold text-3xl'>Error loading Challenges</div>
+  }
 
   return (
-     <div className=" ">
+     <div className="w-full ">
        <div className="z-40 sticky  top-24  backdrop-blur-xl   flex place-items-start justify-between p-3 rounded-b-lg shadow-lg">
         <span className="md:text-2xl text-lg font-normal text-gray-100">
           Challenges
@@ -137,7 +46,7 @@ const Challenges = () => {
 
 
         <div className="flex-1 ">
-          <h1 className='text-gray-300 font-bold my-8 text-xl text-center '>All Challenges {`(${challenges.length})`}</h1>
+          <h1 className='text-gray-300 font-bold my-8 text-xl text-center '>All Challenges {`(${challenges.length || "--"})`}</h1>
 
           <div className="grid lg:grid-cols-3 justify-center text-start md:grid-cols-2 gap-4">
             {challenges.map((challenge) => (

@@ -22,13 +22,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    profile: builder.mutation({
-      query: ({ id, formData }) => ({
-        url: `${USER_URL}/edit/${id}`,
-        method: "PUT",
-        body: formData
-      })
-    }),
+
 
     getCurrentUser: builder.query({
       query: () => ({
@@ -59,6 +53,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 5
     }),
 
+    updateUser: builder.mutation({
+      query: ({ id, formData }) => ({
+        url: `${USER_URL}/edit/${id}`,
+        method: "PUT",
+        body: formData
+      })
+    }),
+
     getProfileImage: builder.query({
       query: (id) => ({
         url: `${PROFILE_URL}/${id}`,
@@ -66,13 +68,22 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    updateUser: builder.mutation({
-      query: ({ data, id }) => ({
-        url: `${USER_URL}/edit/${id}`,
-        body: data,
-        method: "PUT"
-      }),
-    }),
+    updateProfileImage: builder.mutation({
+  query: ({ id, imageFile }) => {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    console.log("FormData for uploadProfileImage:", formData.get("image")); // Log the file
+
+    return {
+      url: `${PROFILE_URL}/${id}`,
+      method: "POST",
+      body: formData,
+    };
+  },
+}),
+
+
+    
   })
 });
 
@@ -85,5 +96,5 @@ export const {
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useGetProfileImageQuery,
-  useProfileMutation,
+  useUpdateProfileImageMutation,
 } = userApiSlice;
