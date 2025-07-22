@@ -5,29 +5,18 @@ import { FaEdit, FaPlus, FaTrash, FaUser } from 'react-icons/fa'
 
 import { useGetChallengesQuery } from '../../../redux/api/challengeSlice'
 
-const  challenges= [
-    {
-      id: "1",
-      difficulty: "Easy",
-      title: "Palindrome Checker",
-      description:
-        "Write a function to check if a string is a palindrome (reads the same forward and backward).",
-      likes: "10",
-    },
-  ]
-
 const Challenges = () => {
-//   const {data: challenges , isLoading, isError}=useGetChallengesQuery()
+  const {data: challenges , isLoading, isError}=useGetChallengesQuery()
   
-//   if(isLoading){
-//     return <div className=' w-screen h-screen m-0 bg-blue-950'>
-//       <Loader />
-//     </div>
-//   }
+  if(isLoading){
+    return <div className=' w-screen h-screen m-0 bg-blue-950'>
+      <Loader />
+    </div>
+  }
 
-//   if(isError){
-//     return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
-//   }
+  if(isError){
+    return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
+  }
 
   return (
      <div className=" ">

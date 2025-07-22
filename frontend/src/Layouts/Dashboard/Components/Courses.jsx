@@ -11,7 +11,7 @@ import {
   FaHtml5,
   FaAccessibleIcon,
 } from 'react-icons/fa';
-// import { useGetCoursesQuery } from '../../../redux/api/coursesSlice'
+import { useGetCoursesQuery } from '../../../redux/api/coursesSlice';
 
 const Courses = () => {
 
@@ -29,72 +29,72 @@ const Courses = () => {
 
   const navigate = useNavigate();
 
-//   const {data: courses , isLoading, isError}=useGetCoursesQuery()
+  const {data: courses , isLoading, isError}=useGetCoursesQuery()
   
-//   if(isLoading){
-//     return <div className=' w-screen h-screen m-0 bg-blue-950'>
-//       <Loader />
-//     </div>
-//   }
+  if(isLoading){
+    return <div className=' w-screen h-screen m-0 bg-blue-950'>
+      <Loader />
+    </div>
+  }
 
-//   if(isError){
-//     return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
-//   }
+  if(isError){
+    return <div className='w-screen h-screen bg-blue-950'>Error loading Users</div>
+  }
 
-const  courses= [
-    {
-      id: "1",
-      context: "watched",
-      level: "BEGGINER",
-      title: "Web Development using python",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "10",
-      likes: "20",
-    },
-    {
-      id: "2",
-      context: "liked",
-      level: "INTERMEDIATE",
-      title: "Web Development using js",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "20",
-      likes: "20",
-    },
-    {
-      id: "2",
-      context: "liked",
-      level: "INTERMEDIATE",
-      title: "Web Development using js",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "20",
-      likes: "20",
-    },
-    {
-      id: "2",
-      context: "liked",
-      level: "INTERMEDIATE",
-      title: "Web Development using js",
-      description:
-        "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
-      modules: "0",
-      lessons: "0",
-      viewers: "20",
-      completions: "20",
-      likes: "20",
-    },
-  ]
+// const  courses= [
+//     {
+//       id: "1",
+//       context: "watched",
+//       level: "BEGGINER",
+//       title: "Web Development using python",
+//       description:
+//         "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//       modules: "0",
+//       lessons: "0",
+//       viewers: "20",
+//       completions: "10",
+//       likes: "20",
+//     },
+//     {
+//       id: "2",
+//       context: "liked",
+//       level: "INTERMEDIATE",
+//       title: "Web Development using js",
+//       description:
+//         "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//       modules: "0",
+//       lessons: "0",
+//       viewers: "20",
+//       completions: "20",
+//       likes: "20",
+//     },
+//     {
+//       id: "2",
+//       context: "liked",
+//       level: "INTERMEDIATE",
+//       title: "Web Development using js",
+//       description:
+//         "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//       modules: "0",
+//       lessons: "0",
+//       viewers: "20",
+//       completions: "20",
+//       likes: "20",
+//     },
+//     {
+//       id: "2",
+//       context: "liked",
+//       level: "INTERMEDIATE",
+//       title: "Web Development using js",
+//       description:
+//         "Learn HTML, CSS, and JavaScript fundamentals through interactive lessons.",
+//       modules: "0",
+//       lessons: "0",
+//       viewers: "20",
+//       completions: "20",
+//       likes: "20",
+//     },
+//   ]
   return (
      <div className=" opacity-90">
   
