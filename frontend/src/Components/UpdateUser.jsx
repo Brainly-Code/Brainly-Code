@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
-import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateUserMutation } from "../redux/api/userSlice";
+import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateProfileImageMutation, useUpdateUserMutation } from "../redux/api/userSlice";
 import { setCredentials } from "../redux/Features/authSlice";
 import Loader from "./ui/Loader";
 import profileFallback from "../assets/profile.png";
@@ -13,8 +13,9 @@ const Profile = () => {
   const token = jwtDecode(userInfo.access_token);
 
   const { data: user } = useGetCurrentUserQuery(token.sub);
-  const { data: image } = useGetProfileImageQuery(token.sub);
+  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
   const [updateProfile, { isLoading: loadingUpdateProfile }] = useUpdateUserMutation();
+  const [uploadProfileImage, { isLoading: uploading }] = useUpdateProfileImageMutation();
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -27,31 +28,61 @@ const Profile = () => {
     setEmail(user?.email || '');
   }, [user]);
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    if (hash !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  setImageFile(file);
+};
+
+ const submitHandler = async (e) => {
+  e.preventDefault();
+
+  if (hash !== confirmPassword) {
+    toast.error("Passwords do not match");
+    return;
+  }
+
+  try {
+    let cloudinaryUrl;
+
+  
+    if (imageFile) {
+      console.log(imageFile)
+      const cloudRes = await uploadProfileImage({ id: token.sub, imageFile }).unwrap();
+      
+      console.log(cloudRes)
+      cloudinaryUrl = cloudRes?.url || cloudRes?.secure_url;
     }
 
-    try {
-      const formData = new FormData();
-      formData.append("username", username);
-      formData.append("email", email);
-      formData.append("hash", hash);
-      if (imageFile) formData.append("image", imageFile);
 
-      const res = await updateProfile({ id: token.sub, formData }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      toast.success("User profile updated successfully");
-    } catch (err) {
-      toast.error(err?.data?.message || err.message);
+    const profileData = new FormData();
+    profileData.append("username", username);
+    profileData.append("email", email);
+    profileData.append("hash", hash);
+
+
+    if (cloudinaryUrl) {
+      profileData.append("image", cloudinaryUrl);
     }
-  };
 
-  const imagePath = image?.path
-    ? `http://localhost:3000/uploads/profile-images/${image?.path}`
-    : profileFallback;
+
+    const res = await updateProfile({ id: token.sub, formData: profileData }).unwrap();
+
+    
+    dispatch(setCredentials({
+      ...res,
+      access_token: userInfo.access_token,
+    }));
+  
+  } catch (err) {
+    toast.error(err?.data?.message || err.message);
+  }
+};
+
+const imagePath = image?.path && image.path.startsWith("http")
+  ? image.path
+  : profileFallback;
+
 
   return (
     <div className="h-full w-full bg-[#110167] p-4">
@@ -61,18 +92,25 @@ const Profile = () => {
           <form onSubmit={submitHandler}>
             <div className="w-48 h-48 overflow-hidden hover:cursor-pointer bg-white rounded-full mx-auto flex items-center justify-center">
               <label htmlFor="image" className="cursor-pointer">
+              {loadingImage ? (
+                <div className="w-[180px] h-[180px] flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-white border-opacity-50"></div>
+                </div>
+              ) : (
                 <img
                   src={imageFile ? URL.createObjectURL(imageFile) : imagePath}
                   alt="profile"
                   className="w-[180px] h-[180px] object-cover rounded-full"
                 />
+              )}
+
               </label>
               <input
                 type="file"
                 id="image"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => setImageFile(e.target.files[0])}
+                onChange={handleImageChange}
               />
             </div>
 
@@ -117,9 +155,15 @@ const Profile = () => {
             </div>
 
             <div className="flex justify-center">
-              <button type="submit" className="bg-[#1ADBE2] text-white py-2 px-4 rounded-md hover:bg-pink-600">
-                Update Profile
-              </button>
+              <button
+              type="submit"
+              disabled={loadingUpdateProfile}
+              className={`py-2 px-4 rounded-md text-white ${
+                loadingUpdateProfile ? "bg-gray-400 cursor-not-allowed" : "bg-[#1ADBE2] hover:bg-pink-600"
+              }`}
+            >
+              {uploading ? "Updating..." : "Update Profile"}
+            </button>
             </div>
           </form>
         </div>
