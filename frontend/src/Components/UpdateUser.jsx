@@ -80,10 +80,11 @@ const handleImageChange = (e) => {
     toast.error(err?.data?.message || err.message);
   }
 };
+    const imagePath =
+      image?.path && image.path.startsWith("http")
+        ? image.path
+        : profileFallback;
 
-const imagePath = image?.path && image.path.startsWith("http")
-  ? image.path
-  : profileFallback;
 
 
   return (

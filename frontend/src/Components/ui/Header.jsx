@@ -17,9 +17,10 @@ const Header = () => {
 
     const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
 
-    const imagePath = image?.path && image.path.startsWith("http")
-  ? image.path
-  : profileFallback;
+    const imagePath =
+      image?.path && image.path.startsWith("http")
+        ? image.path
+        : profileFallback;
 
 
   const navItems = [
