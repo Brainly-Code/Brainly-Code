@@ -15,7 +15,7 @@ import {
   Legend,
   ComposedChart,
 } from "recharts";
-import { useGetUsersQuery } from "../../../redux/api/userSlice.jsx";
+import { useGetUsersQuery } from "../../../redux/api/AdminSlice.jsx";
 
 const GraphSection = () => {
 

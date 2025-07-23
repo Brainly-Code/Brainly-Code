@@ -32,6 +32,7 @@ const handleImageChange = (e) => {
   const file = e.target.files[0];
   if (!file) return;
   setImageFile(file);
+  toast.success("Image added successfully");
 };
 
  const submitHandler = async (e) => {
@@ -74,6 +75,7 @@ const handleImageChange = (e) => {
       access_token: userInfo.access_token,
     }));
   
+    toast.success("Profile updated successfully");
   } catch (err) {
     toast.error(err?.data?.message || err.message);
   }
