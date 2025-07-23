@@ -23,6 +23,8 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [imageFile, setImageFile] = useState(null);
 
+  
+
   useEffect(() => {
     setUsername(user?.username || '');
     setEmail(user?.email || '');
@@ -78,10 +80,11 @@ const handleImageChange = (e) => {
     toast.error(err?.data?.message || err.message);
   }
 };
+    const imagePath =
+      image?.path && image.path.startsWith("http")
+        ? image.path
+        : profileFallback;
 
-const imagePath = image?.path && image.path.startsWith("http")
-  ? image.path
-  : profileFallback;
 
 
   return (
