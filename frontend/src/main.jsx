@@ -63,7 +63,6 @@ const router = createBrowserRouter (
         <Route path='challenges' element={<Challenges />} />
         <Route path='courses' element={<Courses />} />
         <Route path='users' element={<Users />} />
-        <Route path='users' element={<Users />} />
         <Route path='profile' element={<UpdateUser />} />
         {/* <Route path='challenges' element={<AllChallenges />} /> 
 
