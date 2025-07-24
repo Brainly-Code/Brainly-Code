@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Import useRef
+import React, { useState, useEffect, useContext } from "react"; // Import useContext
 import Loader from "../../../Components/ui/Loader";
 import { Link } from "react-router-dom";
 import { CiUndo, CiRedo } from "react-icons/ci";
@@ -14,11 +14,10 @@ import {
   FaHtml5,
   FaAccessibleIcon,
 } from "react-icons/fa";
-// import { useGetCoursesQuery } from '../../../redux/api/coursesSlice'; // Uncomment this line when integrating with your RTK Query API
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
 import { useGetCoursesQuery } from "../../../redux/api/coursesSlice";
-
+import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
 const getIconForCourse = (title) => {
   const key = title.toLowerCase();
@@ -118,22 +117,46 @@ const initialMockCourses = [
 ];
 
 const Courses = () => {
-  
-  const { data: courses = [], isLoading, isError, refetch } = useGetCoursesQuery();
+  // Access the search query from the context
+  const { searchQuery } = useContext(SearchContext);
+
+  const { data: coursesData = [], isLoading, isError, refetch } = useGetCoursesQuery();
   const [createCourse, { isLoading: isCreating }] = useCreateCourseMutation();
 
-  const [ {courses: course}, setCourses] = useState([]); 
-  console.log(course)
+  // Use a local state for courses if you're mixing mock data and API data,
+  // or if you want to enable undo/redo on the displayed list.
+  // For now, let's assume `coursesData` from RTK Query is the source of truth,
+  // and `initialMockCourses` is just for initial setup if API is not used.
+  // If you want undo/redo to work on the fetched data, you'd initialize
+  // `courses` state with `coursesData` and update it when `coursesData` changes.
+  const [courses, setCourses] = useState(initialMockCourses); // Initialize with mock data
+
+  // Update local courses state when RTK Query data changes
+  useEffect(() => {
+    if (coursesData && coursesData.length > 0) {
+      setCourses(coursesData);
+      // Also update history if you want undo/redo to apply to fetched data
+      setCourseHistory([coursesData]);
+      setHistoryIndex(0);
+    } else if (!isLoading && !isError) {
+      // If no data from API, ensure local state is also empty or handles it
+      setCourses([]);
+      setCourseHistory([[]]);
+      setHistoryIndex(0);
+    }
+  }, [coursesData, isLoading, isError]);
+
+
   const [courseHistory, setCourseHistory] = useState([initialMockCourses]);
-  
+
   const [historyIndex, setHistoryIndex] = useState(0);
 
- 
+
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
- 
+
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
- 
-  const [selectedLevelFilter, setSelectedLevelFilter] = useState("ALL"); 
+
+  const [selectedLevelFilter, setSelectedLevelFilter] = useState("ALL");
 
 
   const [newCourseData, setNewCourseData] = useState({
@@ -143,10 +166,10 @@ const Courses = () => {
     category: "",     // added
     duration: 0,      // added
   });
- 
+
   const [previewIcon, setPreviewIcon] = useState(null);
 
-  
+
   useEffect(() => {
     setPreviewIcon(getIconForCourse(newCourseData.title));
   }, [newCourseData.title]);
@@ -154,16 +177,13 @@ const Courses = () => {
 
 
 
-
-  
   const addStateToHistory = (newCoursesState) => {
-   
     const newHistory = courseHistory.slice(0, historyIndex + 1);
     setCourseHistory([...newHistory, newCoursesState]);
     setHistoryIndex(newHistory.length);
   };
 
-  console.log(addStateToHistory)
+  // console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
 
   const handleUndo = () => {
     if (historyIndex > 0) {
@@ -187,30 +207,52 @@ const Courses = () => {
       toast.warn("Nothing to redo.");
     }
   };
- 
-  const filteredCourses = courses.filter((course) => {
-    if (selectedLevelFilter === "ALL") {
-      return true;
+
+  // Combined filtering logic for both level and search query
+  const getFilteredAndSearchedCourses = () => {
+    let currentFilteredCourses = courses;
+
+    // Apply level filter
+    if (selectedLevelFilter !== "ALL") {
+      currentFilteredCourses = currentFilteredCourses.filter(
+        (course) => course.level === selectedLevelFilter
+      );
     }
-    return course.level === selectedLevelFilter;
-  });
+
+    // Apply search query filter
+    if (searchQuery) {
+      const lowerCaseSearchQuery = searchQuery.toLowerCase();
+      currentFilteredCourses = currentFilteredCourses.filter(
+        (course) =>
+          course.title.toLowerCase().includes(lowerCaseSearchQuery) ||
+          course.description.toLowerCase().includes(lowerCaseSearchQuery) ||
+          (course.category && course.category.toLowerCase().includes(lowerCaseSearchQuery)) || // Check for category existence
+          course.level.toLowerCase().includes(lowerCaseSearchQuery)
+      );
+    }
+    return currentFilteredCourses;
+  };
+
+  const filteredCourses = getFilteredAndSearchedCourses();
 
 
   const handleAddCourseClick = () => {
     setShowAddCourseModal(true);
   };
 
- 
+
   const handleCloseAddCourseModal = () => {
     setShowAddCourseModal(false);
     setNewCourseData({
       title: "",
       level: "BEGINNER",
       description: "",
+      category: "",
+      duration: 0,
     });
   };
 
- 
+
   const handleNewCourseInputChange = (e) => {
     const { name, value, type } = e.target;
     setNewCourseData((prev) => ({
@@ -220,7 +262,7 @@ const Courses = () => {
   };
 
 
-  
+
   const handleCreateNewCourse = async (e) => {
     e.preventDefault();
 
@@ -248,13 +290,13 @@ const Courses = () => {
 
   const applyFilter = (level) => {
     setSelectedLevelFilter(level);
-    setShowFilterDropdown(false); 
+    setShowFilterDropdown(false);
   };
 
-  if(isCreating) {
+  if (isCreating) {
     return <Loader />
   }
- 
+
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -263,7 +305,7 @@ const Courses = () => {
     );
   }
 
- 
+
   if (isError) {
     return (
       <div className="w-full h-full text-center text-white font-bold text-3xl flex justify-center items-center">
@@ -274,8 +316,8 @@ const Courses = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      
-      <div className="z-40 sticky top-28 backdrop-blur-xl  flex items-center justify-between p-3 rounded-b-lg shadow-lg mb-8">
+
+      <div className="z-40 sticky top-28 backdrop-blur-xl flex items-center justify-between p-3 rounded-b-lg shadow-lg mb-8">
         <span className="md:text-2xl text-lg font-normal text-gray-100">
           Courses
         </span>
@@ -291,7 +333,7 @@ const Courses = () => {
           >
             <CiUndo />
           </button>
-         
+
           <button
             onClick={handleRedo}
             disabled={historyIndex === courseHistory.length - 1} // Disable if at the end of history
@@ -302,7 +344,7 @@ const Courses = () => {
           >
             <CiRedo />
           </button>
-         
+
           <button
             onClick={toggleFilterDropdown}
             className="w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white hover:bg-gray-700 transition-colors"
@@ -417,6 +459,11 @@ const Courses = () => {
               </div>
             </div>
           ))}
+          {filteredCourses.length === 0 && (
+            <div className="col-span-full text-center text-gray-400 text-xl mt-10">
+              No courses found matching your filters and search query.
+            </div>
+          )}
         </div>
       </div>
 
@@ -436,34 +483,34 @@ const Courses = () => {
             <h2 className="text-2xl font-bold text-white mb-6 text-center">Create New Course</h2>
 
             <form onSubmit={handleCreateNewCourse} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start"> 
-  <div>
-    <label htmlFor="course-title" className="block mb-1 font-medium text-gray-300 text-sm">
-      Course Title *
-    </label>
-    <input
-      id="course-title"
-      type="text"
-      name="title"
-      value={newCourseData.title}
-      onChange={handleNewCourseInputChange}
-      placeholder="e.g., Advanced React Hooks"
-      maxLength={50}
-      required
-      className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
-    />
-    <p className="text-xs text-gray-500 mt-1">Max {50 - newCourseData.title.length} characters remaining.</p>
-  </div>
-  <div>
-    <label className="block mb-1 font-medium text-gray-300 text-sm">
-      Auto-generated Icon Preview
-    </label>
-    <div className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] flex items-center gap-2 h-full text-sm">
-      {previewIcon} 
-      <span className="text-gray-400 text-xs">Icon based on title.</span>
-    </div>
-  </div>
-</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                <div>
+                  <label htmlFor="course-title" className="block mb-1 font-medium text-gray-300 text-sm">
+                    Course Title *
+                  </label>
+                  <input
+                    id="course-title"
+                    type="text"
+                    name="title"
+                    value={newCourseData.title}
+                    onChange={handleNewCourseInputChange}
+                    placeholder="e.g., Advanced React Hooks"
+                    maxLength={50}
+                    required
+                    className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Max {50 - newCourseData.title.length} characters remaining.</p>
+                </div>
+                <div>
+                  <label className="block mb-1 font-medium text-gray-300 text-sm">
+                    Auto-generated Icon Preview
+                  </label>
+                  <div className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] flex items-center gap-2 h-full text-sm">
+                    {previewIcon}
+                    <span className="text-gray-400 text-xs">Icon based on title.</span>
+                  </div>
+                </div>
+              </div>
 
               <div>
                 <label htmlFor="course-level" className="block mb-1 font-medium text-gray-300 text-sm">

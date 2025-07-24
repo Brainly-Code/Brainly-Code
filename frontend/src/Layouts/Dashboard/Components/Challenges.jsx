@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // Import useEffect and useContext
 import Loader from '../../../Components/ui/Loader';
 import { Link } from 'react-router-dom';
 import { FaStopwatch } from 'react-icons/fa';
@@ -6,8 +6,7 @@ import { CiUndo, CiRedo } from 'react-icons/ci';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { toast } from 'react-toastify'; // For notifications
 import { X } from 'lucide-react'; // For modal close icon
-
-// import { useGetChallengesQuery } from '../../../redux/api/challengeSlice' // Commented out for mock data
+import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
 // Mock data for challenges
 const initialMockChallenges = [
@@ -64,6 +63,9 @@ const initialMockChallenges = [
 ];
 
 const Challenges = () => {
+  // Access the search query from the context
+  const { searchQuery } = useContext(SearchContext);
+
   // Main state for the list of challenges
   const [challenges, setChallenges] = useState(initialMockChallenges);
   // History of challenge states for undo/redo
@@ -131,12 +133,32 @@ const Challenges = () => {
     setShowFilterDropdown(false); // Close dropdown after selection
   };
 
-  const filteredChallenges = challenges.filter((challenge) => {
-    if (selectedDifficultyFilter === "ALL") {
-      return true;
+  // Combined filtering logic for both difficulty and search query
+  const getFilteredAndSearchedChallenges = () => {
+    let currentFilteredChallenges = challenges;
+
+    // Apply difficulty filter
+    if (selectedDifficultyFilter !== "ALL") {
+      currentFilteredChallenges = currentFilteredChallenges.filter(
+        (challenge) => challenge.difficulty === selectedDifficultyFilter
+      );
     }
-    return challenge.difficulty === selectedDifficultyFilter;
-  });
+
+    // Apply search query filter
+    if (searchQuery) {
+      const lowerCaseSearchQuery = searchQuery.toLowerCase();
+      currentFilteredChallenges = currentFilteredChallenges.filter(
+        (challenge) =>
+          challenge.title.toLowerCase().includes(lowerCaseSearchQuery) ||
+          challenge.description.toLowerCase().includes(lowerCaseSearchQuery) ||
+          challenge.context.toLowerCase().includes(lowerCaseSearchQuery) ||
+          challenge.difficulty.toLowerCase().includes(lowerCaseSearchQuery)
+      );
+    }
+    return currentFilteredChallenges;
+  };
+
+  const filteredChallenges = getFilteredAndSearchedChallenges();
   // --- End Filter Logic ---
 
   // --- Add Challenge Modal Logic ---
@@ -171,7 +193,7 @@ const Challenges = () => {
       return;
     }
 
-    const newChallengeId = `mock-${Date.now()}`; 
+    const newChallengeId = `mock-${Date.now()}`;
     const challengeToAdd = {
       _id: newChallengeId,
       title: newChallengeData.title,
@@ -184,7 +206,7 @@ const Challenges = () => {
     };
 
     const updatedChallenges = [...challenges, challengeToAdd];
-    setChallenges(updatedChallenges); 
+    setChallenges(updatedChallenges);
     addStateToHistory(updatedChallenges);
 
     toast.success(`Challenge "${newChallengeData.title}" created successfully!`);
@@ -211,12 +233,12 @@ const Challenges = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="z-40 sticky top-28 backdrop-blur-xl  flex place-items-start justify-between p-3 rounded-b-lg shadow-lg mb-8">
+      <div className="z-40 sticky top-28 backdrop-blur-xl flex place-items-start justify-between p-3 rounded-b-lg shadow-lg mb-8">
         <span className="md:text-2xl text-lg font-normal text-gray-100">
           Challenges
         </span>
-        <div className="flex items-center gap-2 relative"> 
-        
+        <div className="flex items-center gap-2 relative">
+
           <button
             onClick={handleUndo}
             disabled={historyIndex === 0}
@@ -227,7 +249,7 @@ const Challenges = () => {
           >
             <CiUndo />
           </button>
-        
+
           <button
             onClick={handleRedo}
             disabled={historyIndex === challengeHistory.length - 1}
@@ -238,7 +260,7 @@ const Challenges = () => {
           >
             <CiRedo />
           </button>
-         
+
           <button
             onClick={toggleFilterDropdown}
             className="w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white hover:bg-gray-700 transition-colors"
@@ -249,7 +271,7 @@ const Challenges = () => {
             <HiOutlineAdjustmentsHorizontal />
           </button>
 
-         
+
           {showFilterDropdown && (
             <div className="absolute top-full right-0 mt-2 w-48 bg-[#07032B] border border-[#3A3A5A] rounded-lg shadow-lg overflow-hidden z-50">
               <button
@@ -318,7 +340,7 @@ const Challenges = () => {
                     <h1 className="text-xl sm:text-2xl font-bold text-neutral-300 dark:text-neutral-200 mb-2">
                       {challenge.title}
                     </h1>
-                    <p className="text-gray-400 text-sm sm:text-base line-clamp-3"> {/* Added line-clamp-3 */}
+                    <p className="text-gray-400 text-sm sm:text-base line-clamp-3">
                       {challenge.description}
                     </p>
                   </div>
@@ -328,12 +350,12 @@ const Challenges = () => {
                   <div className="flex items-center text-white my-4 justify-start">
                     <FaStopwatch/> <p className='ml-3'>Est. Time: {challenge.estimatedTime || "30 Minutes"}</p>
                   </div>
-                  <div className="flex items-center justify-between mt-6"> {/* Removed h-1/6 */}
-                    <div className="flex gap-4"> {/* Used gap for spacing */}
+                  <div className="flex items-center justify-between mt-6">
+                    <div className="flex gap-4">
                       <span className="text-white text-sm">{challenge.likes} likes</span>
                       <span className="text-white text-sm">{challenge.completions} completions</span>
                     </div>
-                    <Link to={`/user/challenge/${challenge._id}`}> {/* Assuming a route for single challenge view */}
+                    <Link to={`/user/challenge/${challenge._id}`}>
                       <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-6 py-2 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300">
                         View
                       </button>
@@ -343,6 +365,11 @@ const Challenges = () => {
               </div>
             </div>
           ))}
+          {filteredChallenges.length === 0 && (
+            <div className="col-span-full text-center text-gray-400 text-xl mt-10">
+              No challenges found matching your filters and search query.
+            </div>
+          )}
         </div>
       </div>
 

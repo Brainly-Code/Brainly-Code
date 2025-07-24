@@ -10,21 +10,22 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { AiOutlineLogout } from "react-icons/ai";
 import { jwtDecode } from "jwt-decode";
 
-const DashboardHeader = () => {
+
+const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation();
 
-    const { userInfo } = useSelector((state) => state.auth);
-    const token = jwtDecode(userInfo.access_token);
-  
-      const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
-  
+  const { userInfo } = useSelector((state) => state.auth);
+  const token = jwtDecode(userInfo.access_token);
 
-    const imagePath =
-      image?.path && image.path.startsWith("http")
-        ? image.path
-        : profileFallback;
+  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
+
+
+  const imagePath =
+    image?.path && image.path.startsWith("http")
+      ? image.path
+      : profileFallback;
 
   const logoutHandler = async () => {
     try {
@@ -36,47 +37,47 @@ const DashboardHeader = () => {
     }
   };
 
-  if(loadingImage) {
-    return <div className="">
-        
-    </div>
+  if (loadingImage) {
+    return <div className=""></div>
   }
 
   return (
     <div>
-      <div className=" backdrop-blur-xl   w-full py-9 rounded-b-md ">
-        <header className="flex items-center mx-auto  text-white   sm:w-[97%] w-5/6 justify-between">
+      <div className=" backdrop-blur-xl w-full py-9 rounded-b-md ">
+        <header className="flex items-center mx-auto text-white sm:w-[97%] w-5/6 justify-between">
           <h1 className="text-center text-xl hidden lg:block font-bold mr-[3rem] text-white ">
             ADMIN DASHBOARD
           </h1>
           <div className="flex gap-2 items-center">
-            {/*middle search input*/}
-            <div className="relative w-full md:flex-1 h-full items-center bg-transparent min-w-[180px]  block max-w-md">
+            
+            <div className="relative w-full md:flex-1 h-full items-center bg-transparent min-w-[180px] block max-w-md">
               <input
                 type="text"
                 placeholder="Search anything here..."
                 className="w-full pl-4 pr-10 py-2 text-sm rounded-md border bg-transparent border-gray-200 shadow-sm focus:outline-none"
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
               />
-              <FiSearch className="absolute right-3 top-1/2  transform -translate-y-1/2 text-gray-200" />
+              <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-200" />
             </div>
-            {/* Right: Notification */}
-            <div className="relative h-full  flex-shrink-0 ">
+        
+            <div className="relative h-full flex-shrink-0 ">
               <button className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center shadow-sm">
                 <IoMdNotificationsOutline className="text-xl text-gray-200" />
-                <span className="absolute top-2 right-2 block w-1 h-1 rounded-full bg-red-500  "></span>
+                <span className="absolute top-2 right-2 block w-1 h-1 rounded-full bg-red-500"></span>
               </button>
             </div>
           </div>
 
-          <ul className=" flex items-center min-h-1/4">
+          <ul className="flex items-center min-h-1/4">
             <li className="">
               <li className="">
-                  <Link to="/admin/profile">
-                    <img src={imagePath} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
-                  </Link>
+                <Link to="/admin/profile">
+                  <img src={imagePath} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
+                </Link>
               </li>
             </li>
-            <li className="font-semibold inline bg-gradient-to-r  from-[#00ffff] rounded-full sm:rounded-3xl px-2 pt-1 to-purple-400 sm:px-5  sm:py-2 text-gray-300">
+            <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-full sm:rounded-3xl px-2 pt-1 to-purple-400 sm:px-5 sm:py-2 text-gray-300">
               <button
                 onClick={logoutHandler}
                 className="justify-center items-center"

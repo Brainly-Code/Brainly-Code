@@ -4,7 +4,7 @@ import { CiUndo, CiRedo } from "react-icons/ci";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Loader from "../../../Components/ui/Loader";
-import { userRoleContext } from "../DashboardLayout";
+import { userRoleContext } from "../../../Contexts/UserRoleContext";
 import { toast } from "react-toastify";
 import { X } from 'lucide-react';
 import { useGetUsersQuery } from "../../../redux/api/AdminSlice";
@@ -12,17 +12,19 @@ import { useGetProfileImageQuery } from "../../../redux/api/userSlice";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import profileFallback from "../../../assets/profile.png";
-
+import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
 const Users = () => {
   const role = useContext(userRoleContext);
+  const { searchQuery } = useContext(SearchContext); // Access the search query from the context
+
   const { data: usersData, isLoading, isError } = useGetUsersQuery();
 
-  const {userInfo} = useSelector(state => state.auth);
+  const { userInfo } = useSelector(state => state.auth);
   const token = jwtDecode(userInfo.access_token);
 
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
-  
+
 
   const imagePath =
     image?.path && image.path.startsWith("http")
@@ -153,14 +155,41 @@ const Users = () => {
     setCurrentPage(1);
   };
 
-  const filteredUsers = users?.filter((user) => {
-    const matchesRole = selectedRoleFilter === "ALL" || user.role === selectedRoleFilter;
-    const matchesPro =
-      selectedProFilter === "ALL" ||
-      (selectedProFilter === "PRO" && user.isPremium) ||
-      (selectedProFilter === "NON_PRO" && !user.isPremium);
-    return matchesRole && matchesPro;
-  });
+  // Combined filtering logic for role, pro status, and search query
+  const getFilteredAndSearchedUsers = () => {
+    let currentFilteredUsers = users;
+
+    // Apply role filter
+    if (selectedRoleFilter !== "ALL") {
+      currentFilteredUsers = currentFilteredUsers.filter(
+        (user) => user.role === selectedRoleFilter
+      );
+    }
+
+    // Apply pro status filter
+    if (selectedProFilter !== "ALL") {
+      currentFilteredUsers = currentFilteredUsers.filter(
+        (user) =>
+          (selectedProFilter === "PRO" && user.isPremium) ||
+          (selectedProFilter === "NON_PRO" && !user.isPremium)
+      );
+    }
+
+    // Apply search query filter
+    if (searchQuery) {
+      const lowerCaseSearchQuery = searchQuery.toLowerCase();
+      currentFilteredUsers = currentFilteredUsers.filter(
+        (user) =>
+          user.username.toLowerCase().includes(lowerCaseSearchQuery) ||
+          user.email.toLowerCase().includes(lowerCaseSearchQuery) ||
+          user.role.toLowerCase().includes(lowerCaseSearchQuery)
+      );
+    }
+    return currentFilteredUsers;
+  };
+
+  const filteredUsers = getFilteredAndSearchedUsers();
+
 
   const totalPages = Math.ceil(filteredUsers?.length / usersPerPage);
   const paginatedUsers = filteredUsers?.slice(
@@ -258,7 +287,7 @@ const Users = () => {
     );
   }
 
-  if(loadingImage) {
+  if (loadingImage) {
     return (
       <div className="w-full h-full flex justify-center items-center">
         <Loader />
@@ -396,7 +425,6 @@ const Users = () => {
                 onClick={() => handleViewUser(user)}
               >
                 <td className="p-3 align-middle first:rounded-l-lg">
-                  {/* <FaUser size={24} /> */}
                   <img src={imagePath} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
                 </td>
                 <td className="p-3 align-middle font-medium">{user.username}</td>
@@ -478,6 +506,13 @@ const Users = () => {
                 )}
               </tr>
             ))}
+            {filteredUsers?.length === 0 && (
+              <tr>
+                <td colSpan="6" className="text-center text-gray-400 text-xl py-10">
+                  No users found matching your filters and search query.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
