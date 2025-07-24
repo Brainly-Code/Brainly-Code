@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"; // Import useRef
 import Loader from "../../../Components/ui/Loader";
 import { Link } from "react-router-dom";
 import { CiUndo, CiRedo } from "react-icons/ci";
+import { useCreateCourseMutation } from '../../../redux/api/AdminSlice';
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 
 import {
@@ -16,6 +17,7 @@ import {
 // import { useGetCoursesQuery } from '../../../redux/api/coursesSlice'; // Uncomment this line when integrating with your RTK Query API
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
+import { useGetCoursesQuery } from "../../../redux/api/coursesSlice";
 
 
 const getIconForCourse = (title) => {
@@ -117,8 +119,11 @@ const initialMockCourses = [
 
 const Courses = () => {
   
-  const [courses, setCourses] = useState(initialMockCourses);
- 
+  const { data: courses = [], isLoading, isError, refetch } = useGetCoursesQuery();
+  const [createCourse, { isLoading: isCreating }] = useCreateCourseMutation();
+
+  const [ {courses: course}, setCourses] = useState([]); 
+  console.log(course)
   const [courseHistory, setCourseHistory] = useState([initialMockCourses]);
   
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -135,8 +140,9 @@ const Courses = () => {
     title: "",
     level: "BEGINNER",
     description: "",
+    category: "",     // added
+    duration: 0,      // added
   });
-
  
   const [previewIcon, setPreviewIcon] = useState(null);
 
@@ -146,8 +152,8 @@ const Courses = () => {
   }, [newCourseData.title]);
 
 
-  const isLoading = false;
-  const isError = false;
+
+
 
   
   const addStateToHistory = (newCoursesState) => {
@@ -156,6 +162,8 @@ const Courses = () => {
     setCourseHistory([...newHistory, newCoursesState]);
     setHistoryIndex(newHistory.length);
   };
+
+  console.log(addStateToHistory)
 
   const handleUndo = () => {
     if (historyIndex > 0) {
@@ -179,12 +187,6 @@ const Courses = () => {
       toast.warn("Nothing to redo.");
     }
   };
-
- 
-  // const refetch = () => {
-  //   console.log("Refetch simulated for mock data. In a real app, this would refresh data from API.");
-  // };
-
  
   const filteredCourses = courses.filter((course) => {
     if (selectedLevelFilter === "ALL") {
@@ -210,15 +212,16 @@ const Courses = () => {
 
  
   const handleNewCourseInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
     setNewCourseData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "number" ? Number(value) : value,
     }));
   };
 
- 
-  const handleCreateNewCourse = (e) => {
+
+  
+  const handleCreateNewCourse = async (e) => {
     e.preventDefault();
 
     if (!newCourseData.title || !newCourseData.description || !newCourseData.level) {
@@ -226,25 +229,15 @@ const Courses = () => {
       return;
     }
 
-   
-    const newCourseId = `mock-${Date.now()}`;
-    const courseToAdd = {
-      _id: newCourseId,
-      title: newCourseData.title,
-      description: newCourseData.description,
-      level: newCourseData.level,
-      viewers: 0, 
-      completions: 0,
-      likes: 0,
-    };
-
-    const updatedCourses = [...courses, courseToAdd];
-    setCourses(updatedCourses);
-    addStateToHistory(updatedCourses);
-
-    toast.success(`Course "${newCourseData.title}" created successfully!`);
-
-    handleCloseAddCourseModal();
+    try {
+      await createCourse(newCourseData).unwrap();
+      toast.success(`Course "${newCourseData.title}" created successfully!`);
+      handleCloseAddCourseModal();
+      refetch(); // refetch updated list
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.data?.message || "Failed to create course.");
+    }
   };
 
 
@@ -258,6 +251,9 @@ const Courses = () => {
     setShowFilterDropdown(false); 
   };
 
+  if(isCreating) {
+    return <Loader />
+  }
  
   if (isLoading) {
     return (
@@ -486,6 +482,25 @@ const Courses = () => {
                   <option value="ADVANCED">ADVANCED</option>
                 </select>
               </div>
+
+              <div>
+                <label htmlFor="course-category" className="block mb-1 font-medium text-gray-300 text-sm">
+                  Course Category
+                </label>
+                <select
+                  id="course-category"
+                  name="category"
+                  value={newCourseData.category}
+                  onChange={handleNewCourseInputChange}
+                  className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
+                >
+                  <option value="">Select category</option>
+                  <option value="Normal">Normal</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </div>
+
 
               <div>
                 <label htmlFor="course-description" className="block mb-1 font-medium text-gray-300 text-sm">

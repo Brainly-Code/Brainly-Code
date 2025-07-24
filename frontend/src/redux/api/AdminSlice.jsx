@@ -17,10 +17,20 @@ const AdminSlice = apiSlice.injectEndpoints({
       }),
       keepUnusedDataFor: 5
     }),
+
+    createCourse: builder.mutation({
+      query: (courseData) => ({
+        url: '/courses/create',
+        method: 'POST',
+        body: courseData,
+      }),
+      invalidatesTags: ['Course'],
+    }),
   }),
-})
+});
 
 export const {
   useGetDashboardStatsQuery,
   useGetUsersQuery,
-} = AdminSlice
+  useCreateCourseMutation, // ✅ export this to use in components
+} = AdminSlice;
