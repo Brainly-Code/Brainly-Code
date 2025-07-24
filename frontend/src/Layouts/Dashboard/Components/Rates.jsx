@@ -73,11 +73,12 @@ const Challenge = () => {
   const sortedViews = courses ? [...courses].sort((a, b) => Number(b.users) - Number(a.users)) : [];
 
   const  {data: challenges } = useGetChallengesQuery();
-  const mostLikedChallenge = challenges ?
-    challenges.reduce((prev, curr) => {
-      return Number(curr.likes) > Number(prev.likes) ? curr : prev
-    })
-   : null;
+  const mostLikedChallenge = challenges && challenges.length > 0
+    ? challenges.reduce((prev, curr) => {
+        return Number(curr.likes) > Number(prev.likes) ? curr : prev;
+      }, challenges[0]) // Provide initial value
+    : null;
+
 
   const Rates = [
     sortedCourses[0],

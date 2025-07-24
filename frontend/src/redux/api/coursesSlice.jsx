@@ -10,17 +10,24 @@ const coursesApiSlice = apiSlice.injectEndpoints({
         method: "GET"
       })
     }),
-
     getCourseById: builders.query({
       query: id => ({
         url: `${COURSE_URL}/${id}`,
         method: "GET"
       }) 
-    }) 
+    }),
+    getCoursesByCreator: builders.query({
+      query: () => ({
+        url: `${COURSE_URL}/my-courses`,
+        method: "GET",
+      })
+    }),
   })
 })
+
 
 export const {
   useGetCoursesQuery,
   useGetCourseByIdQuery,
+  useGetCoursesByCreatorQuery
 } = coursesApiSlice

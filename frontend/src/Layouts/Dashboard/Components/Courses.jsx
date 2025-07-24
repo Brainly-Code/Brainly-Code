@@ -59,7 +59,7 @@ const Courses = () => {
           <button className="w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white ">
             <HiOutlineAdjustmentsHorizontal />
           </button>
-          <button className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r  cursor-pointer bg-[#07032B] text-white rounded-full">
+          <button className="flex items-center gap-1 px-4 py-2 bg-gradient-to-r  cursor-pointer bg-[#07032B] text-white rounded-full" onClick={() => navigate('/admin/create')}>
             <span>Add</span>
             <span>+</span>
           </button>

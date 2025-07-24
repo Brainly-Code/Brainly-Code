@@ -29,7 +29,7 @@ const CreateCourse = () => {
     try {
       const res = await createCourse({ title, category, level, description, duration: parseInt(duration, 10) }).unwrap(); 
       console.log(res)
-      navigate(redirect)
+      navigate('/admin/myCourses')
       toast.success("Course created successfully")
     } catch (error) {
       console.log(error)
