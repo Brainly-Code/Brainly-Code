@@ -26,7 +26,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
     getCurrentUser: builder.query({
       query: () => ({
-        url: `${USER_URL}/profile`,
+        url: `${USER_URL}`,
         method: "GET",
       })
     }),
@@ -45,18 +45,10 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    getUsers: builder.query({
-      query: () => ({
-        url: `${USER_URL}`,
-        method: "GET",
-      }),
-      keepUnusedDataFor: 5
-    }),
-
     updateUser: builder.mutation({
       query: ({ id, formData }) => ({
         url: `${USER_URL}/edit/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: formData
       })
     }),
@@ -69,21 +61,18 @@ export const userApiSlice = apiSlice.injectEndpoints({
     }),
 
     updateProfileImage: builder.mutation({
-  query: ({ id, imageFile }) => {
-    const formData = new FormData();
-    formData.append("image", imageFile);
-    console.log("FormData for uploadProfileImage:", formData.get("image")); // Log the file
+      query: ({ id, imageFile }) => {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        console.log("FormData for uploadProfileImage:", formData.get("image")); // Log the file
 
-    return {
-      url: `${PROFILE_URL}/${id}`,
-      method: "POST",
-      body: formData,
-    };
-  },
-}),
-
-
-    
+        return {
+          url: `${PROFILE_URL}/${id}`,
+          method: "POST",
+          body: formData,
+        };
+      },
+    }),
   })
 });
 
@@ -92,7 +81,6 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useGetCurrentUserQuery,
-  useGetUsersQuery,
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useGetProfileImageQuery,

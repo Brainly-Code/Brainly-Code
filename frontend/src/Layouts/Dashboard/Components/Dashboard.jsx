@@ -1,8 +1,8 @@
 import React from 'react'
 import DashboardStats from "./DashboardStats"
-import GraphSection from './GraphSection'
 import Rates from "./Rates"
 import Footer from "../../../Components/ui/Footer"
+import GraphSection from './GraphSection'
 
 const Dashboard = () => {
   return (

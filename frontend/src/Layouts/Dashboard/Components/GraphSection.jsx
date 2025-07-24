@@ -15,9 +15,7 @@ import {
   Legend,
   ComposedChart,
 } from "recharts";
-import { useGetUsersQuery } from "../../../redux/api/userSlice.jsx";
-
-const GraphSection = () => {
+import { useGetUsersQuery } from "../../../redux/api/AdminSlice.jsx";
 
   // Fallback data in case backend is not ready
   const fallbackData = [
@@ -34,12 +32,13 @@ const GraphSection = () => {
     { month: "Nov", Users: 55,},
   ];
 
-const GrapshSection = () => {
+const GraphSection = () => {
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { data: users } = useGetUsersQuery();
-  console.log(users);
+
 
   
   useEffect(() => {
@@ -47,7 +46,7 @@ const GrapshSection = () => {
       try {
         // Ensure the data is in the correct format
         const formattedData = Array.isArray(users)
-          ? users
+          ? users.map()
           : fallbackData;
         setData(formattedData);
       } catch (error) {
@@ -144,7 +143,5 @@ const GrapshSection = () => {
   </div>
   );
 };
-
-}
 
 export default GraphSection;

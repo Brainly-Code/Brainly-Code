@@ -15,7 +15,7 @@ export const lessonVideoApi = apiSlice.injectEndpoints({
     }),
 
     getLessonVideosByMiniModule: builder.query({
-      query: (miniModuleId) => `/lesson-videos?miniModuleId=${miniModuleId}`, // filter by miniModuleId
+      query: (miniModuleId) => `/lesson-videos/mini-module/${miniModuleId}`,
       providesTags: (result, error, miniModuleId) =>
         result
           ? [

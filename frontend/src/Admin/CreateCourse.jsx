@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useCreateCourseMutation } from '../redux/api/AdminSlice';
 import { toast } from 'react-toastify';
 import Loader from '../Components/ui/Loader';
@@ -15,9 +15,9 @@ const CreateCourse = () => {
 
   const [ createCourse , {isLoading} ] = useCreateCourseMutation();
   
-  const search = useLocation();
-  const sp = new URLSearchParams(search);
-  const redirect = sp.get('/') || '/';
+  // const search = useLocation();
+  // const sp = new URLSearchParams(search);
+  // const redirect = sp.get('/') || '/';
 
   if(isLoading){
     return <Loader/>
@@ -29,7 +29,7 @@ const CreateCourse = () => {
     try {
       const res = await createCourse({ title, category, level, description, duration: parseInt(duration, 10) }).unwrap(); 
       console.log(res)
-      navigate(redirect)
+      navigate('/admin/myCourses')
       toast.success("Course created successfully")
     } catch (error) {
       console.log(error)

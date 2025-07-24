@@ -1,18 +1,30 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import profile from "../../../assets/profile.png";
-import { useLogoutMutation } from "../../../redux/api/userSlice";
+import profileFallback from "../../../assets/profile.png";
+import { useGetProfileImageQuery, useLogoutMutation } from "../../../redux/api/userSlice";
 import { Logout } from "../../../redux/Features/authSlice";
 import { FiSearch } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { AiOutlineLogout } from "react-icons/ai";
+import { jwtDecode } from "jwt-decode";
 
 const DashboardHeader = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation();
+
+    const { userInfo } = useSelector((state) => state.auth);
+    const token = jwtDecode(userInfo.access_token);
+  
+      const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
+  
+
+    const imagePath =
+      image?.path && image.path.startsWith("http")
+        ? image.path
+        : profileFallback;
 
   const logoutHandler = async () => {
     try {
@@ -23,6 +35,12 @@ const DashboardHeader = () => {
       toast.error(error?.data?.message || error.message);
     }
   };
+
+  if(loadingImage) {
+    return <div className="">
+        
+    </div>
+  }
 
   return (
     <div>
@@ -52,12 +70,11 @@ const DashboardHeader = () => {
 
           <ul className=" flex items-center min-h-1/4">
             <li className="">
-              <Link to="/admin/profile">
-                <img
-                  src={profile}
-                  className=" h-1/2 w-1/2 md:h-3/4 sm:w-1/2 md:w-2/4"
-                />
-              </Link>
+              <li className="">
+                  <Link to="/admin/profile">
+                    <img src={imagePath} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
+                  </Link>
+              </li>
             </li>
             <li className="font-semibold inline bg-gradient-to-r  from-[#00ffff] rounded-full sm:rounded-3xl px-2 pt-1 to-purple-400 sm:px-5  sm:py-2 text-gray-300">
               <button
