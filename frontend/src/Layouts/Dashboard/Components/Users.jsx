@@ -7,89 +7,66 @@ import Loader from "../../../Components/ui/Loader";
 import { userRoleContext } from "../DashboardLayout";
 import { toast } from "react-toastify";
 import { X } from 'lucide-react';
+import { useGetUsersQuery } from "../../../redux/api/AdminSlice";
+import { useGetProfileImageQuery } from "../../../redux/api/userSlice";
+import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import profileFallback from "../../../assets/profile.png";
 
-
-const generateMockUsers = (count = 45) => {
-  const users = [];
-  const roles = ["USER", "ADMIN"];
-  const courseTitles = ["React Basics", "Advanced JavaScript", "Node.js Fundamentals", "Data Structures in Python", "Cybersecurity Intro", "UX Design Principles", "Cloud Computing 101"];
-  const gameTitles = ["Code Breaker", "Syntax Sprint", "Algorithmic Ascent", "Logic Puzzle Pro"];
-
-  for (let i = 0; i < count; i++) {
-    const id = `user-${i + 1}`;
-    let role = roles[Math.floor(Math.random() * roles.length)];
-    let username = `User ${i + 1}`;
-
-
-    if (i === 0) {
-      role = "SUPERADMIN";
-      username = "SuperAdmin User";
-    } else if (i === 1) {
-      role = "ADMIN";
-      username = "Admin User";
-    }
-
-    users.push({
-      id: id,
-      username: username,
-      email: `${username.toLowerCase().replace(/\s/g, "")}${i + 1}@mail.com`,
-      role: role,
-      isPro: Math.random() > 0.3,
-      coursesWatched: Array.from({ length: Math.floor(Math.random() * 4) + 1 }, () => // 1-4 courses
-        courseTitles[Math.floor(Math.random() * courseTitles.length)]
-      ),
-      gamesPlayed: Array.from({ length: Math.floor(Math.random() * 3) }, () => // 0-2 games
-        gameTitles[Math.floor(Math.random() * gameTitles.length)]
-      ),
-      completions: Math.floor(Math.random() * 25) + 5, // 5-29 completions
-      startTime: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last year
-    });
-  }
-  return users;
-};
-
-const initialMockUsers = generateMockUsers(45);
 
 const Users = () => {
   const role = useContext(userRoleContext);
+  const { data: usersData, isLoading, isError } = useGetUsersQuery();
 
+  const {userInfo} = useSelector(state => state.auth);
+  const token = jwtDecode(userInfo.access_token);
 
-  const [users, setUsers] = useState(initialMockUsers);
+  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
+  
 
-  const [userHistory, setUserHistory] = useState([initialMockUsers]);
+  const imagePath =
+    image?.path && image.path.startsWith("http")
+      ? image.path
+      : profileFallback;
+
+  const [users, setUsers] = useState(usersData || []);
+  const [userHistory, setUserHistory] = useState([usersData || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
-
 
   const usersPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
-
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedRoleFilter, setSelectedRoleFilter] = useState("ALL");
-  const [selectedProFilter, setSelectedProFilter] = useState("ALL"); // New state for Pro filter
-
+  const [selectedProFilter, setSelectedProFilter] = useState("ALL");
 
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [newUserData, setNewUserData] = useState({
     username: "",
     email: "",
     role: "USER",
-    isPro: false,
+    isPremium: false,
   });
-
 
   const [showViewUserModal, setShowViewUserModal] = useState(false);
   const [userToView, setUserToView] = useState(null);
 
-  const [showActionsDropdownForUser, setShowActionsDropdownForUser] = useState(null); // Stores the ID of the user whose dropdown is open
+  const [showActionsDropdownForUser, setShowActionsDropdownForUser] = useState(null);
 
-  // New state for delete confirmation
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
+  // Update users and history when API data changes
+  useEffect(() => {
+    if (usersData) {
+      setUsers(usersData);
+      setUserHistory([usersData]);
+      setHistoryIndex(0);
+    }
+  }, [usersData]);
 
   const addStateToHistory = (newState) => {
-    const newHistory = userHistory.slice(0, historyIndex + 1); // Truncate future history
+    const newHistory = userHistory.slice(0, historyIndex + 1);
     setUserHistory([...newHistory, newState]);
     setHistoryIndex(newHistory.length);
   };
@@ -99,7 +76,7 @@ const Users = () => {
       const newIndex = historyIndex - 1;
       setHistoryIndex(newIndex);
       setUsers(userHistory[newIndex]);
-      toast.info("Undo successfull!");
+      toast.info("Undo successful!");
     } else {
       toast.warn("Nothing to undo.");
     }
@@ -126,7 +103,7 @@ const Users = () => {
       username: "",
       email: "",
       role: "USER",
-      isPro: false,
+      isPremium: false,
     });
   };
 
@@ -146,12 +123,11 @@ const Users = () => {
     }
 
     const newUser = {
-      id: `user-${Date.now()}`,
+      id: Date.now(), // Temporary ID; in a real app, this would come from the API
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       ...newUserData,
-      coursesWatched: [],
-      gamesPlayed: [],
-      completions: 0,
-      startTime: new Date().toISOString(),
+      courseId: 1, // Default courseId; adjust as needed
     };
 
     const updatedUsers = [...users, newUser];
@@ -161,7 +137,6 @@ const Users = () => {
     handleCloseAddUserModal();
   };
 
-  // --- Filter Logic ---
   const toggleFilterDropdown = () => {
     setShowFilterDropdown((prev) => !prev);
   };
@@ -169,27 +144,26 @@ const Users = () => {
   const applyRoleFilter = (filterRole) => {
     setSelectedRoleFilter(filterRole);
     setShowFilterDropdown(false);
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
   };
 
   const applyProFilter = (filterPro) => {
     setSelectedProFilter(filterPro);
     setShowFilterDropdown(false);
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
   };
 
-  const filteredUsers = users.filter((user) => {
+  const filteredUsers = users?.filter((user) => {
     const matchesRole = selectedRoleFilter === "ALL" || user.role === selectedRoleFilter;
     const matchesPro =
       selectedProFilter === "ALL" ||
-      (selectedProFilter === "PRO" && user.isPro) ||
-      (selectedProFilter === "NON_PRO" && !user.isPro);
+      (selectedProFilter === "PRO" && user.isPremium) ||
+      (selectedProFilter === "NON_PRO" && !user.isPremium);
     return matchesRole && matchesPro;
   });
-  // --- End Filter Logic ---
 
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-  const paginatedUsers = filteredUsers.slice(
+  const totalPages = Math.ceil(filteredUsers?.length / usersPerPage);
+  const paginatedUsers = filteredUsers?.slice(
     (currentPage - 1) * usersPerPage,
     currentPage * usersPerPage
   );
@@ -211,32 +185,30 @@ const Users = () => {
   };
 
   const handleChangeUserRole = (userId, newRole) => {
-
-    const loggedInUser = users.find(u => u.role === "SUPERADMIN"); // Assuming one superAdmin and it's the current user
+    const loggedInUser = users?.find((u) => u.role === "SUPERADMIN");
     if (loggedInUser && loggedInUser.id === userId && newRole !== "SUPERADMIN") {
-        toast.error("A SuperAdmin cannot demote themselves!");
-        return;
+      toast.error("A SuperAdmin cannot demote themselves!");
+      return;
     }
 
-    const updatedUsers = users.map((user) =>
+    const updatedUsers = users?.map((user) =>
       user.id === userId ? { ...user, role: newRole } : user
     );
     setUsers(updatedUsers);
     addStateToHistory(updatedUsers);
-    toast.success(`User role updated to ${users.find(u => u.id === userId)?.username}'s role updated to ${newRole}`);
+    toast.success(`User "${users?.find((u) => u.id === userId)?.username}'s role updated to ${newRole}`);
     setShowActionsDropdownForUser(null);
   };
 
   const handleDeleteUserClick = (user) => {
     setUserToDelete(user);
     setShowDeleteConfirmModal(true);
-    setShowActionsDropdownForUser(null); // Close the actions dropdown
+    setShowActionsDropdownForUser(null);
   };
 
   const confirmDeleteUser = () => {
     if (userToDelete) {
-      // Prevent SuperAdmin from deleting themselves
-      const loggedInUser = users.find(u => u.role === "SUPERADMIN"); // Assuming one superAdmin
+      const loggedInUser = users?.find((u) => u.role === "SUPERADMIN");
       if (loggedInUser && loggedInUser.id === userToDelete.id) {
         toast.error("A SuperAdmin cannot delete themselves!");
         setShowDeleteConfirmModal(false);
@@ -244,7 +216,7 @@ const Users = () => {
         return;
       }
 
-      const updatedUsers = users.filter((user) => user.id !== userToDelete.id);
+      const updatedUsers = users?.filter((user) => user.id !== userToDelete.id);
       setUsers(updatedUsers);
       addStateToHistory(updatedUsers);
       toast.success(`User "${userToDelete.username}" deleted successfully!`);
@@ -252,10 +224,6 @@ const Users = () => {
       setUserToDelete(null);
     }
   };
-
-
-  const isLoading = false;
-  const isError = false;
 
   // Close dropdown if clicked outside
   useEffect(() => {
@@ -290,17 +258,21 @@ const Users = () => {
     );
   }
 
-
+  if(loadingImage) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
-    <div className="">
-
+    <div>
       <div className="sticky top-28 backdrop-blur-xl flex justify-between p-3 rounded-b-lg shadow-lg mb-8">
         <span className="md:text-2xl text-lg font-normal text-gray-100">
           Users
         </span>
         <div className="flex items-center gap-2 relative">
-
           <button
             onClick={handleUndo}
             disabled={historyIndex === 0}
@@ -323,7 +295,7 @@ const Users = () => {
             <CiRedo />
           </button>
 
-          <div className="relative filter-dropdown-container"> {/* Added a wrapper for click outside */}
+          <div className="relative filter-dropdown-container">
             <button
               onClick={toggleFilterDropdown}
               className="w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white hover:bg-gray-700 transition-colors"
@@ -334,7 +306,6 @@ const Users = () => {
               <HiOutlineAdjustmentsHorizontal />
             </button>
 
-            {/* Filter Dropdown Menu */}
             {showFilterDropdown && (
               <div className="absolute top-full right-0 mt-2 w-48 bg-[#07032B] border border-[#3A3A5A] rounded-lg shadow-lg overflow-hidden z-50">
                 <div className="px-4 py-2 text-gray-400 text-xs uppercase font-bold border-b border-[#3A3A5A]">Filter by Role</div>
@@ -345,19 +316,19 @@ const Users = () => {
                   All Roles
                 </button>
                 <button
-                  onClick={() => applyRoleFilter("student")}
+                  onClick={() => applyRoleFilter("USER")}
                   className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#3A3A5A] transition-colors text-sm"
                 >
-                  Students
+                  Users
                 </button>
                 <button
-                  onClick={() => applyRoleFilter("admin")}
+                  onClick={() => applyRoleFilter("ADMIN")}
                   className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#3A3A5A] transition-colors text-sm"
                 >
                   Admins
                 </button>
                 <button
-                  onClick={() => applyRoleFilter("superAdmin")}
+                  onClick={() => applyRoleFilter("SUPERADMIN")}
                   className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#3A3A5A] transition-colors text-sm"
                 >
                   SuperAdmins
@@ -399,10 +370,9 @@ const Users = () => {
         </div>
       </div>
 
-
-      <div className="mt-6 w-full overflow-x-auto custom-scrollbar"> {/* Added custom-scrollbar for better mobile ux */}
+      <div className="mt-6 w-full overflow-x-auto custom-scrollbar">
         <h2 className="text-gray-300 font-bold text-xl text-center mb-4">
-          All Users ({filteredUsers.length})
+          All Users ({filteredUsers?.length})
         </h2>
 
         <table className="w-full text-white border-separate border-spacing-y-3">
@@ -411,47 +381,51 @@ const Users = () => {
               <th className="p-3 w-[6%]">Icon</th>
               <th className="p-3 w-[35%]">Username</th>
               <th className="p-3 w-[36%] sm:table-cell hidden">Email</th>
-              <th className="p-3 w-[10%]">Role</th> {/* Changed from "User Role" */}
+              <th className="p-3 w-[10%]">Role</th>
               <th className="p-3 w-[18%]">Pro</th>
-              {(role === "superAdmin" || role === "admin") && ( // Show actions if admin or superAdmin
+              {(role === "SUPERADMIN" || role === "ADMIN") && (
                 <th className="p-3 w-[5%] text-right">Actions</th>
               )}
             </tr>
           </thead>
           <tbody>
-            {paginatedUsers.map((user) => (
+            {paginatedUsers?.map((user) => (
               <tr
                 key={user.id}
-                className="bg-[#19179B] text-sm hover:bg-[#2c28b8] transition cursor-pointer" // Added cursor-pointer
+                className="bg-[#19179B] text-sm hover:bg-[#2c28b8] transition cursor-pointer"
+                onClick={() => handleViewUser(user)}
               >
                 <td className="p-3 align-middle first:rounded-l-lg">
-                  <FaUser size={24} />
+                  {/* <FaUser size={24} /> */}
+                  <img src={imagePath} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
                 </td>
                 <td className="p-3 align-middle font-medium">{user.username}</td>
-                <td className="p-3 align-middle sm:table-cell hidden">
-                  {user.email}
-                </td>
+                <td className="p-3 align-middle sm:table-cell hidden">{user.email}</td>
                 <td className="p-3 align-middle">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    user.role === "superAdmin" ? "bg-red-700 text-white" :
-                    user.role === "admin" ? "bg-blue-700 text-white" :
-                    "bg-gray-700 text-white"
-                  }`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      user.role === "SUPERADMIN"
+                        ? "bg-red-700 text-white"
+                        : user.role === "ADMIN"
+                        ? "bg-blue-700 text-white"
+                        : "bg-gray-700 text-white"
+                    }`}
+                  >
                     {user.role}
                   </span>
                 </td>
                 <td className="p-3 align-middle">
-                  {user.isPro && (
+                  {user.isPremium && (
                     <span className="bg-gradient-to-r from-purple-500 to-blue-400 text-xs px-2 py-1 rounded-full">
                       PRO
                     </span>
                   )}
                 </td>
                 {(role === "SUPERADMIN" || role === "ADMIN") && (
-                  <td className="p-3 align-middle text-right last:rounded-r-lg relative actions-dropdown-container"> {/* Added a wrapper for click outside */}
+                  <td className="p-3 align-middle text-right last:rounded-r-lg relative actions-dropdown-container">
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent row click from interfering
+                        e.stopPropagation();
                         toggleActionsDropdown(user.id);
                       }}
                       className="text-gray-300 hover:text-white"
@@ -462,12 +436,15 @@ const Users = () => {
                     {showActionsDropdownForUser === user.id && (
                       <div className="absolute right-0 mt-2 w-40 bg-[#07032B] border border-[#3A3A5A] rounded-md shadow-lg z-50 overflow-hidden">
                         <button
-                          onClick={(e) => { e.stopPropagation(); handleViewUser(user); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewUser(user);
+                          }}
                           className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#3A3A5A] transition-colors text-sm"
                         >
                           View
                         </button>
-                        {role === "superAdmin" && (
+                        {role === "SUPERADMIN" && (
                           <>
                             <div className="border-t border-[#3A3A5A]"></div>
                             <div className="px-4 py-2 text-gray-200 text-sm">
@@ -476,16 +453,19 @@ const Users = () => {
                                 className="w-full mt-1 rounded-md px-2 py-1 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
                                 value={user.role}
                                 onChange={(e) => handleChangeUserRole(user.id, e.target.value)}
-                                onClick={(e) => e.stopPropagation()} // Prevent dropdown from closing immediately
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                <option value="student">Student</option>
-                                <option value="admin">Admin</option>
-                                <option value="superAdmin">SuperAdmin</option>
+                                <option value="USER">User</option>
+                                <option value="ADMIN">Admin</option>
+                                <option value="SUPERADMIN">SuperAdmin</option>
                               </select>
                             </div>
                             <div className="border-t border-[#3A3A5A]"></div>
                             <button
-                              onClick={(e) => { e.stopPropagation(); handleDeleteUserClick(user); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteUserClick(user);
+                              }}
                               className="block w-full text-left px-4 py-2 text-red-500 hover:bg-red-900 transition-colors text-sm"
                             >
                               Delete
@@ -502,7 +482,6 @@ const Users = () => {
         </table>
       </div>
 
-      {/* Pagination Footer */}
       <div className="flex justify-end mt-6 gap-1">
         {Array.from({ length: totalPages }, (_, i) => (
           <button
@@ -519,7 +498,6 @@ const Users = () => {
         ))}
       </div>
 
-      {/* Add User Modal */}
       {showAddUserModal && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
           <div className="bg-[#070045] w-full max-w-md p-6 rounded-2xl shadow-2xl border border-[#3A3A5A] relative">
@@ -577,21 +555,21 @@ const Users = () => {
                   required
                   className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
                 >
-                  <option value="student">Student</option>
-                  <option value="admin">Admin</option>
-                  {role === "superAdmin" && <option value="superAdmin">SuperAdmin</option>}
+                  <option value="USER">User</option>
+                  <option value="ADMIN">Admin</option>
+                  {role === "SUPERADMIN" && <option value="SUPERADMIN">SuperAdmin</option>}
                 </select>
               </div>
               <div className="flex items-center">
                 <input
-                  id="isPro"
+                  id="isPremium"
                   type="checkbox"
-                  name="isPro"
-                  checked={newUserData.isPro}
+                  name="isPremium"
+                  checked={newUserData.isPremium}
                   onChange={handleNewUserInputChange}
                   className="mr-2 h-4 w-4 text-purple-600 border-gray-600 rounded focus:ring-purple-500 bg-[#07032B]"
                 />
-                <label htmlFor="isPro" className="font-medium text-gray-300 text-sm">
+                <label htmlFor="isPremium" className="font-medium text-gray-300 text-sm">
                   Is Pro User
                 </label>
               </div>
@@ -616,13 +594,15 @@ const Users = () => {
         </div>
       )}
 
-      {/* User Detail View Modal */}
       {showViewUserModal && userToView && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
           <div className="bg-[#070045] w-full max-w-lg p-6 rounded-2xl shadow-2xl border border-[#3A3A5A] relative max-h-[90vh] overflow-y-auto custom-scrollbar">
             <button
               type="button"
-              onClick={() => { setUserToView(null); setShowViewUserModal(false); }}
+              onClick={() => {
+                setUserToView(null);
+                setShowViewUserModal(false);
+              }}
               className="absolute top-4 right-4 p-2 cursor-pointer text-gray-400 hover:bg-[#3A3A5A] rounded-full transition-colors"
               aria-label="Close"
             >
@@ -636,17 +616,21 @@ const Users = () => {
               <p><strong>Email:</strong> {userToView.email}</p>
               <p>
                 <strong>Role:</strong>{" "}
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  userToView.role === "superAdmin" ? "bg-red-700 text-white" :
-                  userToView.role === "admin" ? "bg-blue-700 text-white" :
-                  "bg-gray-700 text-white"
-                }`}>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    userToView.role === "SUPERADMIN"
+                      ? "bg-red-700 text-white"
+                      : userToView.role === "ADMIN"
+                      ? "bg-blue-700 text-white"
+                      : "bg-gray-700 text-white"
+                  }`}
+                >
                   {userToView.role}
                 </span>
               </p>
               <p>
                 <strong>Pro User:</strong>{" "}
-                {userToView.isPro ? (
+                {userToView.isPremium ? (
                   <span className="bg-gradient-to-r from-purple-500 to-blue-400 text-xs px-2 py-1 rounded-full">
                     YES (PRO)
                   </span>
@@ -654,43 +638,18 @@ const Users = () => {
                   <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded-full">NO</span>
                 )}
               </p>
-              <p><strong>Completions:</strong> {userToView.completions}</p>
-              <p><strong>Member Since:</strong> {new Date(userToView.startTime).toLocaleDateString()} at {new Date(userToView.startTime).toLocaleTimeString()}</p>
-
-              {userToView.coursesWatched && userToView.coursesWatched.length > 0 && (
-                <div>
-                  <strong>Courses Watched:</strong>
-                  <ul className="list-disc list-inside ml-4 text-sm mt-1 space-y-1">
-                    {userToView.coursesWatched.map((course, index) => (
-                      <li key={index}>{course}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {(!userToView.coursesWatched || userToView.coursesWatched.length === 0) && (
-                  <p><strong>Courses Watched:</strong> No courses watched yet.</p>
-              )}
-
-
-              {userToView.gamesPlayed && userToView.gamesPlayed.length > 0 && (
-                <div>
-                  <strong>Games Played:</strong>
-                  <ul className="list-disc list-inside ml-4 text-sm mt-1 space-y-1">
-                    {userToView.gamesPlayed.map((game, index) => (
-                      <li key={index}>{game}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {(!userToView.gamesPlayed || userToView.gamesPlayed.length === 0) && (
-                  <p><strong>Games Played:</strong> No games played yet.</p>
-              )}
+              <p><strong>Created At:</strong> {new Date(userToView.createdAt).toLocaleDateString()} at {new Date(userToView.createdAt).toLocaleTimeString()}</p>
+              <p><strong>Updated At:</strong> {new Date(userToView.updatedAt).toLocaleDateString()} at {new Date(userToView.updatedAt).toLocaleTimeString()}</p>
+              <p><strong>Course ID:</strong> {userToView.courseId}</p>
             </div>
 
             <div className="flex justify-center mt-6 pt-4 border-t border-[#3A3A5A]">
               <button
                 type="button"
-                onClick={() => { setUserToView(null); setShowViewUserModal(false); }}
+                onClick={() => {
+                  setUserToView(null);
+                  setShowViewUserModal(false);
+                }}
                 className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 border border-gray-600 shadow-md text-sm"
               >
                 Close
@@ -700,13 +659,15 @@ const Users = () => {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {showDeleteConfirmModal && userToDelete && (
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
           <div className="bg-[#070045] w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-[#3A3A5A] relative">
             <button
               type="button"
-              onClick={() => { setShowDeleteConfirmModal(false); setUserToDelete(null); }}
+              onClick={() => {
+                setShowDeleteConfirmModal(false);
+                setUserToDelete(null);
+              }}
               className="absolute top-4 right-4 p-2 cursor-pointer text-gray-400 hover:bg-[#3A3A5A] rounded-full transition-colors"
               aria-label="Close"
             >
@@ -721,7 +682,10 @@ const Users = () => {
             <div className="flex justify-center gap-3 mt-6 pt-4 border-t border-[#3A3A5A]">
               <button
                 type="button"
-                onClick={() => { setShowDeleteConfirmModal(false); setUserToDelete(null); }}
+                onClick={() => {
+                  setShowDeleteConfirmModal(false);
+                  setUserToDelete(null);
+                }}
                 className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 border border-gray-600 shadow-md text-sm"
               >
                 Cancel
