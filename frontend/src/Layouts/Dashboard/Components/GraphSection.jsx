@@ -17,8 +17,6 @@ import {
 } from "recharts";
 import { useGetUsersQuery } from "../../../redux/api/AdminSlice.jsx";
 
-const GraphSection = () => {
-
   // Fallback data in case backend is not ready
   const fallbackData = [
     { month: "Jan", Users: 50 },
@@ -33,6 +31,8 @@ const GraphSection = () => {
     { month: "Oct", Users: 70,}, 
     { month: "Nov", Users: 55,},
   ];
+
+const GraphSection = () => {
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);

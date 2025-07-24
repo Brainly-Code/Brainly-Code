@@ -23,7 +23,7 @@ const Home = () => {
 
   if (role !== "USER") {
     // Logged in but not a normal user
-    return <Navigate to="/users" replace />;
+    return <Navigate to="/user" replace />;
   }
 
   return <Outlet />;

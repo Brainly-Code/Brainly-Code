@@ -27,6 +27,7 @@ const Login = () => {
     try {
       const decoded = jwtDecode(userInfo.access_token);
       role = decoded.role;
+      console.log(role)
     } catch (error) {
       console.error("Invalid token", error);
     }
@@ -36,12 +37,10 @@ const Login = () => {
   const sp = new URLSearchParams(search);
   
   let redirect;
-  if(role === "SUPERADMIN"){
-  redirect = sp.get('redirect') || '/super/dashboard';
-  } else if(role === "ADMIN") {
-    redirect = sp.get('redirect') || '/admin';
+  if(role === "user"){
+  redirect = sp.get('redirect') || 'user';
   } else {
-    redirect = sp.get('redirect') || '/user';
+    redirect = sp.get('redirect') || '/admin';
   }
 
 

@@ -273,7 +273,7 @@ const Users = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showFilterDropdown, showActionsDropdownForUser]);
-  
+
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
