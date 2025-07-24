@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '../../redux/api/userSlice';
 import { Logout } from '../../redux/Features/authSlice';
 import { toast } from 'react-toastify';
-import profile from '../../assets/profile.png';
 import { FloatingNav } from './FloatingNav';
 import BrainlyCodeIcon from '../BrainlyCodeIcon';
 import profileFallback from "../../assets/profile.png";

@@ -24,11 +24,19 @@ const ModuleItem = ({ moduleId,title, submodules }) => {
       </button>
 
       {open && Array.isArray(submodules) && submodules.length > 0 && (
+        <>
         <div className='mt-2 sm:mt-3 space-y-2'>
           {submodules.map(( submodule ) => (
             <SubModuleItem key={submodule.id} title={submodule.title} id={submodule.id} moduleId={moduleId} steps={submodule.lessons} />
           ))}
         </div>
+        <button
+            onClick={() => console.log("Add a new module")}
+            className="flex items-center gap-2 bg-[#1D1543] hover:bg-[#2C1E6A] text-white px-6 py-3 rounded-full h-1/2 mt-auto mb-auto"
+        >
+            Add module
+        </button>
+        </>
       )}
     </div>
   );

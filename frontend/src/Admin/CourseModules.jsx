@@ -6,9 +6,8 @@ import paint from '../assets/paint.png';
 import time from '../assets/time.png';
 import star from '../assets/star.png';
 import Footer from './../Components/ui/Footer';
-import { ModuleItem } from './../Components/ModuleItem';
+import { ModuleItem } from './ModuleItem';
 import { useGetModulesForCourseQuery } from '../redux/api/moduleSlice';
-import Header from './../Components/ui/Header';
 import { useGetCourseByIdQuery } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
 import Loader from './../Components/ui/Loader';
@@ -51,7 +50,6 @@ const Modules = () => {
   
   return (
     <div className='bg-[#0D0056] h-full text-white flex flex-col justify-between'>
-      <Header />
 
       {/* Course Header */}
       <h3 className='text-2xl font-bold  mt-12 text-center'>{course?.title}</h3>
@@ -108,11 +106,12 @@ const Modules = () => {
             return null;
           }) : <h2 className='text-center mb-6'>No modules in this course!</h2>}
         </div>
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center mt-6 bg-[#6B5EDD] w-full h-12 rounded-xl">
         <button
             onClick={() => console.log("Add a new module")}
-            className="flex items-center gap-2 bg-[#1D1543] hover:bg-[#2C1E6A] text-white px-6 py-3 rounded-full"
+            className="flex items-center gap-2 bg-[#1D1543] hover:bg-[#2C1E6A] text-white px-6 py-3 rounded-full h-1/2 mt-auto mb-auto"
         >
+            Add module
         </button>
         </div>
 

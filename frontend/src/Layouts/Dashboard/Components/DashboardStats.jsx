@@ -61,14 +61,14 @@ const DashboardStats = () => {
   
     {
       label: "Students",
-      value: `${stats?.studentCount} `,
+      value: `${stats?.studentCount || "--"} `,
       icon: <PiStudentDuotone className="text-2xl text-white" />,
       bg: "bg-slate-100",
       iconBg: "bg-gray-700",
     },
     {
       label: "Challenges",
-      value: `${stats?.challengeCount}`,
+      value: `${stats?.challengeCount || "--"}`,
       icon: <FaChartLine className="text-2xl text-white" />,
       bg: "bg-blue-50",
       iconBg: "bg-blue-500",
@@ -76,7 +76,7 @@ const DashboardStats = () => {
   
     {
       label: "Courses",
-      value: `${stats?.courseNumber} `,
+      value: `${stats?.courseNumber || "--"} `,
       icon: <FaMoneyBillWave className="text-2xl text-white" />,
       
       iconBg: "[#19179B]",

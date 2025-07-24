@@ -2,11 +2,13 @@ import React, { createContext } from "react";
 import { Outlet } from "react-router-dom";
 import DashboardHeader from "./Components/DashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
+
 export const userRoleContext = createContext("admin");
 
 const DashboardLayout = () => {
   return (
-    <userRoleContext.Provider value="admin">
+    <userRoleContext.Provider value="superAdmin"> 
+    {/* use admin or superAdmin because in users i hardcoded it  */}
       <div className="w-full z-50 min-h-screen bg-[#0D0056]  flex">
         <aside className="sticky  top-10 left-0 md:w-[25%] w-[5rem] lg:w-[20%] z-50">
           <SideBar />
