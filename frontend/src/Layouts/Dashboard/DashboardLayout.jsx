@@ -1,5 +1,5 @@
 import React, { createContext } from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import DashboardHeader from "./Components/DashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
 import { useSelector } from "react-redux";
@@ -14,9 +14,11 @@ const DashboardLayout = () => {
   const role = token.role;
 
   return (
-    <userRoleContext.Provider value={role}> 
+    role && role !== "USER" ? (
+    
+    <userRoleContext.Provider value={role}>
     {/* use admin or superAdmin because in users i hardcoded it  */}
-      <div className="w-full z-50 min-h-screen bg-[#0D0056]  flex">
+      <div className="w-full z-50 min-h-screen bg-[#0D0056] flex">
         <aside className="sticky  top-10 left-0 md:w-[25%] w-[5rem] lg:w-[20%] z-50">
           <SideBar />
         </aside>
@@ -30,7 +32,7 @@ const DashboardLayout = () => {
         </div>
       </div>
     </userRoleContext.Provider>
-  );
-};
+  ) : (<Navigate to="/login" />)
+)}
 
 export default DashboardLayout;

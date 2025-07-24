@@ -11,7 +11,7 @@ import { X } from 'lucide-react';
 
 const generateMockUsers = (count = 45) => {
   const users = [];
-  const roles = ["student", "admin"];
+  const roles = ["USER", "ADMIN"];
   const courseTitles = ["React Basics", "Advanced JavaScript", "Node.js Fundamentals", "Data Structures in Python", "Cybersecurity Intro", "UX Design Principles", "Cloud Computing 101"];
   const gameTitles = ["Code Breaker", "Syntax Sprint", "Algorithmic Ascent", "Logic Puzzle Pro"];
 
@@ -22,10 +22,10 @@ const generateMockUsers = (count = 45) => {
 
 
     if (i === 0) {
-      role = "superAdmin";
+      role = "SUPERADMIN";
       username = "SuperAdmin User";
     } else if (i === 1) {
-      role = "admin";
+      role = "ADMIN";
       username = "Admin User";
     }
 
@@ -73,7 +73,7 @@ const Users = () => {
   const [newUserData, setNewUserData] = useState({
     username: "",
     email: "",
-    role: "student",
+    role: "USER",
     isPro: false,
   });
 
@@ -99,7 +99,7 @@ const Users = () => {
       const newIndex = historyIndex - 1;
       setHistoryIndex(newIndex);
       setUsers(userHistory[newIndex]);
-      toast.info("Undo successful!");
+      toast.info("Undo successfull!");
     } else {
       toast.warn("Nothing to undo.");
     }
@@ -125,7 +125,7 @@ const Users = () => {
     setNewUserData({
       username: "",
       email: "",
-      role: "student",
+      role: "USER",
       isPro: false,
     });
   };
@@ -212,8 +212,8 @@ const Users = () => {
 
   const handleChangeUserRole = (userId, newRole) => {
 
-    const loggedInUser = users.find(u => u.role === "superAdmin"); // Assuming one superAdmin and it's the current user
-    if (loggedInUser && loggedInUser.id === userId && newRole !== "superAdmin") {
+    const loggedInUser = users.find(u => u.role === "SUPERADMIN"); // Assuming one superAdmin and it's the current user
+    if (loggedInUser && loggedInUser.id === userId && newRole !== "SUPERADMIN") {
         toast.error("A SuperAdmin cannot demote themselves!");
         return;
     }
@@ -236,7 +236,7 @@ const Users = () => {
   const confirmDeleteUser = () => {
     if (userToDelete) {
       // Prevent SuperAdmin from deleting themselves
-      const loggedInUser = users.find(u => u.role === "superAdmin"); // Assuming one superAdmin
+      const loggedInUser = users.find(u => u.role === "SUPERADMIN"); // Assuming one superAdmin
       if (loggedInUser && loggedInUser.id === userToDelete.id) {
         toast.error("A SuperAdmin cannot delete themselves!");
         setShowDeleteConfirmModal(false);
@@ -386,7 +386,7 @@ const Users = () => {
             )}
           </div>
 
-          {role === "superAdmin" && (
+          {role === "SUPERADMIN" && (
             <button
               onClick={handleAddUserClick}
               className="px-4 py-2 bg-gradient-to-r from-[#00ffee] to-purple-500 text-white rounded-full flex items-center gap-1 font-semibold shadow-md hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300"
@@ -447,7 +447,7 @@ const Users = () => {
                     </span>
                   )}
                 </td>
-                {(role === "superAdmin" || role === "admin") && (
+                {(role === "SUPERADMIN" || role === "ADMIN") && (
                   <td className="p-3 align-middle text-right last:rounded-r-lg relative actions-dropdown-container"> {/* Added a wrapper for click outside */}
                     <button
                       onClick={(e) => {

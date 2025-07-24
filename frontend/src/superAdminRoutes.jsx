@@ -21,7 +21,7 @@ const SuperAdminRoutes = () => {
  
   return (
     <div>
-      {/* {role === "SUPERADMIN" ? <Outlet /> : <Navigate to="/login" replace />} */}
+      {role === "SUPERADMIN" ? <Outlet /> : <Navigate to="/login" replace />}
       <Outlet/>
     </div>
   );

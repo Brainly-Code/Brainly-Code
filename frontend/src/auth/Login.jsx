@@ -37,12 +37,11 @@ const Login = () => {
   const sp = new URLSearchParams(search);
   
   let redirect;
-  if(role === "user"){
-  redirect = sp.get('redirect') || 'user';
+  if(role === "USER"){
+  redirect = sp.get('redirect') || '/user';
   } else {
     redirect = sp.get('redirect') || '/admin';
   }
-
 
 
   useEffect(() => {
