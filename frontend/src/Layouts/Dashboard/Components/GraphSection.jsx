@@ -34,12 +34,11 @@ const GraphSection = () => {
     { month: "Nov", Users: 55, revenue: 450 },
   ];
 
-const GrapshSection = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const { data: users } = useGetUsersQuery();
-  console.log(users);
+
 
   
   useEffect(() => {
@@ -47,7 +46,7 @@ const GrapshSection = () => {
       try {
         // Ensure the data is in the correct format
         const formattedData = Array.isArray(users)
-          ? users
+          ? users.map()
           : fallbackData;
         setData(formattedData);
       } catch (error) {
@@ -144,7 +143,5 @@ const GrapshSection = () => {
   </div>
   );
 };
-
-}
 
 export default GraphSection;

@@ -2,6 +2,7 @@ import React, { createContext } from "react";
 import { Outlet } from "react-router-dom";
 import DashboardHeader from "./Components/DashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
+// eslint-disable-next-line react-refresh/only-export-components
 export const userRoleContext = createContext("admin");
 
 const DashboardLayout = () => {

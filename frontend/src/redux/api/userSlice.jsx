@@ -48,7 +48,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
     updateUser: builder.mutation({
       query: ({ id, formData }) => ({
         url: `${USER_URL}/edit/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: formData
       })
     }),
@@ -72,7 +72,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
           body: formData,
         };
       },
-    }),    
+    }),
   })
 });
 
