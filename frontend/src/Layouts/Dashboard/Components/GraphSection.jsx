@@ -21,17 +21,17 @@ const GraphSection = () => {
 
   // Fallback data in case backend is not ready
   const fallbackData = [
-    { month: "Jan", Users: 50, revenue: 400 },
-    { month: "Feb", Users: 45, revenue: 350 },
-    { month: "Mar", Users: 60, revenue: 500 },
-    { month: "Apr", Users: 80, revenue: 650 },
-    { month: "May", Users: 60, revenue: 600 },
-    { month: "Jun", Users: 40, revenue: 300 },
-    { month: "Jul", Users: 50, revenue: 400 },
-    { month: "Aug", Users: 75, revenue: 700 },
-    { month: "Sep", Users: 65, revenue: 620 },
-    { month: "Oct", Users: 70, revenue: 690 }, 
-    { month: "Nov", Users: 55, revenue: 450 },
+    { month: "Jan", Users: 50 },
+    { month: "Feb", Users: 45,},
+    { month: "Mar", Users: 60,},
+    { month: "Apr", Users: 80,},
+    { month: "May", Users: 60,},
+    { month: "Jun", Users: 40,},
+    { month: "Jul", Users: 50,},
+    { month: "Aug", Users: 75,},
+    { month: "Sep", Users: 65,},
+    { month: "Oct", Users: 70,}, 
+    { month: "Nov", Users: 55,},
   ];
 
   const [data, setData] = useState([]);

@@ -26,7 +26,7 @@ const DashboardHeader = () => {
 
   return (
     <div>
-      <div className=" backdrop-blur-xl   w-full py-9 rounded-none ">
+      <div className=" backdrop-blur-xl   w-full py-9 rounded-b-md ">
         <header className="flex items-center mx-auto  text-white   sm:w-[97%] w-5/6 justify-between">
           <h1 className="text-center text-xl hidden lg:block font-bold mr-[3rem] text-white ">
             ADMIN DASHBOARD
