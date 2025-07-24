@@ -14,7 +14,7 @@ import Footer from '../Components/ui/Footer'
 const Login = () => { 
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
-
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
