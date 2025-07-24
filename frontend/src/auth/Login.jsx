@@ -126,10 +126,10 @@ const Login = () => {
                     </button>
 
                   
-                  <div className="flex justify-between gap-3">
+                  <div className="flex justify-between items-center my-3 gap-3">
                     <hr className="w-full border-gray-600" />
                     <span className="text-gray-400">or</span>
-                    <hr className="w-full border-gray-600" />
+                    <hr className="w-full h-1 border-gray-600" />
                   </div>
 
                   

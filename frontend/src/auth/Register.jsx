@@ -42,8 +42,7 @@ const Register = () => {
     e.preventDefault()
 
     try {
-      // Ensure role is set before submitting if it's tied to the checkbox
-      // For simplicity, assuming the checkbox implies 'USER' role for registration
+     
       const res = await register({ role: "USER", username, email, password }).unwrap(); // Hardcoding role to USER as per checkbox logic
       console.log(res);
       dispatch(setCredentials({ ...res }));
@@ -54,20 +53,19 @@ const Register = () => {
     }
   }
 
-  // The Loader component is handled by the isLoading state on the button itself now
-  // if (isLoading) return <Loader />
+
 
   return (
     <>
-      <div className='min-h-screen bg-[#1A182C] text-white flex flex-col items-center justify-between'>
-        <header className="flex flex-col items-center pt-16 w-full">
+      <div className='min-h-screen bg-[#070045] text-white flex flex-col items-center justify-between'>
+        <header className="flex flex-col items-center pt-8 w-full">
           <div className="w-full max-w-md px-4 sm:px-6 lg:px-8">
-            <h1 className="text-center text-3xl font-bold mb-2">Create Your Account</h1> {/* Changed text */}
-            <p className="text-center text-gray-400 mb-8">Code With BrainlyCode</p> {/* Changed text */}
 
-            <div className="bg-[#1D1B36] rounded-lg p-8 shadow-lg">
+            <div className="bg-[#070045] rounded-lg border-[#3A3A5A] border p-6 shadow-lg">
+            <h1 className="text-center text-3xl font-bold mb-2">Create Your Account</h1> 
+            <p className="text-center text-gray-400 mb-8">Code With BrainlyCode</p> 
               <form onSubmit={submitHandler} className="flex flex-col items-center">
-                {/* Username Input */}
+               
                 <div className="w-full mb-4">
                   <input
                     type="text"
@@ -75,11 +73,11 @@ const Register = () => {
                     id="username"
                     onChange={e => setUsername(e.target.value)}
                     name="username"
-                    className="w-full p-3 rounded-md bg-[#252340] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#8A2BE2]"
+                    className="w-full py-3 px-4 rounded-full bg-[#070045] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 border-[#3A3A5A] border focus:ring-[#8A2BE2]"
                     placeholder="Name"
                   />
                 </div>
-                {/* Email Input */}
+               
                 <div className="w-full mb-4">
                   <input
                     type="email"
@@ -87,11 +85,11 @@ const Register = () => {
                     required
                     id="email"
                     name="email"
-                    className="w-full p-3 rounded-md bg-[#252340] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#8A2BE2]"
+                    className="w-full py-3 px-4 rounded-full bg-[#070045] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 border-[#3A3A5A] border focus:ring-[#8A2BE2]"
                     placeholder="Email"
                   />
                 </div>
-                {/* Password Input */}
+               
                 <div className="w-full mb-4">
                   <input
                     autoComplete='true'
@@ -100,16 +98,16 @@ const Register = () => {
                     required
                     id="password"
                     name="password"
-                    className="w-full p-3 rounded-md bg-[#252340] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#8A2BE2]"
+                    className="w-full py-3 px-4 rounded-full bg-[#070045] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 border-[#3A3A5A] border focus:ring-[#8A2BE2]"
                     placeholder="Password"
                   />
                 </div>
 
-                {/* Terms and Privacy Policy Checkbox */}
+              
                 <div className="flex items-center w-full mb-6 text-sm">
                   <input
                     type="checkbox"
-                    onChange={() => setRole("USER")} // Your original logic for setting role
+                    onChange={() => setRole("USER")} 
                     name="terms"
                     id="terms"
                     required
@@ -120,11 +118,11 @@ const Register = () => {
                   </label>
                 </div>
 
-                {/* Create Account Button */}
+          
                 <button
                   type='submit'
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white py-3 rounded-md font-semibold hover:opacity-90 transition duration-300 flex items-center justify-center"
+                  className="w-full bg-gradient-to-r rounded-full from-[#2DD4BF] to-[#8A2BE2] text-white py-3  font-semibold hover:opacity-90 transition duration-300"
                 >
                   {isLoading ? (
                     <span className="w-5 h-5 border-2 border-white border-b-transparent rounded-full animate-spin"></span>
@@ -133,20 +131,24 @@ const Register = () => {
                   )}
                 </button>
 
-                {/* Or Continue with */}
-                <p className="my-6 text-gray-400">Or</p>
 
-                {/* Social Login Buttons */}
-                <button className='w-full flex items-center justify-center bg-[#252340] text-gray-300 py-3 rounded-md mb-3 hover:bg-[#322F50] transition duration-300'>
+                <div className="flex justify-between items-center my-3 gap-3">
+                    <hr className="w-full border-gray-600" />
+                    <span className="text-gray-400">or</span>
+                    <hr className="w-full  border-gray-600" />
+                  </div>
+                 
+              
+                <button className='w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300'>
                   <FaGoogle className='inline mr-3 text-lg' />
                   Continue With Google
                 </button>
-                <button className='w-full flex items-center justify-center bg-[#252340] text-gray-300 py-3 rounded-md mb-6 hover:bg-[#322F50] transition duration-300'>
-                  <FaGithub className='inline mr-3 text-lg' /> {/* Changed to FaGithub */}
+                <button className='w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300'>
+                  <FaGithub className='inline mr-3 text-lg' /> 
                   Continue With Github
                 </button>
 
-                {/* Already have an account? Sign in */}
+              
                 <p className='text-gray-400'>Already have an account? <Link to={'/login'} className='ml-1 text-[#8A2BE2] hover:underline'>Sign in</Link></p>
               </form>
             </div>
