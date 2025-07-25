@@ -47,10 +47,9 @@ const Modules = () => {
       }
     } else if (uploadType === 'video') {
       try {
-        console.log(typeof id,id)
         const formData = new FormData();
         formData.append('title', videoTitle);
-        formData.append("courseId", String(Number(id))); 
+        formData.append("courseId", id); 
         formData.append('file', videoFile);
 
         await createVideo(formData).unwrap(); // Connect this to your RTK mutation

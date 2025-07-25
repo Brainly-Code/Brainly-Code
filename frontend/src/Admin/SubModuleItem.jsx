@@ -74,18 +74,25 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
     videoData.append('miniModuleId', miniModuleId);
     videoData.append('file', videoFile);
 
-    try {
-      await createLessonVideo(videoData).unwrap();
-      toast.success('Lesson video uploaded successfully');
-      setShowAddForm(false);
-      setVideoTitle('');
-      setVideoFile(null);
-    } catch (error) {
-      console.error('Failed to upload lesson video:', error);
-      toast.error(
-        error?.data?.message || 'Failed to upload video. Please try again.'
-      );
-    }
+   try {
+  await createLessonVideo(videoData).unwrap();
+  toast.success('Lesson video uploaded successfully');
+  setShowAddForm(false);
+  setVideoTitle('');
+  setVideoFile(null);
+} catch (error) {
+  console.error('Failed to upload lesson video:', error);
+  // Try this:
+  if (error.data) {
+    console.error('Validation errors:', error.data);
+    toast.error(Object.values(error.data).flat().join(', '));
+  } else {
+    toast.error(
+      error?.data?.message || 'Failed to upload video. Please try again.'
+    );
+  }
+}
+
   }
 };
 
