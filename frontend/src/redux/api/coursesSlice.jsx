@@ -3,31 +3,43 @@ import { apiSlice } from "./apiSlice.jsx";
 const COURSE_URL = "/courses";
 
 const coursesApiSlice = apiSlice.injectEndpoints({
-  endpoints: builders => ({
-    getCourses: builders.query({
+  endpoints: (builder) => ({
+    getCourses: builder.query({
       query: () => ({
         url: `${COURSE_URL}`,
-        method: "GET"
-      })
+        method: "GET",
+      }),
     }),
-    getCourseById: builders.query({
-      query: id => ({
+
+    getCourseById: builder.query({
+      query: (id) => ({
         url: `${COURSE_URL}/${id}`,
-        method: "GET"
-      }) 
+        method: "GET",
+      }),
     }),
-    getCoursesByCreator: builders.query({
+
+    getCoursesByCreator: builder.query({
       query: () => ({
         url: `${COURSE_URL}/my-courses`,
         method: "GET",
-      })
+      }),
     }),
-  })
-})
+
+    // ✅ Delete course by ID
+    deleteCourse: builder.mutation({
+      query: (id) => ({
+        url: `${COURSE_URL}/${id}`,
+        method: "DELETE",
+      }),
+    }),
+  }),
+});
+
 
 
 export const {
   useGetCoursesQuery,
   useGetCourseByIdQuery,
-  useGetCoursesByCreatorQuery
+  useGetCoursesByCreatorQuery,
+  useDeleteCourseMutation, 
 } = coursesApiSlice

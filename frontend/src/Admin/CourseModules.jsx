@@ -11,7 +11,7 @@ import { useCreateModuleMutation, useGetModulesForCourseQuery } from '../redux/a
 import { useGetCourseByIdQuery } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
 import Loader from './../Components/ui/Loader';
-import VideoItem from './../Components/VideoItem';
+import VideoItem from './AdminVideoItem';
 import { useCreateVideoMutation, useGetVideosForCourseQuery } from '../redux/api/videoApi';
 
 const Modules = () => {
@@ -118,7 +118,7 @@ const Modules = () => {
                     key={`module-${item.id}`}
                     title={item.title}
                     submodules={item.miniModules}
-                    moduleId={item.id}
+                    moduleId={id}
                   />
                 );
               }
