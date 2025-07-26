@@ -177,11 +177,11 @@ const Courses = () => {
 
 
 
-  const addStateToHistory = (newCoursesState) => {
-    const newHistory = courseHistory.slice(0, historyIndex + 1);
-    setCourseHistory([...newHistory, newCoursesState]);
-    setHistoryIndex(newHistory.length);
-  };
+  // const addStateToHistory = (newCoursesState) => {
+  //   const newHistory = courseHistory.slice(0, historyIndex + 1);
+  //   setCourseHistory([...newHistory, newCoursesState]);
+  //   setHistoryIndex(newHistory.length);
+  // };
 
   // console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
 
@@ -447,7 +447,7 @@ const Courses = () => {
                     </span>
                   </div>
                   <div className="flex justify-center mt-4">
-                    <Link to={`/user/module/${course._id}`}>
+                    <Link to={`/admin/courseModules/${course.id}`}>
                       <button
                         className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 py-3 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300"
                       >

@@ -42,7 +42,6 @@ const Register = () => {
     e.preventDefault()
 
     try {
-     
       const res = await register({ role: "USER", username, email, password }).unwrap(); // Hardcoding role to USER as per checkbox logic
       console.log(res);
       dispatch(setCredentials({ ...res }));
@@ -125,7 +124,7 @@ const Register = () => {
                   className="w-full bg-gradient-to-r rounded-full from-[#2DD4BF] to-[#8A2BE2] text-white py-3  font-semibold hover:opacity-90 transition duration-300"
                 >
                   {isLoading ? (
-                    <span className="w-5 h-5 border-2 border-white border-b-transparent rounded-full animate-spin"></span>
+                    <span className="w-5 h-5 rounded-full animate-spin">Creating User</span>
                   ) : (
                     "Create Account"
                   )}

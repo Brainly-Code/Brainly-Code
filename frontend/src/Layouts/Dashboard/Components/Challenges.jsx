@@ -1,103 +1,47 @@
-import React, { useState, useEffect, useContext } from 'react'; // Import useEffect and useContext
+import React, { useState, useContext, useEffect } from 'react';
 import Loader from '../../../Components/ui/Loader';
 import { Link } from 'react-router-dom';
 import { FaStopwatch } from 'react-icons/fa';
 import { CiUndo, CiRedo } from 'react-icons/ci';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
-import { toast } from 'react-toastify'; // For notifications
-import { X } from 'lucide-react'; // For modal close icon
-import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
-
-// Mock data for challenges
-const initialMockChallenges = [
-  {
-    _id: "challenge-1",
-    title: "Implement a Dynamic Array",
-    description: "Create a dynamic array (ArrayList in Java, `std::vector` in C++) from scratch, supporting operations like add, remove, get, and resize.",
-    difficulty: "Medium",
-    context: "Data Structures",
-    estimatedTime: "2 hours",
-    likes: 150,
-    completions: 80,
-  },
-  {
-    _id: "challenge-2",
-    title: "Build a Simple Todo List with React",
-    description: "Develop a basic Todo List application using React.js. Features should include adding, deleting, and marking tasks as complete.",
-    difficulty: "Easy",
-    context: "Frontend",
-    estimatedTime: "1 hour",
-    likes: 230,
-    completions: 190,
-  },
-  {
-    _id: "challenge-3",
-    title: "RESTful API with Node.js and Express",
-    description: "Design and implement a RESTful API for a blog application using Node.js and Express. Include routes for posts (CRUD) and basic user authentication.",
-    difficulty: "Hard",
-    context: "Backend",
-    estimatedTime: "4 hours",
-    likes: 90,
-    completions: 45,
-  },
-  {
-    _id: "challenge-4",
-    title: "FizzBuzz in Python",
-    description: "Write a program that prints numbers from 1 to 100. For multiples of three, print 'Fizz' instead of the number, and for the multiples of five, print 'Buzz'. For numbers which are multiples of both three and five, print 'FizzBuzz'.",
-    difficulty: "Easy",
-    context: "Logic",
-    estimatedTime: "30 minutes",
-    likes: 300,
-    completions: 250,
-  },
-  {
-    _id: "challenge-5",
-    title: "Implement a Binary Search Tree",
-    description: "Build a Binary Search Tree (BST) from scratch, including insert, search, and delete operations. Ensure it maintains the BST properties.",
-    difficulty: "Hard",
-    context: "Data Structures",
-    estimatedTime: "3 hours",
-    likes: 110,
-    completions: 60,
-  },
-];
+import { toast } from 'react-toastify';
+import { X } from 'lucide-react';
+import { SearchContext } from '../../../Contexts/SearchContext';
+import { useCreateChallengeMutation, useGetChallengesQuery } from '../../../redux/api/challengeSlice';
 
 const Challenges = () => {
-  // Access the search query from the context
   const { searchQuery } = useContext(SearchContext);
+  const { data: challengesData, isLoading, isError } = useGetChallengesQuery();
+  const [createChallenge] = useCreateChallengeMutation();
 
-  // Main state for the list of challenges
-  const [challenges, setChallenges] = useState(initialMockChallenges);
-  // History of challenge states for undo/redo
-  const [challengeHistory, setChallengeHistory] = useState([initialMockChallenges]);
-  // Current position in the history array
+  const [challenges, setChallenges] = useState(challengesData || []);
+  const [challengeHistory, setChallengeHistory] = useState([challengesData || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
-
-  // State for Add Challenge modal visibility
   const [showAddChallengeModal, setShowAddChallengeModal] = useState(false);
-  // State for Filter dropdown visibility
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  // State for the selected difficulty filter
   const [selectedDifficultyFilter, setSelectedDifficultyFilter] = useState("ALL");
 
-  // State to hold data for a new challenge being created via the modal form
   const [newChallengeData, setNewChallengeData] = useState({
     title: "",
     description: "",
-    difficulty: "Easy", // Default
-    context: "General",  // Default
-    estimatedTime: "1 hour", // Default
+    difficulty: "Easy",
+    context: "General",
+    estimatedTime: "1 hour",
   });
 
-  // Dummy loading and error states for mock data (replace with RTK Query states when integrating)
-  const isLoading = false;
-  const isError = false;
+  // Sync challenges and history with API data
+  useEffect(() => {
+    if (challengesData) {
+      setChallenges(challengesData);
+      setChallengeHistory([challengesData]);
+      setHistoryIndex(0);
+    }
+  }, [challengesData]);
 
-  // --- Undo/Redo Logic ---
   const addStateToHistory = (newChallengeState) => {
-    const newHistory = challengeHistory.slice(0, historyIndex + 1); // Cut off future history if new action
+    const newHistory = challengeHistory?.slice(0, historyIndex + 1);
     setChallengeHistory([...newHistory, newChallengeState]);
-    setHistoryIndex(newHistory.length); // Point to the new last state
+    setHistoryIndex(newHistory.length);
   };
 
   const handleUndo = () => {
@@ -112,7 +56,7 @@ const Challenges = () => {
   };
 
   const handleRedo = () => {
-    if (historyIndex < challengeHistory.length - 1) {
+    if (historyIndex < challengeHistory?.length - 1) {
       const newIndex = historyIndex + 1;
       setHistoryIndex(newIndex);
       setChallenges(challengeHistory[newIndex]);
@@ -121,47 +65,45 @@ const Challenges = () => {
       toast.warn("Nothing to redo.");
     }
   };
-  // --- End Undo/Redo Logic ---
 
-  // --- Filter Logic ---
   const toggleFilterDropdown = () => {
     setShowFilterDropdown((prev) => !prev);
   };
 
   const applyFilter = (difficulty) => {
     setSelectedDifficultyFilter(difficulty);
-    setShowFilterDropdown(false); // Close dropdown after selection
+    setShowFilterDropdown(false);
+    const filteredChallenges = difficulty === "ALL"
+      ? challenges
+      : challenges.filter((challenge) => challenge.difficulty === difficulty);
+    setChallenges(filteredChallenges);
+    addStateToHistory(filteredChallenges);
   };
 
-  // Combined filtering logic for both difficulty and search query
   const getFilteredAndSearchedChallenges = () => {
     let currentFilteredChallenges = challenges;
 
-    // Apply difficulty filter
     if (selectedDifficultyFilter !== "ALL") {
       currentFilteredChallenges = currentFilteredChallenges.filter(
         (challenge) => challenge.difficulty === selectedDifficultyFilter
       );
     }
 
-    // Apply search query filter
     if (searchQuery) {
       const lowerCaseSearchQuery = searchQuery.toLowerCase();
       currentFilteredChallenges = currentFilteredChallenges.filter(
         (challenge) =>
-          challenge.title.toLowerCase().includes(lowerCaseSearchQuery) ||
-          challenge.description.toLowerCase().includes(lowerCaseSearchQuery) ||
-          challenge.context.toLowerCase().includes(lowerCaseSearchQuery) ||
-          challenge.difficulty.toLowerCase().includes(lowerCaseSearchQuery)
+          (challenge.title?.toLowerCase().includes(lowerCaseSearchQuery) || false) ||
+          (challenge.description?.toLowerCase().includes(lowerCaseSearchQuery) || false) ||
+          (challenge.context?.toLowerCase().includes(lowerCaseSearchQuery) || false) ||
+          (challenge.difficulty?.toLowerCase().includes(lowerCaseSearchQuery) || false)
       );
     }
     return currentFilteredChallenges;
   };
 
   const filteredChallenges = getFilteredAndSearchedChallenges();
-  // --- End Filter Logic ---
 
-  // --- Add Challenge Modal Logic ---
   const handleAddChallengeClick = () => {
     setShowAddChallengeModal(true);
   };
@@ -185,7 +127,7 @@ const Challenges = () => {
     }));
   };
 
-  const handleCreateNewChallenge = (e) => {
+  const handleCreateNewChallenge = async (e) => {
     e.preventDefault();
 
     if (!newChallengeData.title || !newChallengeData.description) {
@@ -193,27 +135,25 @@ const Challenges = () => {
       return;
     }
 
-    const newChallengeId = `mock-${Date.now()}`;
     const challengeToAdd = {
-      _id: newChallengeId,
       title: newChallengeData.title,
       description: newChallengeData.description,
       difficulty: newChallengeData.difficulty,
-      context: newChallengeData.context,
-      estimatedTime: newChallengeData.estimatedTime,
+      duration: newChallengeData.estimatedTime,
+      relation: newChallengeData.context,
       likes: 0,
       completions: 0,
     };
 
-    const updatedChallenges = [...challenges, challengeToAdd];
-    setChallenges(updatedChallenges);
-    addStateToHistory(updatedChallenges);
-
-    toast.success(`Challenge "${newChallengeData.title}" created successfully!`);
-    handleCloseAddChallengeModal();
+    try {
+      await createChallenge(challengeToAdd).unwrap();
+      toast.success(`Challenge "${newChallengeData.title}" created successfully!`);
+      handleCloseAddChallengeModal();
+    } catch (error) {
+      toast.error("Failed to create challenge. Please try again.");
+      console.error("Create challenge error:", error);
+    }
   };
-
-
 
   if (isLoading) {
     return (
@@ -238,7 +178,6 @@ const Challenges = () => {
           Challenges
         </span>
         <div className="flex items-center gap-2 relative">
-
           <button
             onClick={handleUndo}
             disabled={historyIndex === 0}
@@ -252,9 +191,9 @@ const Challenges = () => {
 
           <button
             onClick={handleRedo}
-            disabled={historyIndex === challengeHistory.length - 1}
+            disabled={historyIndex === challengeHistory?.length - 1}
             className={`w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white transition-colors ${
-              historyIndex === challengeHistory.length - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"
+              historyIndex === challengeHistory?.length - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"
             }`}
             title="Redo Last Action"
           >
@@ -270,7 +209,6 @@ const Challenges = () => {
           >
             <HiOutlineAdjustmentsHorizontal />
           </button>
-
 
           {showFilterDropdown && (
             <div className="absolute top-full right-0 mt-2 w-48 bg-[#07032B] border border-[#3A3A5A] rounded-lg shadow-lg overflow-hidden z-50">
@@ -313,27 +251,29 @@ const Challenges = () => {
       </div>
 
       <div className="flex-1">
-        <h1 className='text-gray-300 font-bold mb-8 text-xl text-center '>All Challenges {`(${filteredChallenges.length || "0"})`}</h1>
+        <h1 className="text-gray-300 font-bold mb-8 text-xl text-center">
+          All Challenges {`(${filteredChallenges?.length || "0"})`}
+        </h1>
         <div className="grid lg:grid-cols-3 justify-center text-start md:grid-cols-2 gap-6">
-          {filteredChallenges.map((challenge) => (
-            <div key={challenge._id || challenge.id} className="flex justify-center">
+          {filteredChallenges?.map((challenge) => (
+            <div key={challenge.id} className="flex justify-center">
               <div className="sm:min-w-[20rem] max-w-[20rem] w-full bg-[#070045] min-h-[19rem] rounded-2xl border border-[#3A3A5A] p-6 flex flex-col justify-between">
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <span
                       className={`text-md font-bold px-2 py-1 rounded-md ${
-                        challenge.difficulty === 'Easy'
-                          ? 'bg-[rgba(63,101,58,0.69)] text-[#01FE01]'
-                          : challenge.difficulty === 'Medium'
-                          ? 'bg-[rgba(255,208,51,0.57)] text-[#FFA500]'
-                          : challenge.difficulty === 'Hard'
-                          ? 'bg-[#F59898] text-[rgba(255,0,0,0.89)]'
-                          : 'bg-gray-200 text-gray-800'
+                        challenge.difficulty === "Easy"
+                          ? "bg-[rgba(63,101,58,0.69)] text-[#01FE01]"
+                          : challenge.difficulty === "Medium"
+                          ? "bg-[rgba(255,208,51,0.57)] text-[#FFA500]"
+                          : challenge.difficulty === "Hard"
+                          ? "bg-[#F59898] text-[rgba(255,0,0,0.89)]"
+                          : "bg-gray-200 text-gray-800"
                       }`}
                     >
                       {challenge.difficulty}
                     </span>
-                    <span className='text-white'>{challenge.context}</span>
+                    <span className="text-white">{challenge.relation}</span>
                   </div>
 
                   <div className="mb-4">
@@ -348,7 +288,8 @@ const Challenges = () => {
 
                 <div>
                   <div className="flex items-center text-white my-4 justify-start">
-                    <FaStopwatch/> <p className='ml-3'>Est. Time: {challenge.estimatedTime || "30 Minutes"}</p>
+                    <FaStopwatch />
+                    <p className="ml-3">Est. Time: {challenge.estimatedTime || "30 Minutes"}</p>
                   </div>
                   <div className="flex items-center justify-between mt-6">
                     <div className="flex gap-4">
@@ -365,7 +306,7 @@ const Challenges = () => {
               </div>
             </div>
           ))}
-          {filteredChallenges.length === 0 && (
+          {filteredChallenges?.length === 0 && (
             <div className="col-span-full text-center text-gray-400 text-xl mt-10">
               No challenges found matching your filters and search query.
             </div>
@@ -479,7 +420,6 @@ const Challenges = () => {
                 />
               </div>
 
-              {/* Live Challenge Card Preview */}
               <div className="mt-6 pt-4 border-t border-[#3A3A5A] text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-500/10 rounded-full border border-purple-500/20 mb-3">
                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
@@ -493,18 +433,18 @@ const Challenges = () => {
                       <div className="flex justify-between items-center mb-3">
                         <span
                           className={`font-bold text-xs px-2 py-0.5 rounded-md ${
-                            newChallengeData.difficulty === 'Easy'
-                              ? 'bg-[rgba(63,101,58,0.69)] text-[#01FE01]'
-                              : newChallengeData.difficulty === 'Medium'
-                              ? 'bg-[rgba(255,208,51,0.57)] text-[#FFA500]'
-                              : newChallengeData.difficulty === 'Hard'
-                              ? 'bg-[#F59898] text-[rgba(255,0,0,0.89)]'
-                              : 'bg-gray-200 text-gray-800'
+                            newChallengeData.difficulty === "Easy"
+                              ? "bg-[rgba(63,101,58,0.69)] text-[#01FE01]"
+                              : newChallengeData.difficulty === "Medium"
+                              ? "bg-[rgba(255,208,51,0.57)] text-[#FFA500]"
+                              : newChallengeData.difficulty === "Hard"
+                              ? "bg-[#F59898] text-[rgba(255,0,0,0.89)]"
+                              : "bg-gray-200 text-gray-800"
                           }`}
                         >
                           {newChallengeData.difficulty}
                         </span>
-                        <span className='text-white text-xs'>{newChallengeData.context || 'Context'}</span>
+                        <span className="text-white text-xs">{newChallengeData.context || "Context"}</span>
                       </div>
                       <div className="mb-3">
                         <h1 className="text-xl font-bold text-neutral-300">
@@ -517,7 +457,8 @@ const Challenges = () => {
                     </div>
                     <div>
                       <div className="flex items-center text-white my-2 text-xs justify-start">
-                        <FaStopwatch size={12}/> <p className='ml-2'>Est. Time: {newChallengeData.estimatedTime || "N/A"}</p>
+                        <FaStopwatch size={12} />
+                        <p className="ml-2">Est. Time: {newChallengeData.estimatedTime || "N/A"}</p>
                       </div>
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex gap-2">
@@ -558,6 +499,6 @@ const Challenges = () => {
       )}
     </div>
   );
-}
+};
 
 export default Challenges;

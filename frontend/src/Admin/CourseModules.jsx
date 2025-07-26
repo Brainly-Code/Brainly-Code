@@ -25,8 +25,12 @@ const Modules = () => {
   const { data: modules } = useGetModulesForCourseQuery(id);
   const { data: videos } = useGetVideosForCourseQuery(id);
 
-  const [createModule, { isLoading: isCreatingModule, isError: isCreateError }] = useCreateModuleMutation();
-  const [createVideo, { isLoading: isCreatingVideo, isError: isCreateVideoError }] = useCreateVideoMutation();
+  const [createModule, 
+    // { isLoading: isCreatingModule, isError: isCreateError }
+  ] = useCreateModuleMutation();
+  const [createVideo, 
+    // { isLoading: isCreatingVideo, isError: isCreateVideoError }
+  ] = useCreateVideoMutation();
 
   const combinedItems = [
     ...(videos?.map(video => ({ ...video, type: 'video' })) || []),
