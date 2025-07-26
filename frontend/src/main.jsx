@@ -35,7 +35,6 @@ import Lesson2 from './Admin/AdminLesson.jsx'
 // import AllCourses from './Admin/AllCourses'
 import Challenge from './Components/Challenge'
 import CreateCourse from './Admin/CreateCourse.jsx'
-import AdminCourses from '../src/Admin/AdminCourses.jsx'
 import CourseModules from '../src/Admin/CourseModules.jsx'
 
 // import { GoogleOAuthProvider} from '@react-oauth/google'
@@ -72,7 +71,6 @@ const router = createBrowserRouter (
         <Route path='users' element={<Users />} />
         <Route path='profile' element={<UpdateUser />} />
         <Route path='create' element={<CreateCourse />} /> 
-        <Route path='myCourses' element={<AdminCourses />} />
         <Route path='courseModules/:id' element={<CourseModules />} />
         <Route path='course/module/:moduleId/video/:videoId' element={<VideoPlayer2 />} />
         <Route path=':moduleId/:lessonVideoId' element={<LessonVideoPlayer2 />} />

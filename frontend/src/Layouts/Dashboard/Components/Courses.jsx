@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react"; // Import useContext
 import Loader from "../../../Components/ui/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CiUndo, CiRedo } from "react-icons/ci";
 import { useCreateCourseMutation } from '../../../redux/api/AdminSlice';
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
-import { useGetCoursesQuery } from "../../../redux/api/coursesSlice";
+import { useDeleteCourseMutation, useGetCoursesQuery } from "../../../redux/api/coursesSlice";
 import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
 const getIconForCourse = (title) => {
@@ -122,7 +122,21 @@ const Courses = () => {
 
   const { data: coursesData = [], isLoading, isError, refetch } = useGetCoursesQuery();
   const [createCourse, { isLoading: isCreating }] = useCreateCourseMutation();
+  const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
+  const [openDropdownCourseId, setOpenDropdownCourseId] = useState(null);
+  const navigate = useNavigate();
+  
+  const handleDelete = async (id) => {
 
+  try {
+    await deleteCourse(id).unwrap();
+    await refetch(); 
+ 
+  } catch (err) {
+    console.error("Delete failed:", err);
+
+  }
+};
   // Use a local state for courses if you're mixing mock data and API data,
   // or if you want to enable undo/redo on the displayed list.
   // For now, let's assume `coursesData` from RTK Query is the source of truth,
@@ -235,6 +249,13 @@ const Courses = () => {
 
   const filteredCourses = getFilteredAndSearchedCourses();
 
+const toggleDropdown = (courseId) => {
+  if (openDropdownCourseId === courseId) {
+      setOpenDropdownCourseId(null); // close if same one is clicked again
+    } else {
+      setOpenDropdownCourseId(courseId);
+    }
+  };
 
   const handleAddCourseClick = () => {
     setShowAddCourseModal(true);
@@ -406,6 +427,33 @@ const Courses = () => {
           {filteredCourses.map((course) => (
             <div key={course._id || course.id} className="flex justify-center">
               <div className="sm:min-w-[20rem] max-w-[20rem] w-full bg-[#070045] min-h-[19rem] rounded-2xl border border-[#3A3A5A] p-6 flex flex-col justify-between">
+                  <div className="relative group ">
+                  <div className="flex justify-end">
+                    <button
+                      className="text-white hover:text-gray-400"
+                      onClick={() => toggleDropdown(course.id)}
+                    >
+                      ⋮
+                    </button>
+                  </div>
+                    <div className={openDropdownCourseId === course.id 
+                      ? "block absolute right-0 mt-2 w-28 bg-[#070045] border border-[#3A3A5A] rounded shadow-lg z-50"
+                      : "hidden"}>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#3A3A5A]"
+                        onClick={() => navigate(`/admin/courseModules/${course.id}`)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-[#3A3A5A]"
+                        onClick={() => handleDelete(course.id)}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? "Deleting..." : "Remove"}
+                      </button>
+                    </div>
+                  </div>
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     {getIconForCourse(course.title)}
@@ -422,6 +470,7 @@ const Courses = () => {
                     >
                       {course.level}
                     </span>
+   
                   </div>
 
                   <div className="mb-4">
@@ -453,6 +502,7 @@ const Courses = () => {
                       >
                         View Course
                       </button>
+                      
                     </Link>
                   </div>
                 </div>

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { useCreateMiniModuleMutation } from '../redux/api/subModuleSlice';
 
 const ModuleItem = ({ moduleId, title, submodules }) => {
-    console.log(moduleId);
+    console.log(submodules);
   const [open, setOpen] = useState(false);
   const [showAddSubModuleForm, setShowAddSubModuleForm] = useState(false);
   const [newSubmoduleTitle, setNewSubmoduleTitle] = useState('');
@@ -21,7 +21,7 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
     }
 
     try {
-      await createMiniModule({ title: newSubmoduleTitle, courseModuleId: moduleId }).unwrap();
+      await createMiniModule({ title: newSubmoduleTitle, courseModuleId: Number(moduleId) }).unwrap();
       toast.success('Sub-module added successfully!');
       setNewSubmoduleTitle('');
       setShowAddSubModuleForm(false);

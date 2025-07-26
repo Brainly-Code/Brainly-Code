@@ -25,6 +25,7 @@ const Modules = () => {
   const { data: modules } = useGetModulesForCourseQuery(id);
   const { data: videos } = useGetVideosForCourseQuery(id);
 
+
   const [createModule, 
     // { isLoading: isCreatingModule, isError: isCreateError }
   ] = useCreateModuleMutation();
@@ -44,6 +45,7 @@ const Modules = () => {
       try {
         await createModule({ title, courseId: Number(id) }).unwrap();
         setTitle('');
+
         toast.success('Module created successfully!');
       } catch (err) {
         console.error(err);
