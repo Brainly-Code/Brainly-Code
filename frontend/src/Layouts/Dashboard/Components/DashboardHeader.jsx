@@ -21,7 +21,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
 
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
 
-
   const imagePath =
     image?.path && image.path.startsWith("http")
       ? image.path
@@ -82,7 +81,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
                 onClick={logoutHandler}
                 className="justify-center items-center"
               >
-                <Link className="sm:block hidden" to="">
+                <Link className="sm:block hidden" to="/login">
                   Sign out{" "}
                 </Link>
                 <Link className="sm:hidden block" to="">

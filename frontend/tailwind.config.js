@@ -12,11 +12,9 @@ export default {
       },
 
       backgroundImage: {
-        'bg1': "url('/src/assets/bg1.jpg')", // alias for easier use
+        'bg1': "url('/src/assets/bg1.jpg')",
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/line-clamp'),
-  ],
+  plugins: [],
 };

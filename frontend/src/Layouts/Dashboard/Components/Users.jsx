@@ -89,7 +89,7 @@ const Users = () => {
       const newIndex = historyIndex + 1;
       setHistoryIndex(newIndex);
       setUsers(userHistory[newIndex]);
-      toast.info("Redo successful!");
+      toast.info("Redo successfull!");
     } else {
       toast.warn("Nothing to redo.");
     }

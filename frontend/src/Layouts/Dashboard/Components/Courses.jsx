@@ -178,7 +178,7 @@ const Courses = () => {
     level: "BEGINNER",
     description: "",
     category: "",     // added
-    duration: 0,      // added
+    duration: "1 hour",      // added
   });
 
   const [previewIcon, setPreviewIcon] = useState(null);
@@ -269,7 +269,7 @@ const toggleDropdown = (courseId) => {
       level: "BEGINNER",
       description: "",
       category: "",
-      duration: 0,
+      duration: "",
     });
   };
 

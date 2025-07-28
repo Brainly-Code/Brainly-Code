@@ -6,6 +6,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import profile from '../assets/profile.png'
 import { useGetLessonByIdQuery } from '../redux/api/LessonSlice';
+import { Loader } from 'lucide-react';
+import { FloatingNav } from '../Components/ui/FloatingNav';
+import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
+import CodeEditor from '../Components/CodeEditor';
+import Progress from '../Components/ui/Progress';
+import Footer from '../Components/ui/Footer';
 
 const Lesson2 = () => {
   const { id } = useParams();
