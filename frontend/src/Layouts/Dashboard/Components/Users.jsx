@@ -8,28 +8,25 @@ import { userRoleContext } from "../../../Contexts/UserRoleContext";
 import { toast } from "react-toastify";
 import { X } from 'lucide-react';
 import { useGetUsersQuery } from "../../../redux/api/AdminSlice";
-import { useGetProfileImageQuery } from "../../../redux/api/userSlice";
-import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
 import profileFallback from "../../../assets/profile.png";
 import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
 const Users = () => {
+
   const role = useContext(userRoleContext);
   const { searchQuery } = useContext(SearchContext); // Access the search query from the context
 
   const { data: usersData, isLoading, isError } = useGetUsersQuery();
 
-  const { userInfo } = useSelector(state => state.auth);
-  const token = jwtDecode(userInfo.access_token);
+  let imagePath;
+  usersData?.map((userData) => {
+    imagePath = userData?.image?.path && userData?.image?.path.startsWith("http")
+      ? userData?.image[0]?.path
+      : profileFallback
+      console.log(userData?.image);
+  })
 
-  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
-
-
-  const imagePath =
-    image?.path && image.path.startsWith("http")
-      ? image.path
-      : profileFallback;
+ 
 
   const [users, setUsers] = useState(usersData || []);
   const [userHistory, setUserHistory] = useState([usersData || []]);
@@ -283,14 +280,6 @@ const Users = () => {
     return (
       <div className="w-full h-full text-center text-white font-bold text-3xl flex justify-center items-center">
         Error loading Users.
-      </div>
-    );
-  }
-
-  if (loadingImage) {
-    return (
-      <div className="w-full h-full flex justify-center items-center">
-        <Loader />
       </div>
     );
   }
@@ -738,6 +727,6 @@ const Users = () => {
       )}
     </div>
   );
-};
+}
 
 export default Users;

@@ -36,12 +36,19 @@ import Lesson2 from './Admin/AdminLesson.jsx'
 import Challenge from './Components/Challenge'
 import CreateCourse from './Admin/CreateCourse.jsx'
 import CourseModules from '../src/Admin/CourseModules.jsx'
+import RouteError from './RouteError.jsx'
 
 // import { GoogleOAuthProvider} from '@react-oauth/google'
 
 const router = createBrowserRouter (
   createRoutesFromElements(
+
     <Route path="/" element={<App />}>
+
+      <Route path='/error' element={<RouteError />} >
+
+      </Route>
+
       <Route path='' element={<NewUser />} >
         <Route path='' element = {<Hero />} />
         <Route path="login" element={<Login />} />

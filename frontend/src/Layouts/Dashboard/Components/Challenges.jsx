@@ -465,13 +465,15 @@ const Challenges = () => {
                           <span className="text-white text-xs">0 likes</span>
                           <span className="text-white text-xs">0 completions</span>
                         </div>
-                        <button
-                          type="button"
-                          className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-4 py-1.5 text-white font-bold text-xs opacity-50 cursor-not-allowed shadow-lg"
-                          disabled
-                        >
-                          View
-                        </button>
+                        <Link to={`/challenge/module/1`}>
+                          <button
+                            type="button"
+                            className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-4 py-1.5 text-white font-bold text-xs opacity-50 cursor-not-allowed shadow-lg"
+                            disabled
+                          >
+                            View
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
