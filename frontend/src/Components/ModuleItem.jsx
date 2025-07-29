@@ -6,8 +6,6 @@ import downArrow from '../assets/downArrow.png';
 const ModuleItem = ({ moduleId,title, submodules }) => {
   const [open, setOpen] = useState(false);
 
-  console.log(submodules)
-
   return (
     <div className='bg-[#6B5EDD] rounded-xl p-3 sm:p-4 md:p-6'>
       <button

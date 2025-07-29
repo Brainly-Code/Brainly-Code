@@ -11,7 +11,7 @@ import { useCreateModuleMutation, useGetModulesForCourseQuery } from '../redux/a
 import { useGetCourseByIdQuery } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
 import Loader from './../Components/ui/Loader';
-import VideoItem from './../Components/VideoItem';
+import VideoItem from './AdminVideoItem';
 import { useCreateVideoMutation, useGetVideosForCourseQuery } from '../redux/api/videoApi';
 
 const Modules = () => {
@@ -25,8 +25,13 @@ const Modules = () => {
   const { data: modules } = useGetModulesForCourseQuery(id);
   const { data: videos } = useGetVideosForCourseQuery(id);
 
-  const [createModule, { isLoading: isCreatingModule, isError: isCreateError }] = useCreateModuleMutation();
-  const [createVideo, { isLoading: isCreatingVideo, isError: isCreateVideoError }] = useCreateVideoMutation();
+
+  const [createModule, 
+    // { isLoading: isCreatingModule, isError: isCreateError }
+  ] = useCreateModuleMutation();
+  const [createVideo, 
+    // { isLoading: isCreatingVideo, isError: isCreateVideoError }
+  ] = useCreateVideoMutation();
 
   const combinedItems = [
     ...(videos?.map(video => ({ ...video, type: 'video' })) || []),
@@ -40,6 +45,7 @@ const Modules = () => {
       try {
         await createModule({ title, courseId: Number(id) }).unwrap();
         setTitle('');
+
         toast.success('Module created successfully!');
       } catch (err) {
         console.error(err);
@@ -47,10 +53,9 @@ const Modules = () => {
       }
     } else if (uploadType === 'video') {
       try {
-        console.log(typeof id,id)
         const formData = new FormData();
         formData.append('title', videoTitle);
-        formData.append("courseId", String(Number(id))); 
+        formData.append("courseId", id); 
         formData.append('file', videoFile);
 
         await createVideo(formData).unwrap(); // Connect this to your RTK mutation

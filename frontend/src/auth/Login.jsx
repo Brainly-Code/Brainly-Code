@@ -31,7 +31,6 @@ const Login = () => {
     try {
       const decoded = jwtDecode(userInfo.access_token);
       role = decoded.role;
-      console.log(role)
     } catch (error) {
       console.error("Invalid token", error);
     }
@@ -61,7 +60,6 @@ const Login = () => {
 
     try {
       const res = await login({ email, password }).unwrap();
-      console.log(res);
       dispatch(setCredentials({ ...res }));
       navigate(redirect);
     } catch (error) {

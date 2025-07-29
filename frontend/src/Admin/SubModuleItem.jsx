@@ -8,6 +8,7 @@ import { useCreateLessonVideoMutation } from '../redux/api/lessonVideoApi';
 import { toast } from 'react-toastify'; 
 
 const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
+
   const [open, setOpen] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -74,18 +75,25 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
     videoData.append('miniModuleId', miniModuleId);
     videoData.append('file', videoFile);
 
-    try {
-      await createLessonVideo(videoData).unwrap();
-      toast.success('Lesson video uploaded successfully');
-      setShowAddForm(false);
-      setVideoTitle('');
-      setVideoFile(null);
-    } catch (error) {
-      console.error('Failed to upload lesson video:', error);
-      toast.error(
-        error?.data?.message || 'Failed to upload video. Please try again.'
-      );
-    }
+   try {
+  await createLessonVideo(videoData).unwrap();
+  toast.success('Lesson video uploaded successfully');
+  setShowAddForm(false);
+  setVideoTitle('');
+  setVideoFile(null);
+} catch (error) {
+  console.error('Failed to upload lesson video:', error);
+  // Try this:
+  if (error.data) {
+    console.error('Validation errors:', error.data);
+    toast.error(Object.values(error.data).flat().join(', '));
+  } else {
+    toast.error(
+      error?.data?.message || 'Failed to upload video. Please try again.'
+    );
+  }
+}
+
   }
 };
 
@@ -109,8 +117,8 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
             {combinedItems.map((item, i) => {
               const path =
                 item.type === 'lesson'
-                  ? `/user/lesson/${item.id}`
-                  : `/user/${moduleId}/${item.id}`;
+                  ? `/admin/lesson/${item.id}`
+                  : `/admin/${moduleId}/${item.id}`;
 
               return (
                 <Link
@@ -127,8 +135,8 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
             <div className="flex justify-end w-full">
               <Link to={
                 combinedItems[0].type === 'lesson'
-                  ? `/user/lesson/${combinedItems[0]?.id}`
-                  : `/user/${moduleId}/${combinedItems[0]?.id}`
+                  ? `/admin/lesson/${combinedItems[0]?.id}`
+                  : `/admin/${moduleId}/${combinedItems[0]?.id}`
               }>
               </Link>
             </div>

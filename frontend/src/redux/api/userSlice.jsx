@@ -26,7 +26,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
 
     getCurrentUser: builder.query({
       query: () => ({
-        url: `${USER_URL}`,
+        url: `${USER_URL}/profile`,
         method: "GET",
       })
     }),
@@ -73,6 +73,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+
+    getProfileImages: builder.query({
+      query: () => ({
+        url: `${PROFILE_URL}`,
+        method: "GET",
+      })
+    })
   })
 });
 
@@ -85,4 +92,5 @@ export const {
   useUpdateUserMutation,
   useGetProfileImageQuery,
   useUpdateProfileImageMutation,
+  useGetProfileImagesQuery,
 } = userApiSlice;

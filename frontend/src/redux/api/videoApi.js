@@ -20,13 +20,8 @@ export const videoApi = apiSlice.injectEndpoints({
     }),
 
     createVideo: builder.mutation({
-      query: ({ courseId, title, number, file }) => {
-        const formData = new FormData();
-        formData.append('courseId', courseId);
-        formData.append('title', title);
-        formData.append('number', number);
-        formData.append('file', file);
-
+      query: (formData) => {
+      
         return {
           url: '/videos',
           method: 'POST',

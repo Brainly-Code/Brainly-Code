@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react"; // Import useContext
 import Loader from "../../../Components/ui/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CiUndo, CiRedo } from "react-icons/ci";
 import { useCreateCourseMutation } from '../../../redux/api/AdminSlice';
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
@@ -16,7 +16,7 @@ import {
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
-import { useGetCoursesQuery } from "../../../redux/api/coursesSlice";
+import { useDeleteCourseMutation, useGetCoursesQuery } from "../../../redux/api/coursesSlice";
 import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
 const getIconForCourse = (title) => {
@@ -122,7 +122,21 @@ const Courses = () => {
 
   const { data: coursesData = [], isLoading, isError, refetch } = useGetCoursesQuery();
   const [createCourse, { isLoading: isCreating }] = useCreateCourseMutation();
+  const [deleteCourse, { isLoading: isDeleting }] = useDeleteCourseMutation();
+  const [openDropdownCourseId, setOpenDropdownCourseId] = useState(null);
+  const navigate = useNavigate();
+  
+  const handleDelete = async (id) => {
 
+  try {
+    await deleteCourse(id).unwrap();
+    await refetch(); 
+ 
+  } catch (err) {
+    console.error("Delete failed:", err);
+
+  }
+};
   // Use a local state for courses if you're mixing mock data and API data,
   // or if you want to enable undo/redo on the displayed list.
   // For now, let's assume `coursesData` from RTK Query is the source of truth,
@@ -164,7 +178,7 @@ const Courses = () => {
     level: "BEGINNER",
     description: "",
     category: "",     // added
-    duration: 0,      // added
+    duration: "1 hour",      // added
   });
 
   const [previewIcon, setPreviewIcon] = useState(null);
@@ -177,11 +191,11 @@ const Courses = () => {
 
 
 
-  const addStateToHistory = (newCoursesState) => {
-    const newHistory = courseHistory.slice(0, historyIndex + 1);
-    setCourseHistory([...newHistory, newCoursesState]);
-    setHistoryIndex(newHistory.length);
-  };
+  // const addStateToHistory = (newCoursesState) => {
+  //   const newHistory = courseHistory.slice(0, historyIndex + 1);
+  //   setCourseHistory([...newHistory, newCoursesState]);
+  //   setHistoryIndex(newHistory.length);
+  // };
 
   // console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
 
@@ -235,6 +249,13 @@ const Courses = () => {
 
   const filteredCourses = getFilteredAndSearchedCourses();
 
+const toggleDropdown = (courseId) => {
+  if (openDropdownCourseId === courseId) {
+      setOpenDropdownCourseId(null); // close if same one is clicked again
+    } else {
+      setOpenDropdownCourseId(courseId);
+    }
+  };
 
   const handleAddCourseClick = () => {
     setShowAddCourseModal(true);
@@ -248,7 +269,7 @@ const Courses = () => {
       level: "BEGINNER",
       description: "",
       category: "",
-      duration: 0,
+      duration: "",
     });
   };
 
@@ -406,6 +427,33 @@ const Courses = () => {
           {filteredCourses.map((course) => (
             <div key={course._id || course.id} className="flex justify-center">
               <div className="sm:min-w-[20rem] max-w-[20rem] w-full bg-[#070045] min-h-[19rem] rounded-2xl border border-[#3A3A5A] p-6 flex flex-col justify-between">
+                  <div className="relative group ">
+                  <div className="flex justify-end">
+                    <button
+                      className="text-white hover:text-gray-400"
+                      onClick={() => toggleDropdown(course.id)}
+                    >
+                      ⋮
+                    </button>
+                  </div>
+                    <div className={openDropdownCourseId === course.id 
+                      ? "block absolute right-0 mt-2 w-28 bg-[#070045] border border-[#3A3A5A] rounded shadow-lg z-50"
+                      : "hidden"}>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#3A3A5A]"
+                        onClick={() => navigate(`/admin/courseModules/${course.id}`)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-[#3A3A5A]"
+                        onClick={() => handleDelete(course.id)}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? "Deleting..." : "Remove"}
+                      </button>
+                    </div>
+                  </div>
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     {getIconForCourse(course.title)}
@@ -422,6 +470,7 @@ const Courses = () => {
                     >
                       {course.level}
                     </span>
+   
                   </div>
 
                   <div className="mb-4">
@@ -447,12 +496,13 @@ const Courses = () => {
                     </span>
                   </div>
                   <div className="flex justify-center mt-4">
-                    <Link to={`/user/module/${course._id}`}>
+                    <Link to={`/admin/courseModules/${course.id}`}>
                       <button
                         className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 py-3 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300"
                       >
                         View Course
                       </button>
+                      
                     </Link>
                   </div>
                 </div>

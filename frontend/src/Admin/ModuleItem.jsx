@@ -9,6 +9,7 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
   const [open, setOpen] = useState(false);
   const [showAddSubModuleForm, setShowAddSubModuleForm] = useState(false);
   const [newSubmoduleTitle, setNewSubmoduleTitle] = useState('');
+  console.log(moduleId);
 
   // RTK Query mutation hook
   const [createMiniModule, { isLoading }] = useCreateMiniModuleMutation();
@@ -20,7 +21,7 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
     }
 
     try {
-      await createMiniModule({ title: newSubmoduleTitle, courseModuleId: moduleId }).unwrap();
+      await createMiniModule({ title: newSubmoduleTitle, courseModuleId: Number(moduleId) }).unwrap();
       toast.success('Sub-module added successfully!');
       setNewSubmoduleTitle('');
       setShowAddSubModuleForm(false);
@@ -71,7 +72,7 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
 
       {showAddSubModuleForm && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
+          <div className="bg-[#4a38f1] text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
             <h3 className="text-2xl font-semibold mb-4">Add sub-module</h3>
             <div className="mb-4">
               <label className="block font-medium mb-1">Title:</label>
@@ -79,7 +80,7 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
                 type="text"
                 value={newSubmoduleTitle}
                 onChange={(e) => setNewSubmoduleTitle(e.target.value)}
-                className="w-full p-2 border rounded"
+                className="w-full opacity-90 p-2 border rounded"
                 disabled={isLoading}
               />
             </div>

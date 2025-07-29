@@ -26,18 +26,29 @@ import DashboardLayout from './Layouts/Dashboard/DashboardLayout'
 import Modules from './Components/Modules'
 import Lesson from './Components/Lesson'
 import VideoPlayer from './Components/VideoPlayer'
-import LessonVideoPlayer from './Components/LessonVideoPlayer'
+import VideoPlayer2 from './Admin/AdminVideoPlayer.jsx'
+import LessonVideoPlayer from './Components/LessonVideoPlayer.jsx'
+import LessonVideoPlayer2 from './Admin/AdminLessonVideoPlayer.jsx'
+import Lesson2 from './Admin/AdminLesson.jsx'
+
 // import AllChallenges from './Admin/AllChallenges'
 // import AllCourses from './Admin/AllCourses'
 import Challenge from './Components/Challenge'
 import CreateCourse from './Admin/CreateCourse.jsx'
-import AdminCourses from '../src/Admin/AdminCourses.jsx'
 import CourseModules from '../src/Admin/CourseModules.jsx'
+import RouteError from './RouteError.jsx'
+
 // import { GoogleOAuthProvider} from '@react-oauth/google'
 
 const router = createBrowserRouter (
   createRoutesFromElements(
+
     <Route path="/" element={<App />}>
+
+      <Route path='/error' element={<RouteError />} >
+
+      </Route>
+
       <Route path='' element={<NewUser />} >
         <Route path='' element = {<Hero />} />
         <Route path="login" element={<Login />} />
@@ -67,8 +78,10 @@ const router = createBrowserRouter (
         <Route path='users' element={<Users />} />
         <Route path='profile' element={<UpdateUser />} />
         <Route path='create' element={<CreateCourse />} /> 
-        <Route path='myCourses' element={<AdminCourses />} />
         <Route path='courseModules/:id' element={<CourseModules />} />
+        <Route path='course/module/:moduleId/video/:videoId' element={<VideoPlayer2 />} />
+        <Route path=':moduleId/:lessonVideoId' element={<LessonVideoPlayer2 />} />
+        <Route path='lesson/:id' element={< Lesson2 />}/>
         {/* <Route path='challenges' element={<AllChallenges />} /> 
 
         <Route path='courses' element={<AllCourses />} /> 

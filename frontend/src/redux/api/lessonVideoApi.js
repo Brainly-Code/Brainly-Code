@@ -31,15 +31,11 @@ export const lessonVideoApi = apiSlice.injectEndpoints({
     }),
 
     createLessonVideo: builder.mutation({
-      query: ({ file, ...data }) => {
-        const formData = new FormData();
-        formData.append('file', file);
-        Object.entries(data).forEach(([key, value]) => formData.append(key, value));
-
+      query: (videoData) => {
         return {
           url: '/lesson-videos',
           method: 'POST',
-          body: formData,
+          body: videoData,
         };
       },
       invalidatesTags: [{ type: 'LessonVideo', id: 'LIST' }],

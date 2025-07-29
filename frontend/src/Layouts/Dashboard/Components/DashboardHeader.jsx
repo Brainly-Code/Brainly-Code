@@ -21,7 +21,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
 
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
 
-
   const imagePath =
     image?.path && image.path.startsWith("http")
       ? image.path
@@ -54,8 +53,8 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
               <input
                 type="text"
                 placeholder="Search anything here..."
-                className="w-full pl-4 pr-10 py-2 text-sm rounded-md border bg-transparent border-gray-200 shadow-sm focus:outline-none"
-                value={searchQuery} 
+                className="w-full pl-4 pr-10 py-2 focus:bg-opacity-20 hover:bg-[#4444e4] hover:bg-opacity-10 focus:bg-[#1e1ec9] focus:border-blue-500 text-sm rounded-md border bg-transparent border-gray-200 shadow-sm focus:outline-none"
+                value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} 
               />
               <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-200" />
@@ -82,7 +81,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
                 onClick={logoutHandler}
                 className="justify-center items-center"
               >
-                <Link className="sm:block hidden" to="">
+                <Link className="sm:block hidden" to="/login">
                   Sign out{" "}
                 </Link>
                 <Link className="sm:hidden block" to="">

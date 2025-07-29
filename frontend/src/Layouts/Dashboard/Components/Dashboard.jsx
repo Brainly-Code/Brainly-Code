@@ -10,8 +10,6 @@ const Dashboard = () => {
       <DashboardStats/>
       <GraphSection/>
       <Rates/>
-      <Footer/>
-
     </div>
   )
 }

@@ -100,7 +100,7 @@ const Modules = () => {
                   key={`module-${item.id}`}
                   title={item.title}
                   submodules={item.miniModules}
-                  moduleId={item.id}
+                  moduleId={id}
                 />
               );
             }
