@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "vite": "vite --host 0.0.0.0",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -15,6 +16,7 @@
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
     "clsx": "^2.1.1",
+    "diff": "^8.0.2",
     "framer-motion": "^12.15.0",
     "jwt-decode": "^4.0.0",
     "keen-slider": "^6.8.6",

@@ -7,6 +7,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    host: true,
+    port: 5173,
+    allowedHosts: [
+      'a92e55e941da.ngrok-free.app',
+      '8f12417a0f58.ngrok-free.app'
+    ],
+  },
   plugins: [react()],
   resolve: {
     alias: {

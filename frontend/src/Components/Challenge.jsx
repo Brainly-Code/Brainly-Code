@@ -44,7 +44,7 @@ const Challenge = () => {
           </div>
         </div>
 
-        <CodeEditor onClick={handleTimeUpdate} />
+        <CodeEditor onClick={handleTimeUpdate}/>
 
         <div>
 

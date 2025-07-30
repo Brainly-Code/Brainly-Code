@@ -7,7 +7,7 @@ import Loader from "../../../Components/ui/Loader";
 import { userRoleContext } from "../../../Contexts/UserRoleContext";
 import { toast } from "react-toastify";
 import { X } from 'lucide-react';
-import { useGetUsersQuery } from "../../../redux/api/AdminSlice";
+import { useDeleteUserMutation, useGetUsersQuery } from "../../../redux/api/AdminSlice";
 import profileFallback from "../../../assets/profile.png";
 import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
@@ -23,7 +23,6 @@ const Users = () => {
     imagePath = userData?.image?.path && userData?.image?.path.startsWith("http")
       ? userData?.image[0]?.path
       : profileFallback
-      console.log(userData?.image);
   })
 
  
@@ -226,8 +225,11 @@ const Users = () => {
     setShowActionsDropdownForUser(null);
   };
 
-  const handleDeleteUserClick = (user) => {
-    setUserToDelete(user);
+  const [deleteUser] = useDeleteUserMutation();
+
+  const handleDeleteUserClick = async (user) => {
+    const res = await deleteUser(user.id).unwrap();
+    console.log(res);
     setShowDeleteConfirmModal(true);
     setShowActionsDropdownForUser(null);
   };
