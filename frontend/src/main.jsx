@@ -17,7 +17,6 @@ import NewUser from './User'
 
 import PlayGround from './Components/PlayGround'
 import Dashboard from './Layouts/Dashboard/Components/Dashboard'
-import Challenges from './Layouts/Dashboard/Components/Challenges.jsx'
 import Courses from './Layouts/Dashboard/Components/Courses.jsx'
 import Users from './Layouts/Dashboard/Components/Users.jsx'
 // import AdminRoutes from './AdminRoutes'
@@ -37,8 +36,8 @@ import Challenge from './Components/Challenge'
 import CreateCourse from './Admin/CreateCourse.jsx'
 import CourseModules from '../src/Admin/CourseModules.jsx'
 import RouteError from './RouteError.jsx'
-
-// import { GoogleOAuthProvider} from '@react-oauth/google'
+import Challenges from './Components/Challenges.jsx'
+import AdminChallenges from './Layouts/Dashboard/Components/Challenges.jsx'
 
 const router = createBrowserRouter (
   createRoutesFromElements(
@@ -73,7 +72,7 @@ const router = createBrowserRouter (
       <Route path='admin' element={<DashboardLayout />}>
         {/* <Route path='users' element={<AllUPasers />} /> */}
         <Route path='' element={<Dashboard />} />
-        <Route path='challenges' element={<Challenges />} />
+        <Route path='challenges' element={<AdminChallenges />} />
         <Route path='courses' element={<Courses />} />
         <Route path='users' element={<Users />} />
         <Route path='profile' element={<UpdateUser />} />

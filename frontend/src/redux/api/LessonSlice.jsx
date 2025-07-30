@@ -23,6 +23,13 @@ const lessonApiSlice = apiSlice.injectEndpoints({
         url: `${LESSONS_URL}/more/${subModuleId}`,
         method: "GET"
       }),
+    }),
+
+    getLessonSolution: builders.query({
+      query: id => ({
+        url: `${LESSONS_URL}/solution/${id}`,
+        method: "GET"
+      })
     })
   })
 })
@@ -31,4 +38,5 @@ export const {
   useCreateLessonMutation,
   useGetLessonByIdQuery,
   useGetLessonsForSubModuleQuery,
+  useGetLessonSolutionQuery
 } = lessonApiSlice;

@@ -26,11 +26,30 @@ const AdminSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Course'],
     }),
+
+    deleteUser: builder.mutation({
+      query: id => ({
+        url: `${ADMIN_URL}/${id}`,
+        method: "DELETE",
+      })
+    }),
+
+    createLessonSolution: builder.mutation({
+      query: data => ({
+        url: `${ADMIN_URL}/lesson/solution`,
+        method: "POST",
+        body: data
+      })
+    }),
+
+
   }),
 });
 
 export const {
   useGetDashboardStatsQuery,
   useGetUsersQuery,
+  useDeleteUserMutation,
   useCreateCourseMutation, // ✅ export this to use in components
+  useCreateLessonSolutionMutation
 } = AdminSlice;

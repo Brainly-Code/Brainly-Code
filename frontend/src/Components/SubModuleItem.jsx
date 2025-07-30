@@ -4,9 +4,11 @@ import downArrow from '../assets/downArrow.png';
 import { Link } from 'react-router-dom';
 import { useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
 import { useGetLessonVideosByMiniModuleQuery } from '../redux/api/lessonVideoApi';
+import Loader from './ui/Loader';
 
 const SubModuleItem = ({ title, moduleId, id }) => {
   const [open, setOpen] = useState(false);
+
 
   const { data: lessons } = useGetLessonsForSubModuleQuery(id);
   const { data: lessonVideos } = useGetLessonVideosByMiniModuleQuery(id);
@@ -37,7 +39,7 @@ const SubModuleItem = ({ title, moduleId, id }) => {
           <img src={open ? upArrow : downArrow} alt="Toggle arrow" />
         </span>
       </button>
-
+      
       {open && combinedItems.length > 0 && (
         <div className="mt-3 bg-[#1E20B7] p-3 sm:p-4 rounded-lg">
           <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-15 gap-2 mb-4">
@@ -51,9 +53,13 @@ const SubModuleItem = ({ title, moduleId, id }) => {
                 <Link
                   key={`${item.type}-${item.id}`}
                   to={path}
-                  className="bg-white font-bold text-[#6B5EDD] text-center rounded text-xs sm:text-sm py-1"
+                  className=""
                 >
-                  {i + 1}
+                  <button
+                    className='bg-white font-bold text-[#6B5EDD] text-center rounded text-xs sm:text-sm py-1 px-3'
+                  >
+                    {i + 1}
+                  </button>
                 </Link>
               );
             })}
