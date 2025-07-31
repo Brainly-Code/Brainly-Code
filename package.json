@@ -20,6 +20,7 @@
     "framer-motion": "^12.15.0",
     "jwt-decode": "^4.0.0",
     "keen-slider": "^6.8.6",
+    "lucide-react": "^0.535.0",
     "moment": "^2.30.1",
     "motion": "^12.12.1",
     "react": "^19.1.0",
