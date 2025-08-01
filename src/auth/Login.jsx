@@ -33,11 +33,17 @@ const Login = () => {
     if(userInfo) {
       if(decoded.role === "USER") {
         navigate('/user');
-      }else {
+      }else if(decoded.role === "ADMIN") {
         navigate('/admin');
+      }else if(decoded.role === "SUPERADMIN") {
+        navigate('/admin');
+      }else {
+        navigate('/');
       }
+    }else {
+      navigate('/login');
     }
-   })
+   }, [userInfo, navigate, decoded.role]);
 
   // useEffect(() => {
   //   // If already logged in, redirect immediately to redirectFromQuery or default
