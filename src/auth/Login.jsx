@@ -2,12 +2,12 @@ import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
 import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
 import { useState } from 'react';
 import { useLoginMutation } from '../redux/api/userSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import Footer from '../Components/ui/Footer';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -20,52 +20,31 @@ const Login = () => {
   const location = useLocation();
   const [login, { isLoading }] = useLoginMutation();
 
-  const { userInfo } = useSelector((state) => state.auth);
-  const decoded = jwtDecode(userInfo.access_token);
-  console.log(decoded);
-
-  // Grab redirect param from URL or fallback to default based on role
+  // Grab redirect param from URL
   const sp = new URLSearchParams(location.search);
   const redirectFromQuery = sp.get('redirect');
-  let redirect;
-
-  if(!userInfo) {
-    navigate('/login');
-  }
-
-  if(userInfo) {
-    if(decoded.role === "USER") {
-      redirect = '/user';
-    }else if(decoded.role === "ADMIN") {
-      redirect = '/admin'
-    }else if(decoded.role === "SUPERADMIN") {
-      redirect = '/admin'
-    }else {
-      redirect = '/';
-    }
-  }else {
-    redirect = '/login';
-  }
-  // useEffect(() => {
-  //   // If already logged in, redirect immediately to redirectFromQuery or default
-  //   if (userInfo?.access_token) {
-  //     const redirectPath = redirectFromQuery || getDefaultRedirect();
-  //     // Only redirect if on login or register page
-  //     if (location.pathname === '/login' || location.pathname === '/register') {
-  //       navigate(redirectPath, { replace: true });
-  //     }
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [userInfo, navigate, location.pathname, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res }));
-      // After successful login, redirect to previous page or default
-      const redirectPath = redirect ||redirectFromQuery;
-      navigate(redirectPath);
+      dispatch(setCredentials({ ...res })); // Update auth state with response
+
+      // Decode the token from the response to get the role
+      const decoded = jwtDecode(res.access_token);
+      let redirectPath;
+
+      // Determine redirect based on role from the decoded token
+      if (decoded.role === 'USER') {
+        redirectPath = '/user';
+      } else if (decoded.role === 'ADMIN' || decoded.role === 'SUPERADMIN') {
+        redirectPath = '/admin';
+      } else {
+        redirectPath = '/';
+      }
+
+      // Use redirect from query if provided, otherwise use role-based redirect
+      navigate(redirectPath || redirectFromQuery || '/');
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
