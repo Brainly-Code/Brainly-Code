@@ -13,23 +13,17 @@ import Footer from "../../Components/ui/Footer.jsx";
 const DashboardLayout = () => {
   const { userInfo } = useSelector(state => state.auth);
 
-
   const [searchQuery, setSearchQuery] = useState('');
-
+  const token = jwtDecode(userInfo.access_token);
+  const role = token.role;
+  console.log(token);
 
   if (!userInfo || !userInfo.access_token) {
     return <Navigate to="/login" />;
   }
 
-  const token = jwtDecode(userInfo.access_token);
-  const role = token.role;
-
-
   if (role === "USER") {
     return <Navigate to="/login" />; 
-  }
-  if(role === "SUPERADMIN"){
-    return <Navigate to="/admin" />;
   }
 
   return (

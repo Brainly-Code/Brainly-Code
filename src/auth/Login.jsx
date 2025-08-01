@@ -21,33 +21,35 @@ const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
+  const decoded = jwtDecode(userInfo.access_token);
+  console.log(decoded);
 
   // Grab redirect param from URL or fallback to default based on role
   const sp = new URLSearchParams(location.search);
   const redirectFromQuery = sp.get('redirect');
+  
 
-  // Determine default redirect based on role decoded from token
-  const getDefaultRedirect = () => {
-    if (!userInfo?.access_token) return '/';
-    try {
-      const decoded = jwtDecode(userInfo.access_token);
-      return decoded.role === 'USER' ? '/user' : '/admin';
-    } catch {
-      return '/';
-    }
-  };
-
-  useEffect(() => {
-    // If already logged in, redirect immediately to redirectFromQuery or default
-    if (userInfo?.access_token) {
-      const redirectPath = redirectFromQuery || getDefaultRedirect();
-      // Only redirect if on login or register page
-      if (location.pathname === '/login' || location.pathname === '/register') {
-        navigate(redirectPath, { replace: true });
+   useEffect(() => {
+    if(userInfo) {
+      if(decoded.role === "USER") {
+        navigate('/user');
+      }else {
+        navigate('/admin');
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfo, navigate, location.pathname, redirectFromQuery]);
+   })
+
+  // useEffect(() => {
+  //   // If already logged in, redirect immediately to redirectFromQuery or default
+  //   if (userInfo?.access_token) {
+  //     const redirectPath = redirectFromQuery || getDefaultRedirect();
+  //     // Only redirect if on login or register page
+  //     if (location.pathname === '/login' || location.pathname === '/register') {
+  //       navigate(redirectPath, { replace: true });
+  //     }
+  //   }
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [userInfo, navigate, location.pathname, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -55,8 +57,8 @@ const Login = () => {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
       // After successful login, redirect to previous page or default
-      const redirectPath = redirectFromQuery || getDefaultRedirect();
-      navigate(redirectPath, { replace: true });
+      const redirectPath = redirectFromQuery;
+      navigate(redirectPath);
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
