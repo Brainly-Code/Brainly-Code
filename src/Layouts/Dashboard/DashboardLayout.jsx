@@ -28,6 +28,9 @@ const DashboardLayout = () => {
   if (role === "USER") {
     return <Navigate to="/login" />; 
   }
+  if(role === "SUPERADMIN"){
+    return <Navigate to="/admin" />;
+  }
 
   return (
     <userRoleContext.Provider value={role}>

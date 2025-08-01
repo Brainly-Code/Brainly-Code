@@ -134,7 +134,6 @@ const Courses = () => {
  
   } catch (err) {
     console.error("Delete failed:", err);
-
   }
 };
   // Use a local state for courses if you're mixing mock data and API data,

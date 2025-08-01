@@ -24,13 +24,14 @@ const Users = () => {
   const findImagePath = (imageId) => {
 
     const image = images?.filter(image => image.id === imageId);
-    console.log(image[0]?.path);
+
+    if(image[0]?.path === undefined){
+      return profileFallback;
+    }
     
     let imagePath = image[0]?.path && image[0]?.path.startsWith("http")
     ? image[0]?.path
     : profileFallback
-
-    
     
     return imagePath;
 

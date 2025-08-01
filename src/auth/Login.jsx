@@ -31,7 +31,7 @@ const Login = () => {
     if (!userInfo?.access_token) return '/';
     try {
       const decoded = jwtDecode(userInfo.access_token);
-      return decoded.role === 'ADMIN' ? '/admin' : '/user';
+      return decoded.role === 'USER' ? '/user' : '/admin';
     } catch {
       return '/';
     }
