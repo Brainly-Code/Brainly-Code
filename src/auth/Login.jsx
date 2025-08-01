@@ -1,6 +1,6 @@
 import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
 import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useLoginMutation } from '../redux/api/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../redux/Features/authSlice';
@@ -27,24 +27,25 @@ const Login = () => {
   // Grab redirect param from URL or fallback to default based on role
   const sp = new URLSearchParams(location.search);
   const redirectFromQuery = sp.get('redirect');
-  
+  let redirect;
 
-   useEffect(() => {
-    if(userInfo) {
-      if(decoded.role === "USER") {
-        navigate('/user');
-      }else if(decoded.role === "ADMIN") {
-        navigate('/admin');
-      }else if(decoded.role === "SUPERADMIN") {
-        navigate('/admin');
-      }else {
-        navigate('/');
-      }
+  if(!userInfo) {
+    navigate('/login');
+  }
+
+  if(userInfo) {
+    if(decoded.role === "USER") {
+      redirect = '/user';
+    }else if(decoded.role === "ADMIN") {
+      redirect = '/admin'
+    }else if(decoded.role === "SUPERADMIN") {
+      redirect = '/admin'
     }else {
-      navigate('/login');
+      redirect = '/';
     }
-   }, [userInfo, navigate, decoded.role]);
-
+  }else {
+    redirect = '/login';
+  }
   // useEffect(() => {
   //   // If already logged in, redirect immediately to redirectFromQuery or default
   //   if (userInfo?.access_token) {
@@ -63,7 +64,7 @@ const Login = () => {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
       // After successful login, redirect to previous page or default
-      const redirectPath = redirectFromQuery;
+      const redirectPath = redirect ||redirectFromQuery;
       navigate(redirectPath);
     } catch (error) {
       toast.error(error?.data?.message || error.message);
