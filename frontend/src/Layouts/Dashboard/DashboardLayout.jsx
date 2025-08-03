@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState }  from "react"; 
 import { Navigate, Outlet } from "react-router-dom";
-import DashboardHeader from "./Components/DashboardHeader.jsx";
+import DashboardHeader from "./Components/dashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";

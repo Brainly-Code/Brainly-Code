@@ -5,8 +5,7 @@ import Introductory from "./ui/Introductory";
 import TextGenerateEffect from "./ui/TextGenerate";
 import { FaArrowRight } from "react-icons/fa";
 import Footer from "./ui/Footer";
-
-export const Hero = () => {
+ const Hero = () => {
   const navItems = [
     { name: "Home", link: "/", icon: "🏠" },
     { name: "Courses", link: "/", icon: "📚" },
@@ -134,3 +133,5 @@ export const Hero = () => {
     </div>
   );
 };
+
+export default Hero;

@@ -7,7 +7,7 @@ import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import Footer from '../Components/ui/Footer';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -22,11 +22,18 @@ const Login = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  // Grab redirect param from URL or fallback to default based on role
+  const handleGoogleLogin = () => {
+    console.log("action is triggered")
+    window.location.href = "http://localhost:3000/autho/google";
+  };
+
+  const handleGithubLogin = () => {
+    window.location.href = "http://localhost:3000/autho/github";
+  };
+
   const sp = new URLSearchParams(location.search);
   const redirectFromQuery = sp.get('redirect');
 
-  // Determine default redirect based on role decoded from token
   const getDefaultRedirect = () => {
     if (!userInfo?.access_token) return '/';
     try {
@@ -38,10 +45,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    // If already logged in, redirect immediately to redirectFromQuery or default
     if (userInfo?.access_token) {
       const redirectPath = redirectFromQuery || getDefaultRedirect();
-      // Only redirect if on login or register page
       if (location.pathname === '/login' || location.pathname === '/register') {
         navigate(redirectPath, { replace: true });
       }
@@ -53,7 +58,6 @@ const Login = () => {
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      // After successful login, redirect to previous page or default
       const redirectPath = redirectFromQuery || getDefaultRedirect();
       navigate(redirectPath, { replace: true });
     } catch (error) {
@@ -127,28 +131,6 @@ const Login = () => {
                       <span className="text-gray-400">or</span>
                       <hr className="w-full h-1 border-gray-600" />
                     </div>
-
-                    <button
-                      type="button"
-                      className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300"
-                    >
-                      <FaGoogle className="inline mr-3 text-lg" />
-                      Continue With Google
-                    </button>
-                    <button
-                      type="button"
-                      className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-6 hover:bg-[#001374a9] transition duration-300"
-                    >
-                      <FaGithub className="inline mr-3 text-lg" />
-                      Continue With Github
-                    </button>
-
-                    <p className="text-gray-400">
-                      Don't have an account?{' '}
-                      <Link to={'/register'} className="ml-1 text-[#8A2BE2] hover:underline">
-                        Sign Up
-                      </Link>
-                    </p>
                   </>
                 ) : (
                   <>
@@ -201,6 +183,37 @@ const Login = () => {
                   </>
                 )}
               </form>
+
+              {/* Social buttons moved outside form to bypass HTML validation */}
+              {!open && (
+                <>
+                  <button
+                    onClick={handleGoogleLogin}
+                    type="button"
+                    className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300"
+                  >
+                    <FaGoogle className="inline mr-3 text-lg" />
+                    Continue With Google
+                  </button>
+                  <button
+                    onClick={handleGithubLogin}
+                    type="button"
+                    className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-6 hover:bg-[#001374a9] transition duration-300"
+                  >
+                    <FaGithub className="inline mr-3 text-lg" />
+                    Continue With Github
+                  </button>
+                </>
+              )}
+
+              {!open && (
+                <p className="text-gray-400">
+                  Don't have an account?{' '}
+                  <Link to={'/register'} className="ml-1 text-[#8A2BE2] hover:underline">
+                    Sign Up
+                  </Link>
+                </p>
+              )}
             </div>
           </div>
         </header>
