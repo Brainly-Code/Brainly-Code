@@ -155,7 +155,7 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
 
 {showAddForm && (
   <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-    <div className="bg-white text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
+    <div className="bg-[#4a38f1] text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
       <h3 className="text-2xl font-semibold mb-4">Add Content</h3>
 
       {/* Radio Toggle */}

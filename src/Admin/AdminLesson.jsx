@@ -6,12 +6,12 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import profile from '../assets/profile.png'
 import { useGetLessonByIdQuery } from '../redux/api/LessonSlice';
-import { Loader } from 'lucide-react';
+import Loader from '../Components/ui/Loader';
 import { FloatingNav } from '../Components/ui/FloatingNav';
 import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
 import CodeEditor from '../Components/CodeEditor';
-import Progress from '../Components/ui/Progress';
 import Footer from '../Components/ui/Footer';
+import Progress from '../Components/ui/Progress';
 
 const Lesson2 = () => {
   const { id } = useParams();
@@ -50,24 +50,6 @@ const Lesson2 = () => {
   return (
     <div className='bg-[#0D0056] w-full'>
       <div className='py-6 rounded-none'>
-        <header className="flex items-center mx-auto text-white w-5/6 justify-between">
-            <FloatingNav navItems={navItems} className=""/>
-            <BrainlyCodeIcon className="ml-7 sm:ml-1"/>
-            <ul className=" flex items-center h-1/4">
-              <li className="">
-                  <Link to="/user/profile">
-                    <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 sm:w-1/2 md:w-2/4' />
-                  </Link>
-              </li>
-              <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
-                <button onClick={logoutHandler} className=''>
-                  <Link to="">
-                   Sign out
-                   </Link>
-                </button>
-              </li>
-            </ul>
-        </header>
       </div> 
 
       <div className="text-center">
