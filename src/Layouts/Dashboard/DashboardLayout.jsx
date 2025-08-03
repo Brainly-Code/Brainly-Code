@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState }  from "react"; 
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import DashboardHeader from "./Components/DashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
 import { useSelector } from "react-redux";
@@ -12,24 +12,18 @@ import Footer from "../../Components/ui/Footer.jsx";
 
 const DashboardLayout = () => {
   const { userInfo } = useSelector(state => state.auth);
-
-
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-
-
-  if (!userInfo || !userInfo.access_token) {
-    return <Navigate to="/login" />;
-  }
-
   const token = jwtDecode(userInfo.access_token);
   const role = token.role;
+  console.log(token);
 
+  if(!userInfo) {
+    navigate('/login');
+  }
 
   if (role === "USER") {
     return <Navigate to="/login" />; 
-  }
-  if(role === "SUPERADMIN"){
-    return <Navigate to="/admin" />;
   }
 
   return (
