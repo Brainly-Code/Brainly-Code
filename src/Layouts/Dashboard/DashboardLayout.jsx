@@ -8,22 +8,33 @@ import { jwtDecode } from "jwt-decode";
 import { SearchContext } from './../../Contexts/SearchContext.js'; 
 import { userRoleContext } from './../../Contexts/UserRoleContext.js'; 
 import Footer from "../../Components/ui/Footer.jsx";
+import Loader from "../../Components/ui/Loader.jsx";
 
 
 const DashboardLayout = () => {
-  const { userInfo } = useSelector(state => state.auth);
+  const { userInfo, isLoading } = useSelector(state => state.auth);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const token = jwtDecode(userInfo.access_token);
-  const role = token.role;
-  console.log(token);
 
   if(!userInfo) {
-    navigate('/login');
+    return <Loader/>
   }
+
+  let token;
+  try {
+    token = jwtDecode(userInfo.access_token);
+  } catch (err) {
+    console.error("Invalid token:", err);
+    // return <Navigate to="/login" />;
+  }
+
+  const role = token?.role;
 
   if (role === "USER") {
     return <Navigate to="/login" />; 
+  }
+  if (isLoading) {
+    return <Loader />
   }
 
   return (

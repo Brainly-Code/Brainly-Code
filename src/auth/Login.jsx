@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import Footer from '../Components/ui/Footer';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
@@ -32,19 +32,19 @@ const Login = () => {
 
       // Decode the token from the response to get the role
       const decoded = jwtDecode(res.access_token);
-      let redirectPath;
+      console.log(decoded)
 
       // Determine redirect based on role from the decoded token
-      if (decoded.role === 'USER') {
-        redirectPath = '/user';
-      } else if (decoded.role === 'ADMIN' || decoded.role === 'SUPERADMIN') {
-        redirectPath = '/admin';
-      } else {
-        redirectPath = '/';
+      if(decoded.role !== "USER") {
+        navigate('/admin');
       }
 
-      // Use redirect from query if provided, otherwise use role-based redirect
-      navigate(redirectPath || redirectFromQuery || '/');
+      if(decoded.role !== "ADMIN" | decoded.role !== "SUPERADMIN") {
+        navigate('/user');
+      }else{
+        navigate(redirectFromQuery);
+      }
+
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
@@ -58,6 +58,24 @@ const Login = () => {
     }
     setOpen(true);
   };
+
+  // const { userInfo } = useSelector(state => state.auth);
+  // if(!userInfo.access_token) {
+  //   toast.error("Sign in first");
+  //   ()=>{
+  //     try {
+  //       navigate('/login');
+  //     } catch (error) {
+  //       console.log(error)
+  //       toast.error("Sign in first");
+  //     }
+  //   }
+  // }
+
+  // if((jwtDecode(userInfo.access_token)).role !== "USER") {
+  //   return <Navigate to={`/admin`} />
+  // }
+  
 
   return (
     <>

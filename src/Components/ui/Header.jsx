@@ -38,7 +38,7 @@ const Header = () => {
     }
   }, [userInfo]);
 
-  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(userId, {
+  const { data: image } = useGetProfileImageQuery(userId, {
     skip: !userId,
   });
 
@@ -62,7 +62,7 @@ const Header = () => {
     try {
       await logoutApiCall().unwrap();
       dispatch(Logout());
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }

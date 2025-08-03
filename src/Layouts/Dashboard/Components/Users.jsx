@@ -19,7 +19,7 @@ const Users = () => {
 
   const { data: usersData, isLoading, isError } = useGetUsersQuery();
 
-  const {data: images} = useGetProfileImagesQuery(usersData?.id);
+  const {data: images, isLoading: imageLoading} = useGetProfileImagesQuery(usersData?.id);
 
   const findImagePath = (imageId) => {
 
@@ -288,6 +288,10 @@ const Users = () => {
         <Loader2 />
       </div>
     );
+  }
+
+  if(imageLoading) {
+    return <Loader />
   }
 
   if (isError) {
