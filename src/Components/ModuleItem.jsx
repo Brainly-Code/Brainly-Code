@@ -14,7 +14,7 @@ const ModuleItem = ({ moduleId,title, submodules }) => {
         >
         <div className="flex items-center space-x-2">
             <input type="radio" className='mr-3'/>
-            <span className=" font-bold">{title}</span>
+            <span className="text-sm md:text-base font-bold">{title}</span>
         </div>
         <span className="text-xl block w-4 h-4">
             {open ? <img src={upArrow} /> : <img src={downArrow} />}

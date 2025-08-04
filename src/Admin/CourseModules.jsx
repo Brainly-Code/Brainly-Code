@@ -22,8 +22,8 @@ const Modules = () => {
   const [videoTitle, setVideoTitle] = useState('');
   const [videoFile, setVideoFile] = useState(null);
   const { data: course, error: courseError, isLoading: isCourseLoading } = useGetCourseByIdQuery(id);
-  const { data: modules } = useGetModulesForCourseQuery(id);
-  const { data: videos } = useGetVideosForCourseQuery(id);
+const { data: modules, refetch: refetchModules } = useGetModulesForCourseQuery(id);
+const { data: videos, refetch: refetchVideos } = useGetVideosForCourseQuery(id);
 
 
   const [createModule, 
@@ -39,35 +39,31 @@ const Modules = () => {
   combinedItems.sort((a, b) => a.number - b.number);
 
   const handleSubmit = async () => {
+  try {
     if (uploadType === 'module') {
-      try {
-        await createModule({ title, courseId: Number(id) }).unwrap();
-        setTitle('');
-
-        toast.success('Module created successfully!');
-      } catch (err) {
-        console.error(err);
-        toast.error(err?.data?.message || 'Error creating module');
-      }
+      await createModule({ title, courseId: Number(id) }).unwrap();
+      setTitle('');
+      toast.success('Module created successfully!');
+      await refetchModules();
     } else if (uploadType === 'video') {
-      try {
-        const formData = new FormData();
-        formData.append('title', videoTitle);
-        formData.append("courseId", id); 
-        formData.append('file', videoFile);
+      const formData = new FormData();
+      formData.append('title', videoTitle);
+      formData.append("courseId", id);
+      formData.append('file', videoFile);
 
-        await createVideo(formData).unwrap(); // Connect this to your RTK mutation
-        setVideoTitle('');
-        setVideoFile(null);
-        toast.success('Video uploaded successfully!');
-      } catch (err) {
-        console.error(err);
-        toast.error(err?.data?.message || 'Error uploading video');
-      }
+      await createVideo(formData).unwrap();
+      setVideoTitle('');
+      setVideoFile(null);
+      toast.success('Video uploaded successfully!');
+      await refetchVideos();
     }
-
     setShowAddModuleForm(false);
-  };
+  } catch (err) {
+    console.error(err);
+    toast.error(err?.data?.message || 'Error submitting content');
+  }
+};
+
 
   if (courseError) {
     toast.error(courseError?.data?.message || 'Error fetching course');
@@ -110,7 +106,7 @@ const Modules = () => {
                 return (
                   <VideoItem
                     key={`video-${item.id}`}
-                    moduleId={id}
+                    moduleId={item.id}
                     id={item.id}
                     title={item.title}
                   />
@@ -122,7 +118,7 @@ const Modules = () => {
                     key={`module-${item.id}`}
                     title={item.title}
                     submodules={item.miniModules}
-                    moduleId={id}
+                    moduleId={item.id}
                   />
                 );
               }
