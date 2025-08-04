@@ -4,6 +4,7 @@ import upArrow from '../assets/upArrow.png';
 import downArrow from '../assets/downArrow.png';
 import { toast } from 'react-toastify';
 import { useCreateMiniModuleMutation, useGetMiniModulesPerModuleQuery } from '../redux/api/subModuleSlice';
+import { Loader2 } from 'lucide-react';
 
 const ModuleItem = ({ moduleId, title }) => {
   const [open, setOpen] = useState(false);
@@ -34,6 +35,10 @@ const ModuleItem = ({ moduleId, title }) => {
       console.error('Failed to create sub-module:', err);
     }
   };
+  
+  if(isSubmodulesLoading) {
+    return <Loader2 />
+  }
 
   return (
     <div className="bg-[#6B5EDD] rounded-xl p-3 sm:p-4 md:p-6">

@@ -93,7 +93,8 @@ const { data: likedCourses, refetch: refetchLikedCourses } = useGetUserLikedCour
           refetchLikedCourses();
 
       toast.success(result.liked ? 'Course liked!' : 'Like removed!');
-    } catch (err) {
+    } catch (error) {
+      console.log(error);
       toast.error('Failed to update like.');
     }
   };

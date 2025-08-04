@@ -7,12 +7,6 @@ import { FaArrowRight } from "react-icons/fa";
 import Footer from "./ui/Footer";
 
 export const Hero = () => {
-  const navItems = [
-    { name: "Home", link: "/", icon: "🏠" },
-    { name: "Courses", link: "/", icon: "📚" },
-    { name: "Playground", link: "/playground", icon: "🎮" },
-    { name: "Challenges", link: "/challenges", icon: "🏆" },
-  ];
 
   return (
     <div className="bg-[#070045] text-gray-50 min-h-screen">
