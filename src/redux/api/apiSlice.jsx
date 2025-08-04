@@ -4,7 +4,7 @@ const baseQuery = fetchBaseQuery({
   baseUrl: 'https://backend-hx6c.onrender.com',
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth?.userInfo?.access_token;
-  
+
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }

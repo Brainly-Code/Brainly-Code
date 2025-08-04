@@ -79,7 +79,8 @@ const Header = () => {
       dispatch(setCredentials(res));
       toast.success("Congratulations! You are now a Pro Member!");
       setShowUpgradeMessage(true);
-      setIsProMember(true); // Update local state immediately
+      setIsProMember(true)
+      navigate('/user'); // Update local state immediately
     } catch (error) {
       toast.error(error?.data?.message || "Failed to upgrade membership.");
     }

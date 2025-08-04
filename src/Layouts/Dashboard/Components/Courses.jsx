@@ -189,13 +189,13 @@ const Courses = () => {
 
 
 
-  // const addStateToHistory = (newCoursesState) => {
-  //   const newHistory = courseHistory.slice(0, historyIndex + 1);
-  //   setCourseHistory([...newHistory, newCoursesState]);
-  //   setHistoryIndex(newHistory.length);
-  // };
+  const addStateToHistory = (newCoursesState) => {
+    const newHistory = courseHistory.slice(0, historyIndex + 1);
+    setCourseHistory([...newHistory, newCoursesState]);
+    setHistoryIndex(newHistory?.length);
+  };
 
-  // console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
+  console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
 
   const handleUndo = () => {
     if (historyIndex > 0) {

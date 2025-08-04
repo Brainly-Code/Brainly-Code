@@ -18,7 +18,7 @@ const Home = () => {
   }
 
   if (!role) {
-    return <div className = "bg-[#4444e4]">
+    return <div className ="h-full w-full bg-[#4444e4]">
        <h1 className='text-gray-400 text-xl text-center'>Try reloading...</h1>
        <Loader />
     </div>;
