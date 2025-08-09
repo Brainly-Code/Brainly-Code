@@ -8,7 +8,6 @@ import { jwtDecode } from "jwt-decode";
 import { SearchContext } from './../../Contexts/SearchContext.js'; 
 import { userRoleContext } from './../../Contexts/UserRoleContext.js'; 
 import Footer from "../../Components/ui/Footer.jsx";
-import Loader from "../../Components/ui/Loader.jsx";
 
 
 const DashboardLayout = () => {

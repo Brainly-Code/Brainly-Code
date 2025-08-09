@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import Loader from './ui/Loader';
 import VideoItem from './VideoItem'; // import the new component
 import { useGetVideosForCourseQuery } from '../redux/api/videoApi'; // hypothetical API slice
+import BgLoader from './ui/BgLoader';
 
 const Modules = () => {
 
@@ -37,7 +38,7 @@ const Modules = () => {
   }
 
   if(isLoading) {
-    return <Loader />
+    return <BgLoader />
   }
   
   return (
