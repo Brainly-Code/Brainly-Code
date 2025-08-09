@@ -1,7 +1,7 @@
 
 
 import React, { useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useGetCoursesQuery, useGetUserLikedCoursesQuery, useLikeCourseMutation } from '../redux/api/coursesSlice'
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
@@ -20,8 +20,6 @@ import {
 } from 'react-icons/fa';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
-import { useSelector } from 'react-redux';
-import { jwtDecode } from 'jwt-decode';
 
 export default function HomePage() {
   
@@ -36,16 +34,6 @@ export default function HomePage() {
       return <FaAccessibleIcon color="purple" size={30} />;
     return <FaAccessibleIcon color="gray" size={30} />; // Default icon
   };
-  const navigate = useNavigate();
-  const userInfo = useSelector((state) => state.auth.userInfo);
-  const decoded = jwtDecode(userInfo);
-  if(userInfo){
-    if(decoded.role !== "USER") {
-      navigate('/admin')
-    }
-  }else{
-    navigate('/login')
-  }
 
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 

@@ -6,31 +6,32 @@ import Loader from './Components/ui/Loader';
 
 const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
-  let role = null;
+  let role;
 
-  if (userInfo && userInfo.access_token) {
+  
+  if (userInfo?.access_token) {
     try {
       const decoded = jwtDecode(userInfo.access_token);
+      console.log(decoded); 
       role = decoded?.role;
     } catch (error) {
       console.error("Invalid token", error);
     }
   }
 
-  // if (!role) {
-  //   return <div className ="h-full w-full bg-[#4444e4]">
-  //      <h1 className='text-gray-400 text-xl text-center'>Try reloading...</h1>
-  //      <Loader />
-  //   </div>;
-  // }
-
-  if (role !== "USER") {
-    // Logged in but not a normal user
-    return <Navigate to="/admin" replace />;
+  if(role === undefined){
+    window.location.reload();
+    return <Loader/>
   }
-
-  return <Outlet />;
+  
+  console.log(role)
+  if(role === "USER"){
+    return <Outlet />
+  }
+  if(role === "ADMIN" || role === "SUPERADMIN"){
+    return <Navigate to="/admin" />
+  }
+  
 };
-
 
 export default Home;

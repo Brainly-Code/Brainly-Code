@@ -16,7 +16,7 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
-  if(!userInfo) {
+  if(userInfo === undefined) {
     navigate('/login');
   }
 
@@ -25,16 +25,12 @@ const DashboardLayout = () => {
     token = jwtDecode(userInfo.access_token);
   } catch (err) {
     console.error("Invalid token:", err);
-    // return <Navigate to="/login" />;
   }
 
   const role = token?.role;
 
-  if (role === "USER") {
-    return <Navigate to="/login" />; 
-  }
-  if (isLoading) {
-    return <Loader />
+  if(role === "USER"){
+    return <Navigate to="/user" />
   }
 
   return (

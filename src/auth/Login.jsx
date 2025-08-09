@@ -1,13 +1,12 @@
 import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
 import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoginMutation } from '../redux/api/userSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import Footer from '../Components/ui/Footer';
 import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -15,38 +14,33 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
 
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
   const [login, { isLoading }] = useLoginMutation();
 
-  // Grab redirect param from URL
-  const sp = new URLSearchParams(location.search);
-  const redirectFromQuery = sp.get('redirect');
+  const { userInfo } = useSelector((state) => state.auth);
+  
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+  const redirect = sp.get('redirect') || '/user';
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate(redirect);
+    }
+  }, [navigate, redirect, userInfo]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     try {
       const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res })); // Update auth state with response
-
-      // Decode the token from the response to get the role
-      const decoded = jwtDecode(res.access_token);
-      console.log(decoded)
-
-      // Determine redirect based on role from the decoded token
-      if(decoded.role !== "USER") {
-        navigate('/admin');
-      }
-
-      if(decoded.role !== "ADMIN" | decoded.role !== "SUPERADMIN") {
-        navigate('/user');
-      }else{
-        navigate(redirectFromQuery);
-      }
-
+      console.log(res)
+      dispatch(setCredentials({ ...res }));
+      navigate(redirect); // Ensure navigation after successful login
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      toast.error(error?.data?.message || error.message); 
     }
   };
 
@@ -58,23 +52,6 @@ const Login = () => {
     }
     setOpen(true);
   };
-
-  // const { userInfo } = useSelector(state => state.auth);
-  // if(!userInfo.access_token) {
-  //   toast.error("Sign in first");
-  //   ()=>{
-  //     try {
-  //       navigate('/login');
-  //     } catch (error) {
-  //       console.log(error)
-  //       toast.error("Sign in first");
-  //     }
-  //   }
-  // }
-
-  // if((jwtDecode(userInfo.access_token)).role !== "USER") {
-  //   return <Navigate to={`/admin`} />
-  // }
   
 
   return (
