@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import Loader from './Components/ui/Loader';
+import BgLoader from './Components/ui/BgLoader';
 
 const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
@@ -21,7 +21,7 @@ const Home = () => {
 
   if(role === undefined){
     window.location.reload();
-    return <Loader/>
+    return <BgLoader/>
   }
   
   console.log(role)
