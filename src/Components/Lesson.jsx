@@ -70,7 +70,7 @@ const Lesson = () => {
       })()
     }}
   }, [courseProgress, moduleProgress, miniModuleProgress, lessonProgress, trackMiniModuleProgress, trackModuleProgress, trackCourseProgress]
-)
+  )
   
   const { data: lesson, error, isLoading } = useGetLessonByIdQuery(id);
   

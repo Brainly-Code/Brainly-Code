@@ -17,12 +17,12 @@ const Home = () => {
     }
   }
 
-  if (!role) {
-    return <div className ="h-full w-full bg-[#4444e4]">
-       <h1 className='text-gray-400 text-xl text-center'>Try reloading...</h1>
-       <Loader />
-    </div>;
-  }
+  // if (!role) {
+  //   return <div className ="h-full w-full bg-[#4444e4]">
+  //      <h1 className='text-gray-400 text-xl text-center'>Try reloading...</h1>
+  //      <Loader />
+  //   </div>;
+  // }
 
   if (role !== "USER") {
     // Logged in but not a normal user

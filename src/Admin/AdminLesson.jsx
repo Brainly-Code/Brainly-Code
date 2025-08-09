@@ -1,10 +1,6 @@
 import React from 'react'
 import { toast } from 'react-toastify';
 import { Logout } from '../redux/Features/authSlice';
-import { useLogoutMutation } from '../redux/api/userSlice';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import profile from '../assets/profile.png'
 import { useGetLessonByIdQuery } from '../redux/api/LessonSlice';
 import Loader from '../Components/ui/Loader';
 import { FloatingNav } from '../Components/ui/FloatingNav';
@@ -12,6 +8,7 @@ import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
 import CodeEditor from '../Components/CodeEditor';
 import Footer from '../Components/ui/Footer';
 import Progress from '../Components/ui/Progress';
+import { useParams } from 'react-router-dom';
 
 const Lesson2 = () => {
   const { id } = useParams();
@@ -20,27 +17,6 @@ const Lesson2 = () => {
 
   if(error){
     toast.error(error);
-  }
-
-   const navItems = [
-    { name: "Courses", link: "/user", icon: "📚" },
-    { name: "Playground", link: "/user/playground", icon: "🎮" },
-    { name: "Challenges", link: "/user/challenges", icon: "🏆" },
-    { name: "Community", link: "/user/community", icon: "👤"}
-  ];
- 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [ logoutApiCall ] = useLogoutMutation();
-
-  const logoutHandler = async () => {
-    try {
-      await logoutApiCall().unwrap();
-      dispatch(Logout());
-      navigate('/login');
-    } catch (error) {
-      toast.error(error?.data?.message || error.message);
-    }
   }
 
   if(isLoading) {

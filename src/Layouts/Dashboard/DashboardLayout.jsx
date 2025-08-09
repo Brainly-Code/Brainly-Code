@@ -17,7 +17,7 @@ const DashboardLayout = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   if(!userInfo) {
-    return <Loader/>
+    navigate('/login');
   }
 
   let token;
