@@ -16,8 +16,8 @@ import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 
 const courseId = 3;
-const moduleId = 14;
-const miniModuleId = 9;
+const moduleId = 1;
+const miniModuleId = 1;
 const Lesson = () => {
 
 
@@ -123,7 +123,7 @@ const Lesson = () => {
       </div>
 
       <div className='mt-[6rem]'>
-         <CodeEditor lessonId={lesson?.id} />
+         <CodeEditor lessonId={lesson} />
       </div>
 
       <Progress />

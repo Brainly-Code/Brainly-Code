@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -31,14 +32,11 @@ const Header = () => {
 
   // Update local isProMember state whenever userInfo changes
   useEffect(() => {
-if(userInfo?.access_token) {
-      const decoded =jwtDecode(userInfo?.access_token );
-      if (decoded.isPremium === true) {
-        setIsProMember(true);
-      } else {
-        setIsProMember(false);
-      }
-}
+    if (userInfo?.user?.isPremium === true) {
+      setIsProMember(true);
+    } else {
+      setIsProMember(false);
+    }
   }, [userInfo]);
 
   const { data: image } = useGetProfileImageQuery(userId, {
@@ -79,13 +77,11 @@ if(userInfo?.access_token) {
     try {
       const res = await upgradeToPro(userId).unwrap();
       // Important: res should contain { access_token, user }
-      if(res){
-
-        toast.success("Congratulations! You are now a Pro Member!");
-        setShowUpgradeMessage(true);
-        setIsProMember(true)
-        navigate('/user'); // Update local state immediately
-      }
+      dispatch(setCredentials(res));
+      toast.success("Congratulations! You are now a Pro Member!");
+      setShowUpgradeMessage(true);
+      setIsProMember(true)
+      navigate('/user'); // Update local state immediately
     } catch (error) {
       toast.error(error?.data?.message || "Failed to upgrade membership.");
     }

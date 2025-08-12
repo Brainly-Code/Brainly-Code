@@ -6,50 +6,28 @@ import BgLoader from './Components/ui/BgLoader';
 import { setCredentials } from './redux/Features/authSlice';
 
 const Home = () => {
-  const { userInfo } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const { userInfo } = useSelector(state => state.auth);
+  let role;
 
-  const [role, setRole] = useState(null);
-  const tokenFromURL = searchParams.get('token');
-
-  useEffect(() => {
-    let token;
-
-    // 1️⃣ If token in URL, store it and clean up URL
-    if (tokenFromURL) {
-      token = tokenFromURL;
-      
-      dispatch(setCredentials({ access_token: token }));
-      navigate('/user', { replace: true }); // Remove token from URL
-    } 
-    // 2️⃣ Else try Redux or localStorage
-    else {
-      token = userInfo?.access_token || localStorage.getItem('token');
+  
+  if (userInfo?.access_token) {
+    try {
+      const decoded = jwtDecode(userInfo.access_token);
+      console.log(decoded); 
+      role = decoded?.role;
+    } catch (error) {
+      console.error("Invalid token", error);
     }
-
-    // 3️⃣ Decode token safely
-    if (token && token.split('.').length === 3) {
-      try {
-        const decoded = jwtDecode(token);
-        setRole(decoded?.role);
-      } catch (error) {
-        console.error('Invalid token', error);
-      }
-    }else{
-      window.reload();
-    }
-  }, [tokenFromURL, userInfo, dispatch, navigate]);
-
-  // 4️⃣ Loader if role not known yet
-  if (!role) {
-    return <BgLoader />;
   }
 
-  // 5️⃣ Role-based routing
-  if (role === 'USER') {
-    return <Outlet />;
+  if(role === undefined){
+    window.location.reload();
+    return <BgLoader/>
+  }
+  
+  console.log(role)
+  if(role === "USER"){
+    return <Outlet />
   }
   if (role === 'ADMIN' || role === 'SUPERADMIN') {
     return <Navigate to="/admin" />;

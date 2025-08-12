@@ -51,14 +51,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    getUsers: builder.query({
-      query: () => ({
-        url: `${USER_URL}`,
-        method: "GET",
-      }),
-      keepUnusedDataFor: 5
-    }),
-
     getProfileImage: builder.query({
       query: (id) => ({
         url: `${PROFILE_URL}/${id}`,
@@ -94,7 +86,6 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useGetCurrentUserQuery,
-  useGetUsersQuery,
   useGetUserByIdQuery,
   useUpdateUserMutation,
   useGetProfileImageQuery,
