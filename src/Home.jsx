@@ -8,11 +8,14 @@ const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
   let role;
 
+  if(!userInfo) {
+    return <Navigate to="/login" />
+  }
+
   
   if (userInfo?.access_token) {
     try {
       const decoded = jwtDecode(userInfo.access_token);
-      console.log(decoded); 
       role = decoded?.role;
     } catch (error) {
       console.error("Invalid token", error);
@@ -24,7 +27,6 @@ const Home = () => {
     return <BgLoader/>
   }
   
-  console.log(role)
   if(role === "USER"){
     return <Outlet />
   }

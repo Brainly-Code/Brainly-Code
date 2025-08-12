@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -75,8 +76,6 @@ const Header = () => {
     }
     try {
       const res = await upgradeToPro(userId).unwrap();
-      // Important: res should contain { access_token, user }
-      dispatch(setCredentials(res));
       toast.success("Congratulations! You are now a Pro Member!");
       setShowUpgradeMessage(true);
       setIsProMember(true)
