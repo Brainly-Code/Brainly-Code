@@ -32,7 +32,8 @@ const Header = () => {
 
   // Update local isProMember state whenever userInfo changes
   useEffect(() => {
-    if (userInfo?.user?.isPremium === true) {
+    const decoded = jwtDecode(userInfo?.access_token);
+    if (decoded?.isPremium === true) {
       setIsProMember(true);
     } else {
       setIsProMember(false);
