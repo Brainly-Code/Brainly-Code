@@ -24,6 +24,8 @@ const Header = () => {
     if (userInfo?.access_token) {
       const decoded = jwtDecode(userInfo.access_token);
       userId = decoded.sub;
+    }else{
+      navigate('/login');
     }
   } catch (error) {
     console.error('Invalid token', error);
@@ -31,7 +33,8 @@ const Header = () => {
 
   // Update local isProMember state whenever userInfo changes
   useEffect(() => {
-    if (userInfo?.user?.isPremium === true) {
+    const decoded = jwtDecode(userInfo.access_token);
+    if (decoded?.isPremium === true) {
       setIsProMember(true);
     } else {
       setIsProMember(false);
@@ -75,8 +78,6 @@ const Header = () => {
     }
     try {
       const res = await upgradeToPro(userId).unwrap();
-      // Important: res should contain { access_token, user }
-      dispatch(setCredentials(res));
       toast.success("Congratulations! You are now a Pro Member!");
       setShowUpgradeMessage(true);
       setIsProMember(true); // Update local state immediately

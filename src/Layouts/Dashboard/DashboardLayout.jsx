@@ -11,19 +11,25 @@ import Footer from "../../Components/ui/Footer.jsx";
 
 
 const DashboardLayout = () => {
-  const { userInfo } = useSelector(state => state.auth);
+  const { userInfo, isLoading } = useSelector(state => state.auth);
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const token = jwtDecode(userInfo.access_token);
-  const role = token.role;
-  console.log(token);
 
-  if(!userInfo) {
+  if(userInfo === undefined) {
     navigate('/login');
   }
 
-  if (role === "USER") {
-    return <Navigate to="/login" />; 
+  let token;
+  try {
+    token = jwtDecode(userInfo.access_token);
+  } catch (err) {
+    console.error("Invalid token:", err);
+  }
+
+  const role = token?.role;
+
+  if(role === "USER"){
+    return <Navigate to="/user" />
   }
 
   return (

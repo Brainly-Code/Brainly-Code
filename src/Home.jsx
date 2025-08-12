@@ -1,33 +1,62 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Navigate, Outlet } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Navigate, Outlet, useSearchParams, useNavigate } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode'; // ✅ Correct import
+import BgLoader from './Components/ui/BgLoader';
+import { setCredentials } from './redux/Features/authSlice';
 
 const Home = () => {
-  const { userInfo } = useSelector(state => state.auth);
-  let role = null;
+  const { userInfo } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  if (userInfo && userInfo.access_token) {
-    try {
-      const decoded = jwtDecode(userInfo.access_token);
-      role = decoded.role;
-    } catch (error) {
-      console.error("Invalid token", error);
+  const [role, setRole] = useState(null);
+  const tokenFromURL = searchParams.get('token');
+
+  useEffect(() => {
+    let token;
+
+    // 1️⃣ If token in URL, store it and clean up URL
+    if (tokenFromURL) {
+      token = tokenFromURL;
+      
+      dispatch(setCredentials({ access_token: token }));
+      navigate('/user', { replace: true }); // Remove token from URL
+    } 
+    // 2️⃣ Else try Redux or localStorage
+    else {
+      token = userInfo?.access_token || localStorage.getItem('token');
     }
-  }
 
+    // 3️⃣ Decode token safely
+    if (token && token.split('.').length === 3) {
+      try {
+        const decoded = jwtDecode(token);
+        setRole(decoded?.role);
+      } catch (error) {
+        console.error('Invalid token', error);
+      }
+    }else{
+      window.reload();
+    }
+  }, [tokenFromURL, userInfo, dispatch, navigate]);
+
+  // 4️⃣ Loader if role not known yet
   if (!role) {
-    // Not authenticated
-    return <Navigate to="/login" replace />;
+    return <BgLoader />;
   }
 
-  if (role !== "USER") {
-    // Logged in but not a normal user
-    return <Navigate to="/user" replace />;
+  // 5️⃣ Role-based routing
+  if (role === 'USER') {
+    return <Outlet />;
+  }
+  if (role === 'ADMIN' || role === 'SUPERADMIN') {
+    return <Navigate to="/admin" />;
   }
 
-  return <Outlet />;
+  // If role is something unexpected
+  return <Navigate to="/login" />;
 };
-
 
 export default Home;

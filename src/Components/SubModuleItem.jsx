@@ -56,7 +56,7 @@ const SubModuleItem = ({ title, moduleId, id }) => {
                   className=""
                 >
                   <button
-                    className='bg-white font-bold text-[#6B5EDD] text-center rounded text-xs sm:text-sm py-1 px-3'
+                    className='bg-white font-bold text-[#6B5EDD] text-center rounded text-xs sm:text-sm py-1 px-1 md:px-1.5 lg:px-3'
                   >
                     {i + 1}
                   </button>

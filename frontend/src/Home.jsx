@@ -7,6 +7,10 @@ const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
   let role = null;
 
+  if(!userInfo) {
+    return <Navigate to="/login"/>
+  }
+
   if (userInfo && userInfo.access_token) {
     try {
       const decoded = jwtDecode(userInfo.access_token);

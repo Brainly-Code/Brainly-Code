@@ -1,13 +1,12 @@
 import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
 import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoginMutation } from '../redux/api/userSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import Footer from '../Components/ui/Footer';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -15,38 +14,33 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
 
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
   const [login, { isLoading }] = useLoginMutation();
 
-  // Grab redirect param from URL
-  const sp = new URLSearchParams(location.search);
-  const redirectFromQuery = sp.get('redirect');
+  const { userInfo } = useSelector((state) => state.auth);
+  
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+  const redirect = sp.get('redirect') || '/user';
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate(redirect);
+    }
+  }, [navigate, redirect, userInfo]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     try {
       const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ ...res })); // Update auth state with response
-
-      // Decode the token from the response to get the role
-      const decoded = jwtDecode(res.access_token);
-      let redirectPath;
-
-      // Determine redirect based on role from the decoded token
-      if (decoded.role === 'USER') {
-        redirectPath = '/user';
-      } else if (decoded.role === 'ADMIN' || decoded.role === 'SUPERADMIN') {
-        redirectPath = '/admin';
-      } else {
-        redirectPath = '/';
-      }
-
-      // Use redirect from query if provided, otherwise use role-based redirect
-      navigate(redirectPath || redirectFromQuery || '/');
+      console.log(res)
+      dispatch(setCredentials({ ...res }));
+      navigate(redirect); // Ensure navigation after successful login
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      toast.error(error?.data?.message || error.message); 
     }
   };
 
@@ -58,6 +52,15 @@ const Login = () => {
     }
     setOpen(true);
   };
+
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:3000/autho/google';
+  };
+
+  const handleGithubLogin = () => {
+    window.location.href = 'http://localhost:3000/autho/github';
+  };
+  
 
   return (
     <>
@@ -119,6 +122,7 @@ const Login = () => {
 
                     <button
                       type="button"
+                      onClick={handleGoogleLogin}
                       className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300"
                     >
                       <FaGoogle className="inline mr-3 text-lg" />
@@ -126,6 +130,7 @@ const Login = () => {
                     </button>
                     <button
                       type="button"
+                      onClick={handleGithubLogin}
                       className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-6 hover:bg-[#001374a9] transition duration-300"
                     >
                       <FaGithub className="inline mr-3 text-lg" />

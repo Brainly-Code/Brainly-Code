@@ -12,7 +12,8 @@ export default defineConfig({
     port: 5173,
     allowedHosts: [
       'a92e55e941da.ngrok-free.app',
-      '8f12417a0f58.ngrok-free.app'
+      '8f12417a0f58.ngrok-free.app',
+      'localhost:3000'
     ],
   },
   plugins: [react()],

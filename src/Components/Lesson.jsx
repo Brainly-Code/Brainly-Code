@@ -18,17 +18,11 @@ import { jwtDecode } from 'jwt-decode';
 const courseId = 3;
 const moduleId = 14;
 const miniModuleId = 9;
-const Lesson = (
-// {  
-//   courseId,
-//   moduleId,
-//   miniModuleId
-// }
-) => {
+const Lesson = () => {
 
 
   const { id } = useParams();
-  const lessonId = id.id;
+  const lessonId = id;
   const { userInfo } = useSelector(state => state.auth);
   const token = jwtDecode(userInfo?.access_token);
   const userId = token.sub;
@@ -76,7 +70,7 @@ const Lesson = (
       })()
     }}
   }, [courseProgress, moduleProgress, miniModuleProgress, lessonProgress, trackMiniModuleProgress, trackModuleProgress, trackCourseProgress]
-)
+  )
   
   const { data: lesson, error, isLoading } = useGetLessonByIdQuery(id);
   
