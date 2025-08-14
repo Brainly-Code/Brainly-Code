@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 "use client";
 import { useEffect } from "react";
 
-import { stagger, useAnimate } from "framer-motion";
+import { motion,  stagger, useAnimate } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const TextGenerateEffect = ({
