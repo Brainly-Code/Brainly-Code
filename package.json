@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://frontend-mdy5.onrender.com",
   "scripts": {
     "vite": "vite --host 0.0.0.0",
     "dev": "vite",
@@ -14,15 +13,13 @@
   "dependencies": {
     "@react-oauth/google": "^0.12.2",
     "@reduxjs/toolkit": "^2.8.2",
-    "@tailwindcss/line-clamp": "^0.4.4",
     "axios": "^1.10.0",
     "chart.js": "^4.5.0",
     "clsx": "^2.1.1",
     "diff": "^8.0.2",
-    "framer-motion": "^12.23.12",
+    "framer-motion": "^12.15.0",
     "jwt-decode": "^4.0.0",
     "keen-slider": "^6.8.6",
-    "lucide-react": "^0.535.0",
     "moment": "^2.30.1",
     "motion": "^12.12.1",
     "react": "^19.1.0",
@@ -37,7 +34,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
-    "@types/node-fetch": "^2.6.13",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",

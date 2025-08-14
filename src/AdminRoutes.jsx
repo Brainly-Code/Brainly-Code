@@ -3,13 +3,10 @@ import { useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-const Home = () => {
+const AdminRoutes = () => {
   const { userInfo } = useSelector(state => state.auth);
-  let role = null;
 
-  // if(!userInfo) {
-  //   return <Navigate to="/login"/>
-  // }
+  let role = null;
 
   if (userInfo && userInfo.access_token) {
     try {
@@ -20,18 +17,11 @@ const Home = () => {
     }
   }
 
-  // if (!role) {
-  //   // Not authenticated
-  //   return <Navigate to="/login" replace />;
-  // }
-
-  if (role !== "USER") {
-    // Logged in but not a normal user
-    return <Navigate to="/user" replace />;
-  }
-
-  return <Outlet />;
+  return (
+    <div>
+      {role === "ADMIN" ? <Outlet /> : <Navigate to="/login" replace />}
+    </div>
+  );
 };
 
-
-export default Home;
+export default AdminRoutes;
