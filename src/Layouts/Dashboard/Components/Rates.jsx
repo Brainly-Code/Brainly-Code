@@ -157,8 +157,8 @@ const Challenge = () => {
           }
         </div>
         <div className="flex mx-auto  flex-col lg:flex-row gap-5">
-          {Rates?.map((course, i) => (
-            <div key={i} className="max-w-[30rem]">
+          {Rates?.map((course) => (
+            <div key={course.id} className="max-w-[30rem]">
               <div className="">
               <h1 className="text-xl font-semibold mx-auto text-white text-center mb-4">
                 {/* {course.context === "liked"

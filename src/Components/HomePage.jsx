@@ -1,14 +1,13 @@
-
-
-import React, { useEffect } from 'react'
+import React from 'react'
+import BrainlyCodeIcon from './BrainlyCodeIcon';
 import { Link } from 'react-router-dom';
-import { useGetCoursesQuery, useGetUserLikedCoursesQuery, useLikeCourseMutation } from '../redux/api/coursesSlice'
+import { useGetCoursesQuery } from '../redux/api/coursesSlice'
+import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
 import { FloatingNav } from './ui/FloatingNav';
-import like from '../assets/like.png';
-import liked from '../assets/liked.png';
-
+import Loader from './ui/Loader';
+import { BackgroundGradient } from './ui/BgGradient';
 import {
   FaJs,
   FaReact,
@@ -19,7 +18,6 @@ import {
 } from 'react-icons/fa';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
-import BgLoader from './ui/BgLoader';
 
 export default function HomePage() {
   
@@ -34,27 +32,11 @@ export default function HomePage() {
       return <FaAccessibleIcon color="purple" size={30} />;
     return <FaAccessibleIcon color="gray" size={30} />; // Default icon
   };
-
+  
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
   let { data: courses, error, isLoading } = useGetCoursesQuery();
-  const [likesMap, setLikesMap] = React.useState({});
-  const { data: likedCourses, refetch: refetchLikedCourses } = useGetUserLikedCoursesQuery();
-  const [likeCourse] = useLikeCourseMutation();
 
-  useEffect(() => {
-  if (!courses || !likedCourses) return;
-
-  const initialLikesMap = {};
-  courses.forEach((course) => {
-    initialLikesMap[course.id] = {
-      liked: likedCourses.includes(course.id),
-      count: course.likes,
-    };
-  });
-
-  setLikesMap(initialLikesMap);
-}, [courses, likedCourses]);
   
   if(error){
     toast.error(error);
@@ -68,33 +50,9 @@ export default function HomePage() {
 
 
   if(isLoading) {
-    return <BgLoader/>
+    return <Loader/>
   }
 
-  
-
-  const handleLike = async (courseId) => {
-    try {
-      const result = await likeCourse(courseId).unwrap();
-      
-      setLikesMap((prev) => ({
-        ...prev,
-        [courseId]: {
-          liked: result.liked,
-          count:
-            (prev[courseId]?.count ?? 
-              courses?.find((c) => c.id === courseId)?.likes ?? 0) +
-            (result.liked ? 1 : -1),
-        },
-      }));
-          refetchLikedCourses();
-
-      toast.success(result.liked ? 'Course liked!' : 'Like removed!');
-    } catch (error) {
-      console.log(error);
-      toast.error('Failed to update like.');
-    }
-  };
   return (
     <div className='bg-[#070045] opacity-90'>
       <Header />
@@ -183,9 +141,6 @@ export default function HomePage() {
                         Enroll now
                       </button>
                     </Link>
-                    <button onClick={()=> handleLike(course.id)} className='ml-12 self-center'>
-                    <img src={likesMap[course.id]?.liked ? liked : like} alt="Like" className='w-6 h-6'/>
-                    </button>
                   </div>
                 </div>
               </div>

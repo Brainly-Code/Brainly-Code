@@ -134,6 +134,7 @@ const Courses = () => {
  
   } catch (err) {
     console.error("Delete failed:", err);
+
   }
 };
   // Use a local state for courses if you're mixing mock data and API data,
@@ -177,6 +178,7 @@ const Courses = () => {
     level: "BEGINNER",
     description: "",
     category: "",     // added
+    duration: "1 hour",      // added
   });
 
   const [previewIcon, setPreviewIcon] = useState(null);
@@ -189,13 +191,13 @@ const Courses = () => {
 
 
 
-  const addStateToHistory = (newCoursesState) => {
-    const newHistory = courseHistory.slice(0, historyIndex + 1);
-    setCourseHistory([...newHistory, newCoursesState]);
-    setHistoryIndex(newHistory?.length);
-  };
+  // const addStateToHistory = (newCoursesState) => {
+  //   const newHistory = courseHistory.slice(0, historyIndex + 1);
+  //   setCourseHistory([...newHistory, newCoursesState]);
+  //   setHistoryIndex(newHistory.length);
+  // };
 
-  console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
+  // console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
 
   const handleUndo = () => {
     if (historyIndex > 0) {
@@ -267,6 +269,7 @@ const toggleDropdown = (courseId) => {
       level: "BEGINNER",
       description: "",
       category: "",
+      duration: "",
     });
   };
 

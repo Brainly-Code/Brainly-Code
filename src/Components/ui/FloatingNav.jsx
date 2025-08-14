@@ -16,13 +16,22 @@ export const FloatingNav = ({
 }) => {
   const { scrollYProgress } = useScroll();
   const [visible, setVisible] = useState(false);
-useMotionValueEvent(scrollYProgress, "change", () => {
-  if (scrollYProgress.get() < 0.05) {
-    setVisible(false); // Hide at the top
-  } else {
-    setVisible(true); // Show when scrolling up or down
-  }
-});
+
+  useMotionValueEvent(scrollYProgress, "change", (current) => {
+    if (typeof current === "number") {
+      let direction = current - scrollYProgress.getPrevious();
+      if (scrollYProgress.get() < 0.05) {
+        setVisible(false);
+      } else {
+        if (direction < 0) {
+          setVisible(true);
+        } else {
+          setVisible(false);
+        }
+      }
+    }
+  });
+
   return (
     <AnimatePresence mode="wait">
       <motion.div

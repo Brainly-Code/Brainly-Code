@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState }  from "react"; 
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import DashboardHeader from "./Components/DashboardHeader.jsx";
+import { Navigate, Outlet } from "react-router-dom";
+import DashboardHeader from "./Components/dashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
@@ -11,25 +11,22 @@ import Footer from "../../Components/ui/Footer.jsx";
 
 
 const DashboardLayout = () => {
-  const { userInfo, isLoading } = useSelector(state => state.auth);
-  const navigate = useNavigate();
+  const { userInfo } = useSelector(state => state.auth);
+
+
   const [searchQuery, setSearchQuery] = useState('');
 
-  if(userInfo === undefined) {
-    navigate('/login');
+
+  if (!userInfo || !userInfo.access_token) {
+    return <Navigate to="/login" />;
   }
 
-  let token;
-  try {
-    token = jwtDecode(userInfo.access_token);
-  } catch (err) {
-    console.error("Invalid token:", err);
-  }
+  const token = jwtDecode(userInfo.access_token);
+  const role = token.role;
 
-  const role = token?.role;
 
-  if(role === "USER"){
-    return <Navigate to="/user" />
+  if (role === "USER") {
+    return <Navigate to="/login" />; 
   }
 
   return (

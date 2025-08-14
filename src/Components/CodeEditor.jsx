@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { diffLines } from 'diff';
 import { useGetLessonSolutionQuery } from "../redux/api/LessonSlice";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -17,7 +17,7 @@ const compareCode = (studentCode, solutionCode) => {
 
 
 const CodeEditor = (
-  lessonId
+  // lessonId
 ) => {
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");
@@ -29,7 +29,6 @@ const CodeEditor = (
   const [hasPassed, setHasPassed] = useState(false);
   const [showConsole, setShowConsole] = useState(false);
   const iframeRef = useRef(null);
-  const navigate = useNavigate()
 
   const runCode = () => {
     const codeWithConsoleCapture = `
@@ -101,7 +100,7 @@ const CodeEditor = (
   }
 
   if(error) {
-    navigate('/error')
+    Navigate('/error')
   }
 
   if(isLoading) {

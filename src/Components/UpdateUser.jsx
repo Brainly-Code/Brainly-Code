@@ -50,9 +50,8 @@ const handleImageChange = (e) => {
 
   
     if (imageFile) {
-      const formData = new FormData();
-      formData.append('image', imageFile);
-      const cloudRes = await uploadProfileImage({ id: token.sub, data:formData }).unwrap();
+      console.log(imageFile)
+      const cloudRes = await uploadProfileImage({ id: token.sub, imageFile }).unwrap();
       
       console.log(cloudRes)
       cloudinaryUrl = cloudRes?.url || cloudRes?.secure_url;
@@ -70,7 +69,7 @@ const handleImageChange = (e) => {
     }
 
 
-    const res = await updateProfile({ id: token.sub, data: profileData }).unwrap();
+    const res = await updateProfile({ id: token.sub, formData: profileData }).unwrap();
 
     
     dispatch(setCredentials({
