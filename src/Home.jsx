@@ -1,37 +1,50 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Navigate, Outlet } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Navigate, Outlet, useParams, useSearchParams } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode';
+import { setCredentials } from './redux/Features/authSlice';
 
 const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const token = useSearchParams()[0].get("token"); // if token comes from URL param
+  console.log("token", token);
   let role = null;
 
-  if(!userInfo) {
-    return <Navigate to="/login"/>
-  }
-
-  if (userInfo && userInfo.access_token) {
-    try {
-      const decoded = jwtDecode(userInfo.access_token);
-      role = decoded.role;
-    } catch (error) {
-      console.error("Invalid token", error);
+  // If token exists in URL, save to Redux
+  useEffect(() => {
+    if (token) {
+      console.log("Token from URL:", token);
+      dispatch(setCredentials({ access_token: token }));
     }
+  }, [token, dispatch]);
+
+  const accessToken = token || userInfo?.access_token;
+
+  if (!accessToken) {
+    console.log("No access token found");
+    // return <Navigate to="/login" replace />;
   }
 
-  if (!role) {
-    // Not authenticated
+if(accessToken){
+    try {
+    const decoded = jwtDecode(accessToken);
+    role = decoded.role;
+  } catch (error) {
+    console.error("Invalid token", error);
     return <Navigate to="/login" replace />;
   }
+}
 
-  if (role !== "USER") {
-    // Logged in but not a normal user
-    return <Navigate to="/user" replace />;
-  }
+  // if (!role) {
+  //   return <Navigate to="/login" replace />;
+  // }
+
+  // if (role !== "USER") {
+  //   return <Navigate to="/user" replace />;
+  // }
 
   return <Outlet />;
 };
-
 
 export default Home;

@@ -133,13 +133,6 @@ const Header = () => {
             </li>
           </ul>
         </header>
-
-        {/* Optional upgrade success message */}
-        {showUpgradeMessage && (
-          <div className="mt-2 text-center text-green-400 font-semibold">
-            🎉 You are now a Pro Member!
-          </div>
-        )}
       </div>
     </div>
   );
