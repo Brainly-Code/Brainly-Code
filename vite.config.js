@@ -11,7 +11,8 @@ export default defineConfig({
     host: true,
     port: 5173,
     allowedHosts: [
-      'localhost:3000'
+      'localhost://3000',
+      'backend-hx6c.onrender.com'
     ],
   },
   plugins: [react()],
