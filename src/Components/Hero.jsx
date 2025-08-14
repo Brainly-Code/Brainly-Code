@@ -5,14 +5,20 @@ import Introductory from "./ui/Introductory";
 import TextGenerateEffect from "./ui/TextGenerate";
 import { FaArrowRight } from "react-icons/fa";
 import Footer from "./ui/Footer";
-
-export const Hero = () => {
+ const Hero = () => {
+  const navItems = [
+    { name: "Home", link: "/", icon: "🏠" },
+    { name: "Courses", link: "/", icon: "📚" },
+    { name: "Playground", link: "/playground", icon: "🎮" },
+    { name: "Challenges", link: "/challenges", icon: "🏆" },
+  ];
 
   return (
     <div className="bg-[#070045] text-gray-50 min-h-screen">
       {/* Header */} 
       <section id="header" className="max-w-7xl mx-auto">
         <header className="flex flex-wrap border-b-[1px] justify-between items-center gap-4 py-4">
+          <FloatingNav navItems={navItems} />
           {/* Left: Logo */}
           <div className="flex-shrink-0">
             <BrainlyCodeIcon className="ml-2 sm:ml-7" />
@@ -127,3 +133,5 @@ export const Hero = () => {
     </div>
   );
 };
+
+export default Hero;

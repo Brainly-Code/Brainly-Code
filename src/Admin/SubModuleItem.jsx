@@ -25,15 +25,8 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
 
   const [createLessonVideo] = useCreateLessonVideoMutation();
 
-  const {
-    data: lessons = [],
-    refetch: refetchLessons,
-  } = useGetLessonsForSubModuleQuery(miniModuleId);
-
-  const {
-    data: lessonVideos = [],
-    refetch: refetchVideos,
-  } = useGetLessonVideosByMiniModuleQuery(miniModuleId);
+  const { data: lessons } = useGetLessonsForSubModuleQuery(miniModuleId);
+  const { data: lessonVideos } = useGetLessonVideosByMiniModuleQuery(miniModuleId);
 
   const [createLesson, { isLoading }] = useCreateLessonMutation();
 
@@ -65,8 +58,6 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
         note: '',
         assignment: '',
       });
-       await refetchLessons();
-       await refetchVideos();
     } catch (error) {
       console.error('Failed to create lesson:', error);
       toast.error(
@@ -85,16 +76,15 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
     videoData.append('file', videoFile);
 
    try {
-    await createLessonVideo(videoData).unwrap();
-    toast.success('Lesson video uploaded successfully');
-    setShowAddForm(false);
-    setVideoTitle('');
-    setVideoFile(null);
-    await refetchVideos();
-    await refetchLessons();
-  } catch (error) {
-    console.error('Failed to upload lesson video:', error);
-    if (error.data) {
+  await createLessonVideo(videoData).unwrap();
+  toast.success('Lesson video uploaded successfully');
+  setShowAddForm(false);
+  setVideoTitle('');
+  setVideoFile(null);
+} catch (error) {
+  console.error('Failed to upload lesson video:', error);
+  // Try this:
+  if (error.data) {
     console.error('Validation errors:', error.data);
     toast.error(Object.values(error.data).flat().join(', '));
   } else {
@@ -157,7 +147,7 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
       <div className="mt-4">
         <button
           onClick={() => setShowAddForm(true)}
-          className="flex text-sm md:text-base items-center gap-2 bg-[#1D1543] hover:bg-[#2C1E6A] text-white px-6 py-3 rounded-full h-8"
+          className="flex items-center gap-2 bg-[#1D1543] hover:bg-[#2C1E6A] text-white px-6 py-3 rounded-full h-8"
         >
           Add lesson
         </button>
@@ -165,7 +155,7 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
 
 {showAddForm && (
   <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-    <div className="bg-[#4a38f1] text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
+    <div className="bg-white text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
       <h3 className="text-2xl font-semibold mb-4">Add Content</h3>
 
       {/* Radio Toggle */}

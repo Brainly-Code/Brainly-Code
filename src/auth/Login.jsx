@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import Footer from '../Components/ui/Footer';
-import { useNavigate, useLocation, Link, Navigate } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -14,33 +15,53 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
 
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [login, { isLoading }] = useLoginMutation();
 
   const { userInfo } = useSelector((state) => state.auth);
-  
-  const { search } = useLocation();
-  const sp = new URLSearchParams(search);
-  const redirect = sp.get('redirect') || '/user';
+
+  const handleGoogleLogin = () => {
+    console.log("action is triggered")
+    window.location.href = "http://localhost:3000/autho/google";
+  };
+
+  const handleGithubLogin = () => {
+    window.location.href = "http://localhost:3000/autho/github";
+  };
+
+  const sp = new URLSearchParams(location.search);
+  const redirectFromQuery = sp.get('redirect');
+
+  const getDefaultRedirect = () => {
+    if (!userInfo?.access_token) return '/';
+    try {
+      const decoded = jwtDecode(userInfo.access_token);
+      return decoded.role === 'ADMIN' ? '/admin' : '/user';
+    } catch {
+      return '/';
+    }
+  };
 
   useEffect(() => {
-    if (userInfo) {
-      navigate(redirect);
+    if (userInfo?.access_token) {
+      const redirectPath = redirectFromQuery || getDefaultRedirect();
+      if (location.pathname === '/login' || location.pathname === '/register') {
+        navigate(redirectPath, { replace: true });
+      }
     }
-  }, [navigate, redirect, userInfo]);
+  }, [userInfo, navigate, location.pathname, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
     try {
       const res = await login({ email, password }).unwrap();
-      console.log(res)
       dispatch(setCredentials({ ...res }));
-      navigate(redirect); // Ensure navigation after successful login
+      const redirectPath = redirectFromQuery || getDefaultRedirect();
+      navigate(redirectPath, { replace: true });
     } catch (error) {
-      toast.error(error?.data?.message || error.message); 
+      toast.error(error?.data?.message || error.message);
     }
   };
 
@@ -52,15 +73,6 @@ const Login = () => {
     }
     setOpen(true);
   };
-
-  const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:3000/autho/google';
-  };
-
-  const handleGithubLogin = () => {
-    window.location.href = 'http://localhost:3000/autho/github';
-  };
-  
 
   return (
     <>
@@ -119,30 +131,6 @@ const Login = () => {
                       <span className="text-gray-400">or</span>
                       <hr className="w-full h-1 border-gray-600" />
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={handleGoogleLogin}
-                      className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300"
-                    >
-                      <FaGoogle className="inline mr-3 text-lg" />
-                      Continue With Google
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleGithubLogin}
-                      className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-6 hover:bg-[#001374a9] transition duration-300"
-                    >
-                      <FaGithub className="inline mr-3 text-lg" />
-                      Continue With Github
-                    </button>
-
-                    <p className="text-gray-400">
-                      Don't have an account?{' '}
-                      <Link to={'/register'} className="ml-1 text-[#8A2BE2] hover:underline">
-                        Sign Up
-                      </Link>
-                    </p>
                   </>
                 ) : (
                   <>
@@ -195,6 +183,37 @@ const Login = () => {
                   </>
                 )}
               </form>
+
+              {/* Social buttons moved outside form to bypass HTML validation */}
+              {!open && (
+                <>
+                  <button
+                    onClick={handleGoogleLogin}
+                    type="button"
+                    className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300"
+                  >
+                    <FaGoogle className="inline mr-3 text-lg" />
+                    Continue With Google
+                  </button>
+                  <button
+                    onClick={handleGithubLogin}
+                    type="button"
+                    className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-6 hover:bg-[#001374a9] transition duration-300"
+                  >
+                    <FaGithub className="inline mr-3 text-lg" />
+                    Continue With Github
+                  </button>
+                </>
+              )}
+
+              {!open && (
+                <p className="text-gray-400">
+                  Don't have an account?{' '}
+                  <Link to={'/register'} className="ml-1 text-[#8A2BE2] hover:underline">
+                    Sign Up
+                  </Link>
+                </p>
+              )}
             </div>
           </div>
         </header>

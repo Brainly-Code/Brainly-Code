@@ -23,13 +23,6 @@ const progressApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    getCourseProgress: builder.query({
-      query: id => ({
-        url: `${COURSE_PROGRESS_URL}/${id}`,
-        method: "GET"
-      })
-    }),
-
     createLessonProgress: builder.mutation({
       query: (data) => ({
         url: `${LESSON_PROGRESS_URL}`,
@@ -68,14 +61,6 @@ const progressApiSlice = apiSlice.injectEndpoints({
         body: miniModuleId,
       })
     }),
-
-    getMiniModuleProgress: builder.query({
-      query: id => ({
-        url: `${MINI_MODULE_PROGRESS_URL}/${id}`,
-        method: "GET"
-      })
-    }),
-
     createModuleProgress: builder.mutation({
       query: (data) => ({
         url: `${MODULE_PROGRESS_URL}`,
@@ -92,12 +77,6 @@ const progressApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    getModuleProgress: builder.query({
-      query: id => ({
-        url: `${MODULE_PROGRESS_URL}/${id}`,
-        method: "GET"
-      })
-    }),
 
   })
 });
@@ -105,13 +84,10 @@ const progressApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateCourseProgressMutation,
   useTrackCourseProgressMutation,
-  useGetCourseProgressQuery,
   useCreateModuleProgressMutation,
   useTrackModuleProgressMutation,
-  useGetModuleProgressQuery,
   useCreateMiniModuleProgressMutation,
   useTrackMiniModuleProgressMutation,
-  useGetMiniModuleProgressQuery,
   useCreateLessonProgressMutation,
   useTrackLessonProgressMutation,
   useGetLessonProgressQuery,

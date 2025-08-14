@@ -11,7 +11,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.userInfo = action.payload.access_token;
+      state.userInfo = action.payload;
 
       // Save to localStorage
       localStorage.setItem("userInfo", JSON.stringify(action.payload));

@@ -1,40 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Navigate, Outlet, useSearchParams, useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // ✅ Correct import
-import BgLoader from './Components/ui/BgLoader';
-import { setCredentials } from './redux/Features/authSlice';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Navigate, Outlet } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
-  let role;
+  let role = null;
 
-  
-  if (userInfo?.access_token) {
+  if(!userInfo) {
+    return <Navigate to="/login"/>
+  }
+
+  if (userInfo && userInfo.access_token) {
     try {
       const decoded = jwtDecode(userInfo.access_token);
-      console.log(decoded); 
-      role = decoded?.role;
+      role = decoded.role;
     } catch (error) {
       console.error("Invalid token", error);
     }
   }
 
-  if(role === undefined){
-    window.location.reload();
-    return <BgLoader/>
-  }
-  
-  console.log(role)
-  if(role === "USER"){
-    return <Outlet />
-  }
-  if (role === 'ADMIN' || role === 'SUPERADMIN') {
-    return <Navigate to="/admin" />;
+  if (!role) {
+    // Not authenticated
+    return <Navigate to="/login" replace />;
   }
 
-  // If role is something unexpected
-  return <Navigate to="/login" />;
+  if (role !== "USER") {
+    // Logged in but not a normal user
+    return <Navigate to="/user" replace />;
+  }
+
+  return <Outlet />;
 };
+
 
 export default Home;

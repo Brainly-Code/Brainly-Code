@@ -5,12 +5,12 @@ import { Link, useParams } from 'react-router-dom';
 import paint from '../assets/paint.png';
 import time from '../assets/time.png';
 import star from '../assets/star.png';
-import Footer from '../Components/ui/Footer';
+import Footer from './../Components/ui/Footer';
 import { ModuleItem } from './ModuleItem';
 import { useCreateModuleMutation, useGetModulesForCourseQuery } from '../redux/api/moduleSlice';
 import { useGetCourseByIdQuery } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
-import Loader from '../Components/ui/Loader';
+import Loader from './../Components/ui/Loader';
 import VideoItem from './AdminVideoItem';
 import { useCreateVideoMutation, useGetVideosForCourseQuery } from '../redux/api/videoApi';
 
@@ -22,13 +22,15 @@ const Modules = () => {
   const [videoTitle, setVideoTitle] = useState('');
   const [videoFile, setVideoFile] = useState(null);
   const { data: course, error: courseError, isLoading: isCourseLoading } = useGetCourseByIdQuery(id);
-const { data: modules, refetch: refetchModules } = useGetModulesForCourseQuery(id);
-const { data: videos, refetch: refetchVideos } = useGetVideosForCourseQuery(id);
+  const { data: modules } = useGetModulesForCourseQuery(id);
+  const { data: videos } = useGetVideosForCourseQuery(id);
 
 
   const [createModule, 
+    // { isLoading: isCreatingModule, isError: isCreateError }
   ] = useCreateModuleMutation();
   const [createVideo, 
+    // { isLoading: isCreatingVideo, isError: isCreateVideoError }
   ] = useCreateVideoMutation();
 
   const combinedItems = [
@@ -39,31 +41,35 @@ const { data: videos, refetch: refetchVideos } = useGetVideosForCourseQuery(id);
   combinedItems.sort((a, b) => a.number - b.number);
 
   const handleSubmit = async () => {
-  try {
     if (uploadType === 'module') {
-      await createModule({ title, courseId: Number(id) }).unwrap();
-      setTitle('');
-      toast.success('Module created successfully!');
-      await refetchModules();
+      try {
+        await createModule({ title, courseId: Number(id) }).unwrap();
+        setTitle('');
+
+        toast.success('Module created successfully!');
+      } catch (err) {
+        console.error(err);
+        toast.error(err?.data?.message || 'Error creating module');
+      }
     } else if (uploadType === 'video') {
-      const formData = new FormData();
-      formData.append('title', videoTitle);
-      formData.append("courseId", id);
-      formData.append('file', videoFile);
+      try {
+        const formData = new FormData();
+        formData.append('title', videoTitle);
+        formData.append("courseId", id); 
+        formData.append('file', videoFile);
 
-      await createVideo(formData).unwrap();
-      setVideoTitle('');
-      setVideoFile(null);
-      toast.success('Video uploaded successfully!');
-      await refetchVideos();
+        await createVideo(formData).unwrap(); // Connect this to your RTK mutation
+        setVideoTitle('');
+        setVideoFile(null);
+        toast.success('Video uploaded successfully!');
+      } catch (err) {
+        console.error(err);
+        toast.error(err?.data?.message || 'Error uploading video');
+      }
     }
-    setShowAddModuleForm(false);
-  } catch (err) {
-    console.error(err);
-    toast.error(err?.data?.message || 'Error submitting content');
-  }
-};
 
+    setShowAddModuleForm(false);
+  };
 
   if (courseError) {
     toast.error(courseError?.data?.message || 'Error fetching course');
@@ -106,7 +112,7 @@ const { data: videos, refetch: refetchVideos } = useGetVideosForCourseQuery(id);
                 return (
                   <VideoItem
                     key={`video-${item.id}`}
-                    moduleId={item.id}
+                    moduleId={id}
                     id={item.id}
                     title={item.title}
                   />
@@ -142,7 +148,7 @@ const { data: videos, refetch: refetchVideos } = useGetVideosForCourseQuery(id);
       {/* ADD MODULE MODAL */}
       {showAddModuleForm && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-[#4a38f1] text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
+          <div className="bg-white text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
             <h3 className="text-2xl font-semibold mb-4">Add Content</h3>
 
             {/* Radio button selector */}

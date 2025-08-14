@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { diffLines } from 'diff';
 import { useGetLessonSolutionQuery } from "../redux/api/LessonSlice";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -16,14 +16,12 @@ const compareCode = (studentCode, solutionCode) => {
 }
 
 
-const CodeEditor = ( 
-  // lesson, 
-  // challenge 
+const CodeEditor = (
+  // lessonId
 ) => {
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");
   const [js, setJs] = useState("");
-  const lessonId = useParams("");
 
   const [srcDoc, setSrcDoc] = useState("");
   const [consoleOutput, setConsoleOutput] = useState([]);
@@ -31,7 +29,6 @@ const CodeEditor = (
   const [hasPassed, setHasPassed] = useState(false);
   const [showConsole, setShowConsole] = useState(false);
   const iframeRef = useRef(null);
-  const navigate = useNavigate()
 
   const runCode = () => {
     const codeWithConsoleCapture = `
@@ -77,7 +74,7 @@ const CodeEditor = (
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const {data: solution, isLoading, error} = useGetLessonSolutionQuery(lessonId.id);
+  const {data: solution, isLoading, error} = useGetLessonSolutionQuery(4);
   const solutionCode = solution?.solution;
 
   const checkSolution = () => {
@@ -103,7 +100,7 @@ const CodeEditor = (
   }
 
   if(error) {
-    navigate('/error')
+    Navigate('/error')
   }
 
   if(isLoading) {
