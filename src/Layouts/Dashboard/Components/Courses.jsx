@@ -15,7 +15,7 @@ import {
   FaAccessibleIcon,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { X } from "lucide-react";
+// import { X } from "lucide-react";
 import { useDeleteCourseMutation, useGetCoursesQuery } from "../../../redux/api/coursesSlice";
 import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 
@@ -527,7 +527,7 @@ const toggleDropdown = (courseId) => {
               className="absolute top-4 right-4 p-2 cursor-pointer text-gray-400 hover:bg-[#3A3A5A] rounded-full transition-colors"
               aria-label="Close"
             >
-              <X className="w-6 h-6" />
+              {/* <X className="w-6 h-6" /> */}
             </button>
 
             <h2 className="text-2xl font-bold text-white mb-6 text-center">Create New Course</h2>
