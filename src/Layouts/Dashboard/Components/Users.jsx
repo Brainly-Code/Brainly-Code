@@ -21,20 +21,14 @@ const Users = () => {
 
   const {data: images} = useGetProfileImagesQuery(usersData?.id);
 
-  const findImagePath = (imageId) => {
+const findImagePath = (imageId) => {
+  if (!images?.length) return profileFallback;
 
-    const image = images?.filter(image => image.id === imageId);
-    console.log(image[0]?.path);
-    
-    let imagePath = image[0]?.path && image[0]?.path.startsWith("http")
-    ? image[0]?.path
-    : profileFallback
+  const image = images.find(img => img.id === imageId);
+  if (!image?.path || !image.path.startsWith("http")) return profileFallback;
 
-    
-    
-    return imagePath;
-
-  }
+  return image.path;
+};
 
  
 
@@ -427,7 +421,7 @@ const Users = () => {
                 onClick={() => handleViewUser(user)}
               >
                 <td className="p-3 align-middle first:rounded-l-lg">
-                  <img src={findImagePath(user.id)} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
+                  <img src={findImagePath(user?.id)} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
                 </td>
                 <td className="p-3 align-middle font-medium">{user.username}</td>
                 <td className="p-3 align-middle sm:table-cell hidden">{user.email}</td>

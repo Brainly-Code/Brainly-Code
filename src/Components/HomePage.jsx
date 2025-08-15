@@ -56,7 +56,7 @@ export default function HomePage() {
   return (
     <div className='bg-[#070045] opacity-90'>
       <Header />
-
+    
       <section>
         <div className=' mt-[2rem] w-[50%] m-auto '>
           <div className='text-center md:flex md:flex-nowrap md:justify-center items-center gap-5 m-auto mb-4'>
