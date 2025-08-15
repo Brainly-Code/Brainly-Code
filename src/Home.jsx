@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navigate, Outlet, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, Outlet, useSearchParams } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import { setCredentials } from './redux/Features/authSlice';
 
@@ -40,9 +40,9 @@ if(accessToken){
   //   return <Navigate to="/login" replace />;
   // }
 
-  // if (role !== "USER") {
-  //   return <Navigate to="/user" replace />;
-  // }
+  if (role !== "USER") {
+    return <Navigate to="/user" replace />;
+  }
 
   return <Outlet />;
 };

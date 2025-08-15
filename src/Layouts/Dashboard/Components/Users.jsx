@@ -6,10 +6,11 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import Loader from "../../../Components/ui/Loader";
 import { userRoleContext } from "../../../Contexts/UserRoleContext";
 import { toast } from "react-toastify";
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import { useDeleteUserMutation, useGetUsersQuery } from "../../../redux/api/AdminSlice";
 import profileFallback from "../../../assets/profile.png";
 import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
+import { useGetProfileImagesQuery } from "../../../redux/api/userSlice";
 
 const Users = () => {
 
@@ -18,12 +19,22 @@ const Users = () => {
 
   const { data: usersData, isLoading, isError } = useGetUsersQuery();
 
-  let imagePath;
-  usersData?.map((userData) => {
-    imagePath = userData?.image?.path && userData?.image?.path.startsWith("http")
-      ? userData?.image[0]?.path
-      : profileFallback
-  })
+  const {data: images} = useGetProfileImagesQuery(usersData?.id);
+
+  const findImagePath = (imageId) => {
+
+    const image = images?.filter(image => image.id === imageId);
+    console.log(image[0]?.path);
+    
+    let imagePath = image[0]?.path && image[0]?.path.startsWith("http")
+    ? image[0]?.path
+    : profileFallback
+
+    
+    
+    return imagePath;
+
+  }
 
  
 
@@ -228,8 +239,8 @@ const Users = () => {
   const [deleteUser] = useDeleteUserMutation();
 
   const handleDeleteUserClick = async (user) => {
+    // eslint-disable-next-line no-unused-vars
     const res = await deleteUser(user.id).unwrap();
-    console.log(res);
     setShowDeleteConfirmModal(true);
     setShowActionsDropdownForUser(null);
   };
@@ -273,7 +284,7 @@ const Users = () => {
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <Loader />
+        <Loader2 />
       </div>
     );
   }
@@ -416,7 +427,7 @@ const Users = () => {
                 onClick={() => handleViewUser(user)}
               >
                 <td className="p-3 align-middle first:rounded-l-lg">
-                  <img src={imagePath} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
+                  <img src={findImagePath(user.id)} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
                 </td>
                 <td className="p-3 align-middle font-medium">{user.username}</td>
                 <td className="p-3 align-middle sm:table-cell hidden">{user.email}</td>

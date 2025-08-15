@@ -16,16 +16,7 @@ import VideoItem from './VideoItem'; // import the new component
 import { useGetVideosForCourseQuery } from '../redux/api/videoApi'; // hypothetical API slice
 
 const Modules = () => {
-  // const [openSections, setOpenSections] = useState({
-  //   intro: false,
-  //   basic: true,
-  //   intermediate: false,
-  //   advanced: false,
-  // });
 
-  // const toggleSection = (section) => {
-  //   setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  // };
   const { id } = useParams();
 
   const { data: course, error, isLoading } = useGetCourseByIdQuery(id);

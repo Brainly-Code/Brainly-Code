@@ -96,28 +96,10 @@ export const userApiSlice = apiSlice.injectEndpoints({
         // Add payment-related body here if needed
       }),
     }),
-    // OAuth redirect endpoints (if you want to fetch user data after redirect)
-    oauthGoogle: builder.query({
-      query: () => ({
-        url: `${AUTH_URL}/google/redirect`,
-        method: "GET",
-        credentials: "include", // send cookies/session if backend uses it
-      }),
-    }),
-
-    oauthGithub: builder.query({
-      query: () => ({
-        url: `${AUTH_URL}/github/redirect`,
-        method: "GET",
-        credentials: "include",
-      }),
-    }),
   }),
 });
 
 export const {
-  useOauthGoogleQuery,
-  useOauthGithubQuery,
   useRegisterMutation,
   useLoginMutation,
   useLogoutMutation,
