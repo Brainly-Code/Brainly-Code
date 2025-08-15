@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import BrainlyCodeIcon from "./BrainlyCodeIcon";
-import { FloatingNav } from "./ui/FloatingNav";
 import Introductory from "./ui/Introductory";
 import TextGenerateEffect from "./ui/TextGenerate";
 import { FaArrowRight } from "react-icons/fa";
@@ -19,7 +18,6 @@ export const Hero = () => {
       {/* Header */} 
       <section id="header" className="max-w-7xl mx-auto">
         <header className="flex flex-wrap border-b-[1px] justify-between items-center gap-4 py-4">
-          <FloatingNav navItems={navItems} />
           {/* Left: Logo */}
           <div className="flex-shrink-0">
             <BrainlyCodeIcon className="ml-2 sm:ml-7" />
