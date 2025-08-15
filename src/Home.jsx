@@ -11,6 +11,7 @@ const Home = () => {
   // console.log("token", token);
   let role = null;
 
+  
   // If token exists in URL, save to Redux
   useEffect(() => {
     if (token) {
@@ -21,6 +22,9 @@ const Home = () => {
 
   const accessToken = token || userInfo?.access_token;
 
+  if(!userInfo) {
+    return <Navigate to="/login" replace />
+  }
   if (!accessToken) {
     console.log("No access token found");
     return <Navigate to="/login" replace />;

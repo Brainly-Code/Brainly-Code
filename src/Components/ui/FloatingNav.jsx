@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 import React, { useState } from "react";
 import {
@@ -6,6 +7,7 @@ import {
   useScroll,
   useMotionValueEvent,
 } from "framer-motion";
+
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
