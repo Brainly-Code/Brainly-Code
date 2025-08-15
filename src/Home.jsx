@@ -8,13 +8,13 @@ const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const token = useSearchParams()[0].get("token"); // if token comes from URL param
-  console.log("token", token);
+  // console.log("token", token);
   let role = null;
 
   // If token exists in URL, save to Redux
   useEffect(() => {
     if (token) {
-      console.log("Token from URL:", token);
+      // console.log("Token from URL:", token);
       dispatch(setCredentials({ access_token: token }));
     }
   }, [token, dispatch]);
@@ -23,7 +23,7 @@ const Home = () => {
 
   if (!accessToken) {
     console.log("No access token found");
-    // return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
 if(accessToken){
@@ -36,9 +36,9 @@ if(accessToken){
   }
 }
 
-  // if (!role) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!role) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (role !== "USER") {
     return <Navigate to="/user" replace />;

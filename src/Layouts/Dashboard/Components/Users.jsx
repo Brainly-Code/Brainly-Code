@@ -3,7 +3,6 @@ import { FaUser } from "react-icons/fa";
 import { CiUndo, CiRedo } from "react-icons/ci";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import Loader from "../../../Components/ui/Loader";
 import { userRoleContext } from "../../../Contexts/UserRoleContext";
 import { toast } from "react-toastify";
 import { Loader2, X } from 'lucide-react';
@@ -11,6 +10,7 @@ import { useDeleteUserMutation, useGetUsersQuery } from "../../../redux/api/Admi
 import profileFallback from "../../../assets/profile.png";
 import { SearchContext } from '../../../Contexts/SearchContext'; // Import the SearchContext
 import { useGetProfileImagesQuery } from "../../../redux/api/userSlice";
+import BgLoader from "../../../Components/ui/BgLoader";
 
 const Users = () => {
 
@@ -284,7 +284,7 @@ const Users = () => {
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <Loader2 />
+        <BgLoader />
       </div>
     );
   }

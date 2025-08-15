@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect } from 'react';
-import Loader from '../../../Components/ui/Loader';
 import { Link } from 'react-router-dom';
 import { FaStopwatch } from 'react-icons/fa';
 import { CiUndo, CiRedo } from 'react-icons/ci';
@@ -8,6 +7,7 @@ import { toast } from 'react-toastify';
 import { X } from 'lucide-react';
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { useCreateChallengeMutation, useGetChallengesQuery } from '../../../redux/api/challengeSlice';
+import BgLoader from '../../../Components/ui/BgLoader';
 
 const Challenges = () => {
   const { searchQuery } = useContext(SearchContext);
@@ -158,7 +158,7 @@ const Challenges = () => {
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <Loader />
+        <BgLoader />
       </div>
     );
   }
