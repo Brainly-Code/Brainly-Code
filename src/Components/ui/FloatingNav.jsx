@@ -4,6 +4,7 @@ import {
   AnimatePresence,
   useScroll,
   useMotionValueEvent,
+  MotionConfig,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -24,7 +25,7 @@ export const FloatingNav = ({ navItems, className }) => {
   return (
     <AnimatePresence mode="wait">
       {visible && (
-        <motion.div
+        <MotionConfig.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -50 }}
@@ -52,7 +53,7 @@ export const FloatingNav = ({ navItems, className }) => {
             </span>
             <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
           </button>
-        </motion.div>
+        </MotionConfig.div>
       )}
     </AnimatePresence>
   );
