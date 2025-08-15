@@ -77,7 +77,7 @@ const Header = () => {
       return;
     }
     try {
-      const res = await upgradeToPro(userId).unwrap();
+      const res = await upgradeToPro(Number(userId)).unwrap();
       toast.success("Congratulations! You are now a Pro Member!");
       setShowUpgradeMessage(true);
       setIsProMember(true); // Update local state immediately
