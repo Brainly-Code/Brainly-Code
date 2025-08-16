@@ -30,10 +30,12 @@ const Header = () => {
   } catch (error) {
     console.error('Invalid token', error);
   }
+  console.log(decoded?.isPremium)
 
   // Update local isProMember state whenever userInfo changes
   useEffect(() => {
     const decoded = jwtDecode(userInfo.access_token);
+    console.log(decoded?.isPremium)
     if (decoded?.isPremium === true) {
       setIsProMember(true);
     } else {

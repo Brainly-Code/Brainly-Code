@@ -36,13 +36,13 @@ if(accessToken){
   }
 }
 
-  // if (!role) {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!role) {
+    return <Navigate to="/login" replace />;
+  }
 
-  // if (role !== "USER") {
-  //   return <Navigate to="/user" replace />;
-  // }
+  if (role !== "USER") {
+    return <Navigate to="/admin" replace />;
+  }
 
   return <Outlet />;
 };
