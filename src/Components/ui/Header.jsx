@@ -14,10 +14,10 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { userInfo } = useSelector((state) => state.auth);
-
   // Local state for premium to react on changes properly
   const [isProMember, setIsProMember] = useState(false);
-
+  let decoded = null;
+  
   // Decode token to get userId
   let userId = null;
   try {
@@ -28,10 +28,13 @@ const Header = () => {
   } catch (error) {
     console.error('Invalid token', error);
   }
+  console.log(decoded?.isPremium)
 
   // Update local isProMember state whenever userInfo changes
   useEffect(() => {
-    if (userInfo?.user?.isPremium === true) {
+    const decoded = jwtDecode(userInfo.access_token);
+    console.log(decoded?.isPremium)
+    if (decoded?.isPremium === true) {
       setIsProMember(true);
     } else {
       setIsProMember(false);

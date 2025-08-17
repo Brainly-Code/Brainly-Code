@@ -45,7 +45,7 @@ if(accessToken){
   }
 
   if (role !== "USER") {
-    return <Navigate to="/user" replace />;
+    return <Navigate to="/admin" replace />;
   }
 
   return <Outlet />;
