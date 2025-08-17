@@ -1,13 +1,15 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogoutMutation, useUpgradeToProMutation, useGetProfileImageQuery } from '../../redux/api/userSlice';
-import { Logout, setCredentials } from '../../redux/Features/authSlice';
+import { Logout } from '../../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { FloatingNav } from './FloatingNav';
 import BrainlyCodeIcon from '../BrainlyCodeIcon';
 import profileFallback from "../../assets/profile.png";
 import {jwtDecode} from "jwt-decode";
+import Loader from './Loader';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -24,11 +26,13 @@ const Header = () => {
     if (userInfo?.access_token) {
       const decoded = jwtDecode(userInfo.access_token);
       userId = decoded.sub;
+      console.log(decoded?.isPremium)
+    }else{
+      navigate('/login');
     }
   } catch (error) {
     console.error('Invalid token', error);
   }
-  console.log(decoded?.isPremium)
 
   // Update local isProMember state whenever userInfo changes
   useEffect(() => {
@@ -87,6 +91,10 @@ const Header = () => {
       toast.error(error?.data?.message || "Failed to upgrade membership.");
     }
   };
+
+  if(loadingImage) {
+    return <Loader />
+  }
 
   return (
     <div>

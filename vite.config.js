@@ -19,6 +19,14 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
-    }
-  }
+    },
+    // 👇 allow .mjs, .js, .ts, etc.
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
+  },
+  optimizeDeps: {
+    include: [
+      'framer-motion',
+      'lucide-react'
+    ]
+  },
 })

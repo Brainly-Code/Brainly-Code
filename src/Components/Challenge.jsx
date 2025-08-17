@@ -1,24 +1,25 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Header from './ui/Header'
 import { useGetChallengeByIdQuery, useGetChallengeInstructionsQuery } from '../redux/api/challengeSlice';
 import { useNavigate, useParams } from 'react-router-dom';
 import CodeEditor from './CodeEditor';
 import Footer from './ui/Footer';
+import ChallengeCodeEditor from './ChallengeCodeEditor';
 
 const Challenge = () => {
   const challengeId = useParams();
   const navigate = useNavigate();
-  const [progress, setProgress] = useState(0);
+  // const [progress, setProgress] = useState(0);
 
   const {data: challenge} = useGetChallengeByIdQuery(challengeId?.id);
   const {data: instructions} = useGetChallengeInstructionsQuery(challenge?.id);
 
-  const handleTimeUpdate = (e) => {
-    const currentTime = e.target.currentTime;
-    const duration = e.target.duration;
-    const percent = duration ? Math.round((currentTime / duration) * 100) : 0;
-    setProgress(percent);
-  };
+  // const handleTimeUpdate = (e) => {
+  //   const currentTime = e.target.currentTime;
+  //   const duration = e.target.duration;
+  //   const percent = duration ? Math.round((currentTime / duration) * 100) : 0;
+  //   setProgress(percent);
+  // };
   return (
     <div className='bg-[#070045] opacity-90 h-full'>
       <Header />  
@@ -44,12 +45,12 @@ const Challenge = () => {
           </div>
         </div>
 
-        <CodeEditor onClick={handleTimeUpdate}/>
+        <ChallengeCodeEditor />
 
         <div>
 
           <div className="mx-auto flex flex-col gap-2 w-[40%] bg-[#0A1C2B] py-6 px-40 rounded-2xl">
-            <span className="text-white text-center">You are {progress}% there!</span>
+            <span className="text-white text-center">You are almost there!</span>
             <button
               className="bg-[#6B5EDD] hover:bg-[#4d3eb0] text-sm py-2 px-6 sm:px-10 mt-5 rounded-xl"
               onClick={() => navigate(`/user/challenges`)}

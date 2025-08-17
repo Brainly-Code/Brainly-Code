@@ -102,16 +102,17 @@ const Profile = () => {
 
   return (
     <div className="h-full w-full bg-[#110167] p-4">
-      <div className="flex justify-center md:space-x-4">
-        <div className="md:w-1/3">
-          <h1 className="text-xl font-bold mb-7 text-[#989898] text-center">Update Profile</h1>
-          <div className="mb-4">
-          <button
+                <button
             onClick={handleBack}
             className="py-2 px-4 rounded-md bg-[rgba(217,217,217,0.2)] text-white hover:bg-gray-700 font-bold"
           >
             Back
           </button>
+      <div className="flex justify-center md:space-x-4">
+        <div className="md:w-1/3">
+          <h1 className="text-xl font-bold mb-7 text-[#989898] text-center">Update Profile</h1>
+          <div className="mb-4">
+
         </div>
 
           <form onSubmit={submitHandler}>

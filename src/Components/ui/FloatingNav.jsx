@@ -8,12 +8,19 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 
+import { Logout } from '../../redux/Features/authSlice';
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useLogoutMutation } from "../../redux/api/userSlice";
+import { useDispatch } from "react-redux";
 
 export const FloatingNav = ({ navItems, className }) => {
   const { scrollYProgress } = useScroll();
   const [visible, setVisible] = useState(false);
+  const [logoutApiCall] = useLogoutMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useMotionValueEvent(scrollYProgress, "change", (current) => {
     // Show nav whenever scroll is beyond 5%
@@ -23,6 +30,16 @@ export const FloatingNav = ({ navItems, className }) => {
       setVisible(false);
     }
   });
+
+    const logoutHandler = async () => {
+      try {
+        await logoutApiCall().unwrap();
+        dispatch(Logout());
+        navigate('/login');
+      } catch (error) {
+        toast.error(error?.data?.message || error.message);
+      }
+    };
 
   return (
     <AnimatePresence mode="wait">
@@ -49,9 +66,9 @@ export const FloatingNav = ({ navItems, className }) => {
               <span className="hidden sm:block text-sm">{navItem.name}</span>
             </Link>
           ))}
-          <button className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full">
+          <button className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full" onClick={logoutHandler}>
             <span>
-              <Link to="/login">Log out</Link>
+              <Link to="">Log out</Link>
             </span>
             <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
           </button>
