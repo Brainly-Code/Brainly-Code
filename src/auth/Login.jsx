@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
 import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
 import { useEffect, useState } from 'react';

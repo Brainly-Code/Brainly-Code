@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Navigate, Outlet, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, Outlet, useSearchParams } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 import { setCredentials } from './redux/Features/authSlice';
 
@@ -23,7 +23,7 @@ const Home = () => {
 
   if (!accessToken) {
     console.log("No access token found");
-    // return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
 if(accessToken){

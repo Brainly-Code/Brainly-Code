@@ -7,6 +7,7 @@ import TextGenerateEffect from './ui/TextGenerate';
 import CodeEditor from './CodeEditor';
 import Header from './ui/Header';
 import { useGetChallengesQuery } from '../redux/api/challengeSlice';
+import PlaygroundCodeEditor from './PlaygroundCodeEditor';
 
 const PlayGround = () => {
 
@@ -34,7 +35,7 @@ const PlayGround = () => {
       </section>
 
       <section className="editor my-8 px-4 md:px-10">
-        <CodeEditor />
+        <PlaygroundCodeEditor />
       </section>
 
       <section className='text-gray-100 mt-16 mx-4 md:mx-10 lg:mx-32'>
