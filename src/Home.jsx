@@ -7,7 +7,7 @@ import { setCredentials } from './redux/Features/authSlice';
 const Home = () => {
   const { userInfo } = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  const token = useSearchParams()[0].get("token"); // if token comes from URL param
+  const token = useSearchParams()[0].get("token"); 
   console.log("token", token);
   let role = null;
 
