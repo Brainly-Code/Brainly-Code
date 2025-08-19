@@ -38,7 +38,7 @@ const Challenge = () => {
                   <div
                     key={instruction?.id} 
                     className=" mx-auto w-[90%] p-[1rem] bg-opacity-80">
-                    <p className="text-gray-400 text-md text-start">step {(instruction?.number)+1}:  {instruction?.instruction}</p>
+                    <p className="text-gray-400 text-md text-start">step {(instruction?.number)}:  {instruction?.instruction}</p>
                   </div>
                 ))}
             </div>
