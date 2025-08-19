@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogoutMutation, useUpgradeToProMutation, useGetProfileImageQuery } from '../../redux/api/userSlice';
-import { Logout } from '../../redux/Features/authSlice';
+import { Logout, setCredentials } from '../../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { FloatingNav } from './FloatingNav';
 import BrainlyCodeIcon from '../BrainlyCodeIcon';
@@ -83,7 +83,7 @@ const Header = () => {
     try {
       const res = await upgradeToPro(userId).unwrap();
       // Important: res should contain { access_token, user }
-      dispatch(setCredentials(res));
+      dispatch(setCredentials(userInfo?.access_token, res));
       toast.success("Congratulations! You are now a Pro Member!");
       setShowUpgradeMessage(true);
       setIsProMember(true); // Update local state immediately

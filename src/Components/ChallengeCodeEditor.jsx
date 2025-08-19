@@ -17,7 +17,7 @@ const compareCode = (studentCode, solutionCode) => {
 
 
 const ChallengeCodeEditor = (
-  // lessonId
+ 
 ) => {
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");
