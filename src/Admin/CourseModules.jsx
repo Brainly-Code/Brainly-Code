@@ -92,11 +92,11 @@ const Modules = () => {
           <div className='flex flex-col sm:flex-row gap-5'>
             <div className='flex items-center gap-2'>
               <img src={time} alt="Time" className='w-5 h-5' />
-              <span>{course?.duration} hours</span>
+              <span>{course?.duration || 0} hours</span>
             </div>
             <div className='flex items-center gap-2'>
               <img src={star} alt="Star" className='w-5 h-5' />
-              <span>{course?.rating}</span>
+              <span>{course?.rating || 0 }</span>
             </div>
           </div>
         </div>

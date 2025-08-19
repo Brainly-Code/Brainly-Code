@@ -38,6 +38,7 @@ import CourseModules from '../src/Admin/CourseModules.jsx'
 import RouteError from './RouteError.jsx'
 import Challenges from './Components/Challenges.jsx'
 import AdminChallenges from './Layouts/Dashboard/Components/Challenges.jsx'
+import EditChallenge from './Admin/editChallenge.jsx'
 
 const router = createBrowserRouter (
   createRoutesFromElements(
@@ -81,6 +82,7 @@ const router = createBrowserRouter (
         <Route path='course/module/:moduleId/video/:videoId' element={<VideoPlayer2 />} />
         <Route path=':moduleId/:lessonVideoId' element={<LessonVideoPlayer2 />} />
         <Route path='lesson/:id' element={< Lesson2 />}/>
+        <Route path='editChallenge/:id' element={<EditChallenge />} />
         {/* <Route path='challenges' element={<AllChallenges />} /> 
 
         <Route path='courses' element={<AllCourses />} /> 

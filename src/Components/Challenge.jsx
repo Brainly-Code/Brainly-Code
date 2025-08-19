@@ -2,17 +2,16 @@ import React from 'react'
 import Header from './ui/Header'
 import { useGetChallengeByIdQuery, useGetChallengeInstructionsQuery } from '../redux/api/challengeSlice';
 import { useNavigate, useParams } from 'react-router-dom';
-import CodeEditor from './CodeEditor';
 import Footer from './ui/Footer';
 import ChallengeCodeEditor from './ChallengeCodeEditor';
 
 const Challenge = () => {
-  const challengeId = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   // const [progress, setProgress] = useState(0);
 
-  const {data: challenge} = useGetChallengeByIdQuery(challengeId?.id);
-  const {data: instructions} = useGetChallengeInstructionsQuery(challenge?.id);
+  const { data: challenge } = useGetChallengeByIdQuery(id);
+  const { data: instructions = [], isLoading: isInstructionsLoading } = useGetChallengeInstructionsQuery(id);
 
   // const handleTimeUpdate = (e) => {
   //   const currentTime = e.target.currentTime;
@@ -33,14 +32,20 @@ const Challenge = () => {
             <p className="text-gray-500 text-md">{challenge?.more} </p>
             <div className='mb-[2rem]'>
               <h2 className="my-[2rem] text-start text-gray-300 font-bold text-lg">Instructions:</h2>
-              {instructions && 
-                instructions?.map((instruction) => (
-                  <div
-                    key={instruction?.id} 
-                    className=" mx-auto w-[90%] p-[1rem] bg-opacity-80">
-                    <p className="text-gray-400 text-md text-start">step {(instruction?.number)+1}:  {instruction?.instruction}</p>
-                  </div>
-                ))}
+              {isInstructionsLoading ? (
+                <div className="text-gray-400 text-start ml-[3rem]">Loading instructions...</div>
+              ) : (
+                instructions
+                  .slice()
+                  .sort((a, b) => (a?.number || 0) - (b?.number || 0))
+                  .map((instruction) => (
+                    <div
+                      key={instruction?.id}
+                      className=" mx-auto w-[90%] p-[1rem] bg-opacity-80">
+                      <p className="text-gray-400 text-md text-start">step {instruction?.number}: {instruction?.instruction}</p>
+                    </div>
+                  ))
+              )}
             </div>
           </div>
         </div>

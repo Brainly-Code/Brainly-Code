@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice.jsx";
 
-const CHALLENGE_URL = "/challenges"
+const CHALLENGE_URL = "challenges"
 const CHALLENGE_INSTRUCTIONS_URL = "challenge-instructions"
 
 const challengeApiSlice = apiSlice.injectEndpoints({
@@ -9,6 +9,14 @@ const challengeApiSlice = apiSlice.injectEndpoints({
       query: data => ({
         url: `${CHALLENGE_URL}`,
         method: "POST",
+        body: data
+      })
+    }),
+
+    updateChallenge: builders.mutation({
+      query: ({ id, data }) => ({
+        url: `${CHALLENGE_URL}/${id}`,
+        method: "PUT",
         body: data
       })
     }),
@@ -40,13 +48,40 @@ const challengeApiSlice = apiSlice.injectEndpoints({
         method: "GET"
       })
     }),
+
+    createChallengeInstruction: builders.mutation({
+      query: (data) => ({
+        url: `${CHALLENGE_INSTRUCTIONS_URL}`,
+        method: "POST",
+        body: data
+      })
+    }),
+
+    updateChallengeInstruction: builders.mutation({
+      query: ({ id, data }) => ({
+        url: `${CHALLENGE_INSTRUCTIONS_URL}/${id}`,
+        method: "PUT",
+        body: data
+      })
+    }),
+
+    deleteChallengeInstruction: builders.mutation({
+      query: (id) => ({
+        url: `${CHALLENGE_INSTRUCTIONS_URL}/${id}`,
+        method: "DELETE"
+      })
+    }),
   })
 });
 
 export const {
   useCreateChallengeMutation,
+  useUpdateChallengeMutation,
   useIncrementChallengeMutation,
   useGetChallengesQuery,
   useGetChallengeByIdQuery,
   useGetChallengeInstructionsQuery,
+  useCreateChallengeInstructionMutation,
+  useUpdateChallengeInstructionMutation,
+  useDeleteChallengeInstructionMutation,
 } = challengeApiSlice;
