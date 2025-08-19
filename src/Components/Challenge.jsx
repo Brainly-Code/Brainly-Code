@@ -32,20 +32,14 @@ const Challenge = () => {
             <p className="text-gray-500 text-md">{challenge?.more} </p>
             <div className='mb-[2rem]'>
               <h2 className="my-[2rem] text-start text-gray-300 font-bold text-lg">Instructions:</h2>
-              {isInstructionsLoading ? (
-                <div className="text-gray-400 text-start ml-[3rem]">Loading instructions...</div>
-              ) : (
-                instructions
-                  .slice()
-                  .sort((a, b) => (a?.number || 0) - (b?.number || 0))
-                  .map((instruction) => (
-                    <div
-                      key={instruction?.id}
-                      className=" mx-auto w-[90%] p-[1rem] bg-opacity-80">
-                      <p className="text-gray-400 text-md text-start">step {instruction?.number}: {instruction?.instruction}</p>
-                    </div>
-                  ))
-              )}
+              {instructions && 
+                instructions?.map((instruction) => (
+                  <div
+                    key={instruction?.id} 
+                    className=" mx-auto w-[90%] p-[1rem] bg-opacity-80">
+                    <p className="text-gray-400 text-md text-start">step {(instruction?.number)}:  {instruction?.instruction}</p>
+                  </div>
+                ))}
             </div>
           </div>
         </div>

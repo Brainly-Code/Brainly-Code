@@ -17,7 +17,7 @@ const Header = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
   // Local state for premium to react on changes properly
-  const [isProMember, setIsProMember] = useState(false);
+  // const [isProMember, setIsProMember] = useState(false);
   let decoded = null;
   
   // Decode token to get userId
@@ -34,16 +34,16 @@ const Header = () => {
     console.error('Invalid token', error);
   }
 
-  // Update local isProMember state whenever userInfo changes
-  useEffect(() => {
-    const decoded = jwtDecode(userInfo.access_token);
-    console.log(decoded?.isPremium)
-    if (decoded?.isPremium === true) {
-      setIsProMember(true);
-    } else {
-      setIsProMember(false);
-    }
-  }, [userInfo]);
+  // // Update local isProMember state whenever userInfo changes
+  // useEffect(() => {
+  //   const decoded = jwtDecode(userInfo.access_token);
+  //   console.log(decoded?.isPremium)
+  //   if (decoded?.isPremium === true) {
+  //     setIsProMember(true);
+  //   } else {
+  //     setIsProMember(false);
+  //   }
+  // }, [userInfo]);
 
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(userId, {
     skip: !userId,
@@ -55,14 +55,14 @@ const Header = () => {
       : profileFallback;
 
   const [logoutApiCall] = useLogoutMutation();
-  const [upgradeToPro, { isLoading: isUpgrading }] = useUpgradeToProMutation();
-  const [showUpgradeMessage, setShowUpgradeMessage] = useState(false);
+  // const [upgradeToPro, { isLoading: isUpgrading }] = useUpgradeToProMutation();
+  // const [showUpgradeMessage, setShowUpgradeMessage] = useState(false);
 
   const navItems = [
     { name: "Courses", link: "/user", icon: "📚" },
     { name: "Playground", link: "/user/playground", icon: "🎮" },
     { name: "Challenges", link: "/user/challenges", icon: "🏆" },
-    { name: "Community", link: "/user/community", icon: "👤" }
+    { name: "Community", link: "/not-done", icon: "👤" }
   ];
 
   const logoutHandler = async () => {
@@ -75,22 +75,22 @@ const Header = () => {
     }
   };
 
-  const handleUpgrade = async () => {
-    if (isProMember) {
-      toast.info("You are already a Pro Member!");
-      return;
-    }
-    try {
-      const res = await upgradeToPro(userId).unwrap();
-      // Important: res should contain { access_token, user }
-      dispatch(setCredentials(userInfo?.access_token, res));
-      toast.success("Congratulations! You are now a Pro Member!");
-      setShowUpgradeMessage(true);
-      setIsProMember(true); // Update local state immediately
-    } catch (error) {
-      toast.error(error?.data?.message || "Failed to upgrade membership.");
-    }
-  };
+  // const handleUpgrade = async () => {
+  //   if (isProMember) {
+  //     toast.info("You are already a Pro Member!");
+  //     return;
+  //   }
+  //   try {
+  //     const res = await upgradeToPro(userId).unwrap();
+  //     // Important: res should contain { access_token, user }
+  //     dispatch(setCredentials(userInfo?.access_token, res));
+  //     toast.success("Congratulations! You are now a Pro Member!");
+  //     setShowUpgradeMessage(true);
+  //     setIsProMember(true); // Update local state immediately
+  //   } catch (error) {
+  //     toast.error(error?.data?.message || "Failed to upgrade membership.");
+  //   }
+  // };
 
   if(loadingImage) {
     return <Loader />
@@ -110,7 +110,7 @@ const Header = () => {
               </Link>
             </li>
 
-            {/* Upgrade button only if NOT pro */}
+            {/* Upgrade button only if NOT pro
             {!isProMember && (
               <li>
                 <button
@@ -127,12 +127,14 @@ const Header = () => {
               </li>
             )}
 
-            {/* Show Pro badge if user is Pro */}
+            Show Pro badge if user is Pro 
             {isProMember && (
               <li className="text-sm font-semibold text-[#2DD4BF] bg-[#0a2c2d] px-3 py-1 rounded-full select-none">
                 Pro
               </li>
             )}
+              */}
+            
 
             <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
               <button onClick={logoutHandler}>

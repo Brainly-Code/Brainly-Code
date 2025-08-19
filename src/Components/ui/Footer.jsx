@@ -17,10 +17,10 @@ const Footer = () => {
         <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Learn</h1>
           <ul className="space-y-1">
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Courses</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Playgrounds</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Challenges</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Projects</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Courses</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Playgrounds</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Challenges</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Projects</a></li>
           </ul>
         </div>
 
@@ -28,10 +28,10 @@ const Footer = () => {
         <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Resources</h1>
           <ul className="space-y-1">
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Blog</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Documentation</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">FAQ</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Support</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Blog</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Documentation</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">FAQ</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Support</a></li>
           </ul>
         </div>
 
@@ -39,10 +39,10 @@ const Footer = () => {
         <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Company</h1>
           <ul className="space-y-1">
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">About us</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Careers</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Privacy Policy</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Terms of service</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">About us</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Careers</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Privacy Policy</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Terms of service</a></li>
           </ul>
         </div>
       </div>
