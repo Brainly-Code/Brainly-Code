@@ -62,7 +62,7 @@ const Header = () => {
     { name: "Courses", link: "/user", icon: "📚" },
     { name: "Playground", link: "/user/playground", icon: "🎮" },
     { name: "Challenges", link: "/user/challenges", icon: "🏆" },
-    { name: "Community", link: "/user/community", icon: "👤" }
+    { name: "Community", link: "/not-done", icon: "👤" }
   ];
 
   const logoutHandler = async () => {

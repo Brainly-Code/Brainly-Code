@@ -38,6 +38,7 @@ import CourseModules from '../src/Admin/CourseModules.jsx'
 import RouteError from './RouteError.jsx'
 import Challenges from './Components/Challenges.jsx'
 import AdminChallenges from './Layouts/Dashboard/Components/Challenges.jsx'
+import NotDoneError from './NotDoneError.jsx'
 
 const router = createBrowserRouter (
   createRoutesFromElements(
@@ -53,6 +54,7 @@ const router = createBrowserRouter (
         <Route path='' element = {<Hero />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path='not-done' element={<NotDoneError /> } />
       </Route>
    
 
