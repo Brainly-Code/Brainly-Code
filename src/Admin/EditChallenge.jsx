@@ -4,9 +4,10 @@ import star from '../assets/star.png';
 import Footer from '../Components/ui/Footer';
 import Edit from '../assets/edit.png'
 import Delete from '../assets/bin.png'
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useGetChallengeByIdQuery, useGetChallengeInstructionsQuery, useCreateChallengeInstructionMutation, useUpdateChallengeInstructionMutation, useDeleteChallengeInstructionMutation, useUpdateChallengeMutation } from '../redux/api/challengeSlice.jsx';
+import { Loader } from 'lucide-react';
 
 const EditChallenge = () => {   
   const { id } = useParams();
@@ -113,9 +114,21 @@ const EditChallenge = () => {
     }
   };
 
+  if(isDeleting) {
+    return <Loader />
+  }
+
   return (
     <div className='bg-[#0D0056] min-h-screen text-white flex flex-col justify-between'>
-      <h3 className='text-2xl font-bold mt-12 text-center'>Edit challenge</h3>
+      <div className="flex mt-12 gap-[30%]">
+        <Link to="/admin/challenges">
+          <button className="px-8 py-3 rounded-lg bg-blue-500">Back</button>
+        </Link>
+        <h3 className='text-2xl font-bold text-center'>Edit challenge</h3>
+        <Link to={`/admin/completers/${id}`}>
+          <button className="px-8 py-3 rounded-lg bg-blue-500">Check out completers</button>
+        </Link>
+      </div>
 
       <section className='bg-[#0A1C2B] mt-12 w-1/2 mx-auto rounded-3xl border-8 border-[rgba(33,111,184,0.5)]'>
         <div className='bg-[#0A1C2B] border-4 border-[#6B5EDD] w-full mx-auto p-6 rounded-xl flex flex-row sm:flex-col justify-between items-center gap-6'>

@@ -40,6 +40,7 @@ import Challenges from './Components/Challenges.jsx'
 import AdminChallenges from './Layouts/Dashboard/Components/Challenges.jsx'
 import EditChallenge from './Admin/EditChallenge.jsx'
 import NotDoneError from './NotDoneError.jsx'
+import ChallengeCompleters from './Admin/ChallengeCompleters.jsx'
 
 const router = createBrowserRouter (
   createRoutesFromElements(
@@ -76,6 +77,7 @@ const router = createBrowserRouter (
         {/* <Route path='users' element={<AllUPasers />} /> */}
         <Route path='' element={<Dashboard />} />
         <Route path='challenges' element={<AdminChallenges />} />
+        <Route path='completers/:id' element={<ChallengeCompleters />} />
         <Route path='courses' element={<Courses />} />
         <Route path='users' element={<Users />} />
         <Route path='profile' element={<UpdateUser />} />
