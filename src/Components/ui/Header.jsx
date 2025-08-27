@@ -26,7 +26,6 @@ const Header = () => {
     if (userInfo?.access_token) {
       const decoded = jwtDecode(userInfo.access_token);
       userId = decoded.sub;
-      console.log(decoded?.isPremium)
     }else{
       navigate('/login');
     }
