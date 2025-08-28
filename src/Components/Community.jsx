@@ -11,7 +11,8 @@ export const Community = () => {
 
   return (
     <div className="bg-[#0D0056] min-h-screen flex flex-col relative">
-        <Header />
+        {!openChat && <Header />}
+
 
       {/* Title */}
       <h1 className="text-center text-white mt-6 font-bold text-2xl md:text-3xl">
@@ -85,7 +86,7 @@ export const Community = () => {
         <img
           src={conversation}
           alt="chat"
-          className="w-14 h-14 cursor-pointer hover:scale-110 transition shadow-lg p-2"
+          className="w-14 h-14 cursor-pointer hover:scale-110 transition  p-2"
           onClick={() => setOpenChat(true)} // ✅ open modal
         />
       </div>
@@ -94,8 +95,8 @@ export const Community = () => {
 
       {/* Chat Modal */}
       {openChat && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="relative w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-[90vh] bg-[#0D0056] rounded-xl shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 overflow-hidden">
+          <div className="relative w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-[90vh] bg-[#0D0056] rounded-xl shadow-2xl flex flex-col">
             {/* Close Button */}
             <button
               className="absolute top-3 right-3 text-white text-xl font-bold hover:text-gray-300"
