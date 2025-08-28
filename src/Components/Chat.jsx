@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import user from "../assets/user.png";
 import send from "../assets/send.png";
+import { useGetUsersQuery } from "../redux/api/AdminSlice";
 
-export const Chat = () => {
+export const Chat = (userId) => {
+  console.log(userId.userId)
   const users = [
     { id: 1, name: "Nshuti Christian", avatar: user },
     { id: 2, name: "John Doe", avatar: user },
     { id: 3, name: "Jane Smith", avatar: user },
   ];
+
+  const {data: friends} = useGetUsersQuery();
 
   const [selectedUser, setSelectedUser] = useState(users[0]);
   const [messages, setMessages] = useState({
@@ -48,7 +52,7 @@ export const Chat = () => {
           } sm:block w-full sm:w-1/4 bg-[#1a2b3c] text-white p-4 space-y-3 border-r border-gray-700`}
         >
           <h3 className="font-bold text-lg mb-4">Chats</h3>
-          {users.map((u) => (
+          {friends.map((u) => (
             <div
               key={u.id}
               onClick={() => {
@@ -62,11 +66,11 @@ export const Chat = () => {
               }`}
             >
               <img
-                src={u.avatar}
+                src={!u?.photo ? user : u?.photo}
                 className="bg-white rounded-full h-[40px] w-[40px]"
-                alt={u.name}
+                alt={u.username}
               />
-              <span className="truncate">{u.name}</span>
+              <span className="truncate text-lg font-medium">{u.username}</span>
             </div>
           ))}
         </div>
@@ -77,12 +81,12 @@ export const Chat = () => {
           <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700">
             <div className="flex items-center gap-4">
               <img
-                src={selectedUser.avatar}
+                src={selectedUser?.photo ? selectedUser?.photo : user}
                 className="bg-white rounded-full h-[50px] w-[50px] sm:h-[60px] sm:w-[60px]"
-                alt={selectedUser.name}
+                alt={selectedUser?.username}
               />
               <h4 className="text-white text-lg sm:text-xl font-semibold">
-                {selectedUser.name}
+                {selectedUser?.username}
               </h4>
             </div>
             {/* Toggle button (mobile only) */}
@@ -105,7 +109,7 @@ export const Chat = () => {
               >
                 {msg.sender === "them" && (
                   <img
-                    src={selectedUser.avatar}
+                    src={selectedUser.photo ? selectedUser.photo : user}
                     className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
                     alt="avatar"
                   />

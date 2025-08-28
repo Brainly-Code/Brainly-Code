@@ -8,8 +8,13 @@ import Chat from './Chat' // ✅ import Chat component
 import { useGetUsersQuery } from '../redux/api/AdminSlice'
 import Loader from './ui/Loader'
 import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
+import { jwtDecode } from 'jwt-decode'
 
 export const Community = () => {
+  const {userInfo} = useSelector(state => state.auth);
+  const token = jwtDecode(userInfo?.access_token);
+
   const [openChat, setOpenChat] = useState(false) // ✅ modal state
 
   const {data: communityUsers, isLoading, error} = useGetUsersQuery();
@@ -30,7 +35,6 @@ export const Community = () => {
     <div className="bg-[#0D0056] min-h-screen flex flex-col relative">
         {!openChat && <Header />}
 
-
       {/* Title */}
       <h1 className="text-center text-white mt-6 font-bold text-2xl md:text-3xl">
         Community
@@ -46,10 +50,11 @@ export const Community = () => {
             key={i}
             className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
           >
+            {console.log(communityUser?.photo)}
             {/* Profile Image */}
             <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
               <img
-                src={user}
+                src={!communityUser?.photo ? user : communityUser?.photo}
                 alt="profile"
                 className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
               />
@@ -123,7 +128,7 @@ export const Community = () => {
             </button>
 
             {/* Chat Component */}
-            <Chat />
+            <Chat userId = {token?.sub} />
           </div>
         </div>
       )}

@@ -34,10 +34,11 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const [logoutApiCall] = useLogoutMutation();
 
   const logoutHandler = async () => {
+    console.log("Logging out")
     try {
       await logoutApiCall().unwrap();
       dispatch(Logout());
-      navigate("/login");
+      navigate('/login');
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
