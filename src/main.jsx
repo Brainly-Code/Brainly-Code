@@ -13,6 +13,7 @@ import UpdateUser from './Components/UpdateUser'
 import Home from './Home'
 import HomePage from './Components/HomePage'
 import NewUser from './User'
+import Community from './Components/Community.jsx'
 
 
 import PlayGround from './Components/PlayGround'
@@ -40,6 +41,9 @@ import Challenges from './Components/Challenges.jsx'
 import AdminChallenges from './Layouts/Dashboard/Components/Challenges.jsx'
 import EditChallenge from './Admin/EditChallenge.jsx'
 import NotDoneError from './NotDoneError.jsx'
+import ChallengeCompleters from './Admin/ChallengeCompleters.jsx'
+import Chat from './Components/Chat.jsx'
+
 
 const router = createBrowserRouter (
   createRoutesFromElements(
@@ -69,6 +73,8 @@ const router = createBrowserRouter (
         <Route path='module/:id' element={<Modules />} />
         <Route path='course/module/:moduleId/video/:videoId' element={<VideoPlayer />} />
         <Route path=':moduleId/:lessonVideoId' element={<LessonVideoPlayer />} />
+        <Route path='community' element={<Community />} />
+        <Route path='chat' element={<Chat />} />
       </Route>
 
       {/* Admin  */}
@@ -76,6 +82,7 @@ const router = createBrowserRouter (
         {/* <Route path='users' element={<AllUPasers />} /> */}
         <Route path='' element={<Dashboard />} />
         <Route path='challenges' element={<AdminChallenges />} />
+        <Route path='completers/:id' element={<ChallengeCompleters />} />
         <Route path='courses' element={<Courses />} />
         <Route path='users' element={<Users />} />
         <Route path='profile' element={<UpdateUser />} />

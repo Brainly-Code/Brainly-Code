@@ -42,6 +42,12 @@ const AdminSlice = apiSlice.injectEndpoints({
       })
     }),
 
+    getChallengeCompleters: builder.query({
+      query: (challengeId) => ({
+        url: `${ADMIN_URL}/challenge-completers/${challengeId}`,
+        method: "GET"
+      })
+    })
 
   }),
 });
@@ -51,5 +57,6 @@ export const {
   useGetUsersQuery,
   useDeleteUserMutation,
   useCreateCourseMutation, // ✅ export this to use in components
-  useCreateLessonSolutionMutation
+  useCreateLessonSolutionMutation,
+  useGetChallengeCompletersQuery
 } = AdminSlice;

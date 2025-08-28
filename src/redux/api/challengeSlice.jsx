@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice.jsx";
 
-const CHALLENGE_URL = "challenges"
+const CHALLENGE_URL = "/challenges"
 const CHALLENGE_INSTRUCTIONS_URL = "challenge-instructions"
 
 const challengeApiSlice = apiSlice.injectEndpoints({
@@ -71,6 +71,20 @@ const challengeApiSlice = apiSlice.injectEndpoints({
         method: "DELETE"
       })
     }),
+
+    challengeInstructionCompletion: builders.mutation({
+      query: (instructionId) => ({
+        url: `${CHALLENGE_URL}/${CHALLENGE_INSTRUCTIONS_URL}/${instructionId}`
+      })
+    }),
+
+    completeChallenge: builders.mutation({
+      query: (data) => ({
+        url: `${CHALLENGE_URL}/challenge-completer`,
+        method: "POST",
+        form: data
+      })
+    })
   })
 });
 
@@ -84,4 +98,6 @@ export const {
   useCreateChallengeInstructionMutation,
   useUpdateChallengeInstructionMutation,
   useDeleteChallengeInstructionMutation,
+  useChallengeInstructionCompletionMutation,
+  useCompleteChallengeMutation
 } = challengeApiSlice;
