@@ -5,10 +5,27 @@ import messenger from '../assets/messenger.png'
 import Footer from './ui/Footer'
 import conversation from '../assets/conversation.png'
 import Chat from './Chat' // ✅ import Chat component
+import { useGetUsersQuery } from '../redux/api/AdminSlice'
+import Loader from './ui/Loader'
+import { toast } from 'react-toastify'
 
 export const Community = () => {
   const [openChat, setOpenChat] = useState(false) // ✅ modal state
 
+  const {data: communityUsers, isLoading, error} = useGetUsersQuery();
+
+  const roleProvision = (role) => {
+    if(role === "USER") {
+      return role = "Student";
+    }else {
+      return role = "Instructor";
+    }
+  }
+
+  if(isLoading) <Loader />
+  if(error) {
+    toast.error("Sorry could not load the community users")
+  }
   return (
     <div className="bg-[#0D0056] min-h-screen flex flex-col relative">
         {!openChat && <Header />}
@@ -24,7 +41,7 @@ export const Community = () => {
 
       {/* Cards Section */}
       <div className="flex flex-col md:flex-row flex-wrap justify-center items-center m-6 md:m-16 gap-6 md:gap-12">
-        {[1, 2, 3].map((_, i) => (
+        {communityUsers?.map((communityUser, i) => (
           <div
             key={i}
             className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
@@ -40,8 +57,8 @@ export const Community = () => {
 
             {/* Info */}
             <div className="flex flex-col mt-4 mb-4">
-              <span className="text-center">Nshuti Christian</span>
-              <span className="text-center text-sm">Teacher</span>
+              <span className="text-center text-lg font-medium">{communityUser?.username}</span>
+              <span className="text-center text-sm">{roleProvision(communityUser?.role)}</span>
             </div>
 
             {/* Messenger Icon */}
