@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import user from "../assets/user.png";
 import send from "../assets/send.png";
 import { useGetUsersQuery } from "../redux/api/AdminSlice";
+import { useGetCurrentUserQuery } from "../redux/api/userSlice";
 
-export const Chat = (userId) => {
-  console.log(userId.userId)
-  const users = [
-    { id: 1, name: "Nshuti Christian", avatar: user },
-    { id: 2, name: "John Doe", avatar: user },
-    { id: 3, name: "Jane Smith", avatar: user },
-  ];
+export const Chat = (props) => {
+  const { userId } = props;
 
-  const {data: friends} = useGetUsersQuery();
+  const { data: friends = [] } = useGetUsersQuery();
+  const { data: frnd } = useGetCurrentUserQuery(userId);
 
-  const [selectedUser, setSelectedUser] = useState(users[0]);
+  // Use first friend as default if no userId
+  const initialUser =
+    userId && friends.length
+      ? friends.find((u) => u.id === userId) || friends[0]
+      : friends[0];
+
+  const [selectedUser, setSelectedUser] = useState(initialUser || {});
   const [messages, setMessages] = useState({
     1: [
       { id: 1, text: "Hello Christian!", sender: "them" },
@@ -29,23 +32,39 @@ export const Chat = (userId) => {
     ],
   });
   const [newMessage, setNewMessage] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false); // ✅ toggle for small screens
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (userId && friends.length) {
+      const found = friends.find((u) => u.id === userId);
+      setSelectedUser(found || friends[0]);
+    } else if (friends.length) {
+      setSelectedUser(friends[0]);
+    }
+  }, [userId, friends]);
 
   const handleSend = () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || !selectedUser?.id) return;
     const newMsg = { id: Date.now(), text: newMessage, sender: "me" };
     setMessages({
       ...messages,
-      [selectedUser.id]: [...messages[selectedUser.id], newMsg],
+      [selectedUser.id]: [...(messages[selectedUser.id] || []), newMsg],
     });
     setNewMessage("");
   };
 
+  if (!friends.length) {
+    return (
+      <div className="flex items-center justify-center h-full text-white">
+        No users available for chat.
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#0D0056] h-full flex flex-col">
-      <div className="w-full h-full   mx-auto flex flex-col sm:flex-row bg-[#0A1C2B] rounded-lg shadow-lg overflow-hidden">
-        
-        {/* Sidebar (hidden on small screens unless toggled) */}
+      <div className="w-full h-full mx-auto flex flex-col sm:flex-row bg-[#0A1C2B] rounded-lg shadow-lg overflow-hidden">
+        {/* Sidebar */}
         <div
           className={`${
             sidebarOpen ? "block" : "hidden"
@@ -57,10 +76,10 @@ export const Chat = (userId) => {
               key={u.id}
               onClick={() => {
                 setSelectedUser(u);
-                setSidebarOpen(false); // close on mobile after selecting
+                setSidebarOpen(false);
               }}
               className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${
-                selectedUser.id === u.id
+                selectedUser?.id === u.id
                   ? "bg-[#6B5EDD]"
                   : "hover:bg-[#2a3b4c]"
               }`}
@@ -86,7 +105,7 @@ export const Chat = (userId) => {
                 alt={selectedUser?.username}
               />
               <h4 className="text-white text-lg sm:text-xl font-semibold">
-                {selectedUser?.username}
+                {selectedUser?.username || "General Chat"}
               </h4>
             </div>
             {/* Toggle button (mobile only) */}
@@ -99,8 +118,8 @@ export const Chat = (userId) => {
           </div>
 
           {/* Messages */}
-    <div className="bg-[#6B5EDD] flex-1 p-3 sm:p-5 overflow-y-auto space-y-4">
-            {messages[selectedUser.id]?.map((msg) => (
+          <div className="bg-[#6B5EDD] flex-1 p-3 sm:p-5 overflow-y-auto space-y-4">
+            {(messages[selectedUser?.id] || []).map((msg) => (
               <div
                 key={msg.id}
                 className={`flex items-end gap-2 sm:gap-3 ${
@@ -109,7 +128,7 @@ export const Chat = (userId) => {
               >
                 {msg.sender === "them" && (
                   <img
-                    src={selectedUser.photo ? selectedUser.photo : user}
+                    src={selectedUser?.photo ? selectedUser?.photo : user}
                     className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
                     alt="avatar"
                   />

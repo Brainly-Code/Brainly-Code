@@ -4,36 +4,73 @@ import user from '../assets/whiteUser.png'
 import messenger from '../assets/messenger.png'
 import Footer from './ui/Footer'
 import conversation from '../assets/conversation.png'
-import Chat from './Chat' // ✅ import Chat component
+import Chat from './Chat'
 import { useGetUsersQuery } from '../redux/api/AdminSlice'
-import Loader from './ui/Loader'
 import { toast } from 'react-toastify'
-import { useSelector } from 'react-redux'
-import { jwtDecode } from 'jwt-decode'
+import BgLoader from './ui/BgLoader'
 
 export const Community = () => {
-  const {userInfo} = useSelector(state => state.auth);
-  const token = jwtDecode(userInfo?.access_token);
+  const [selectedUser, setSelectedUser] = useState();
+  const [openChat, setOpenChat] = useState(false);
 
-  const [openChat, setOpenChat] = useState(false) // ✅ modal state
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 6;
+
+  // Comment section state
+  const [comment, setComment] = useState("");
+
+  const messangerHandler = (communityUser) => {
+    setOpenChat(true);
+    setSelectedUser(communityUser);
+  }
 
   const {data: communityUsers, isLoading, error} = useGetUsersQuery();
 
   const roleProvision = (role) => {
     if(role === "USER") {
-      return role = "Student";
+      return "Student";
     }else {
-      return role = "Instructor";
+      return "Instructor";
     }
   }
 
-  if(isLoading) <Loader />
-  if(error) {
-    toast.error("Sorry could not load the community users")
+  if(isLoading) {
+    return <BgLoader />
   }
+
+  if(error) {
+    toast.error("Sorry could not load the community users");
+    return (
+      <div className="bg-[#0D0056] min-h-screen flex flex-col items-center justify-center">
+        <Header />
+        <h1 className="text-white text-2xl font-bold">Failed to load community users.</h1>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Pagination logic
+  const totalPages = Math.ceil((communityUsers?.length || 0) / usersPerPage);
+  const paginatedUsers = communityUsers?.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
+
+  // Comment handler
+  const handleSendComment = () => {
+    if (!comment.trim()) {
+      toast.error("Comment cannot be empty");
+      return;
+    }
+    // TODO: Implement API call to send comment
+    toast.success("Comment sent!");
+    setComment("");
+  };
+
   return (
     <div className="bg-[#0D0056] min-h-screen flex flex-col relative">
-        {!openChat && <Header />}
+      {!openChat && <Header />}
 
       {/* Title */}
       <h1 className="text-center text-white mt-6 font-bold text-2xl md:text-3xl">
@@ -45,12 +82,11 @@ export const Community = () => {
 
       {/* Cards Section */}
       <div className="flex flex-col md:flex-row flex-wrap justify-center items-center m-6 md:m-16 gap-6 md:gap-12">
-        {communityUsers?.map((communityUser, i) => (
+        {paginatedUsers?.map((communityUser, i) => (
           <div
             key={i}
             className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
           >
-            {console.log(communityUser?.photo)}
             {/* Profile Image */}
             <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
               <img
@@ -72,7 +108,7 @@ export const Community = () => {
                 src={messenger}
                 alt="chat"
                 className="w-10 mx-auto cursor-pointer hover:scale-110 transition"
-                onClick={() => setOpenChat(true)} // ✅ open modal
+                onClick={() => messangerHandler(communityUser)}
               />
             </div>
           </div>
@@ -81,10 +117,11 @@ export const Community = () => {
 
       {/* Pagination */}
       <div className="text-white font-semibold flex flex-row mx-auto my-6 justify-around gap-3">
-        {[1, 2, 3].map((n) => (
+        {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((n) => (
           <div
             key={n}
-            className="bg-[#19179B] px-3 py-1 rounded-md cursor-pointer hover:bg-[#2a28d4] transition"
+            className={`bg-[#19179B] px-3 py-1 rounded-md cursor-pointer hover:bg-[#2a28d4] transition ${currentPage === n ? "bg-[#2a28d4]" : ""}`}
+            onClick={() => setCurrentPage(n)}
           >
             {n}
           </div>
@@ -97,8 +134,13 @@ export const Community = () => {
         <textarea
           className="bg-[#6B5EDD] h-[180px] md:h-[240px] w-full md:w-3/4 mx-auto p-3 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#2a28d4]"
           placeholder="Write your comment..."
+          value={comment}
+          onChange={e => setComment(e.target.value)}
         />
-        <button className="bg-[#6B5EDD] hover:bg-[#2a28d4] w-1/2 md:w-1/6 mx-auto p-3 rounded-lg font-semibold transition">
+        <button
+          className="bg-[#6B5EDD] hover:bg-[#2a28d4] w-1/2 md:w-1/6 mx-auto p-3 rounded-lg font-semibold transition"
+          onClick={handleSendComment}
+        >
           Send
         </button>
       </div>
@@ -109,7 +151,10 @@ export const Community = () => {
           src={conversation}
           alt="chat"
           className="w-14 h-14 cursor-pointer hover:scale-110 transition  p-2"
-          onClick={() => setOpenChat(true)} // ✅ open modal
+          onClick={() => {
+            setOpenChat(true);
+            setSelectedUser(undefined); // Open general chat
+          }}
         />
       </div>
 
@@ -128,7 +173,7 @@ export const Community = () => {
             </button>
 
             {/* Chat Component */}
-            <Chat userId = {token?.sub} />
+            <Chat userId={selectedUser?.id} />
           </div>
         </div>
       )}
