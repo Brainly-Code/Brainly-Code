@@ -8,6 +8,8 @@ import Chat from './Chat'
 import { useGetUsersQuery } from '../redux/api/AdminSlice'
 import { toast } from 'react-toastify'
 import BgLoader from './ui/BgLoader'
+import { jwtDecode } from 'jwt-decode'
+import { useSelector } from 'react-redux'
 
 export const Community = () => {
   const [selectedUser, setSelectedUser] = useState();
@@ -15,7 +17,11 @@ export const Community = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 6;
+  const usersPerPage = 3;
+
+  const { userInfo } = useSelector(state => state.auth);
+  const token = jwtDecode(userInfo.access_token);
+  const currentUserId = token.sub;
 
   // Comment section state
   const [comment, setComment] = useState("");
@@ -26,6 +32,7 @@ export const Community = () => {
   }
 
   const {data: communityUsers, isLoading, error} = useGetUsersQuery();
+
 
   const roleProvision = (role) => {
     if(role === "USER") {
@@ -46,9 +53,13 @@ export const Community = () => {
     );
   }
 
+  console.log(communityUsers,currentUserId);
   // Pagination logic
-  const totalPages = Math.ceil((communityUsers?.length || 0) / usersPerPage);
-  const paginatedUsers = communityUsers?.slice(
+  const filteredUsers = communityUsers?.filter(user => user.id !== currentUserId);
+
+  // Pagination logic
+  const totalPages = Math.ceil((filteredUsers?.length || 0) / usersPerPage);
+  const paginatedUsers = filteredUsers?.slice(
     (currentPage - 1) * usersPerPage,
     currentPage * usersPerPage
   );
@@ -174,7 +185,7 @@ export const Community = () => {
             </button>
 
             {/* Chat Component */}
-            <Chat userId={selectedUser?.id} />
+            <Chat/>
           </div>
         </div>
       )}
