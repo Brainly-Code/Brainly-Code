@@ -35,10 +35,6 @@ export const Community = () => {
     }
   }
 
-  if(isLoading) {
-    return <BgLoader />
-  }
-
   if(error) {
     toast.error("Sorry could not load the community users");
     return (
@@ -82,7 +78,11 @@ export const Community = () => {
 
       {/* Cards Section */}
       <div className="flex flex-col md:flex-row flex-wrap justify-center items-center m-6 md:m-16 gap-6 md:gap-12">
-        {paginatedUsers?.map((communityUser, i) => (
+        {
+        isLoading ? 
+          <BgLoader />
+        : (
+        paginatedUsers?.map((communityUser, i) => (
           <div
             key={i}
             className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
@@ -112,6 +112,7 @@ export const Community = () => {
               />
             </div>
           </div>
+        )
         ))}
       </div>
 

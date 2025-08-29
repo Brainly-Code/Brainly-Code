@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import user from "../assets/user.png";
 import send from "../assets/send.png";
 import { useGetUsersQuery } from "../redux/api/AdminSlice";
-import { useGetCurrentUserQuery } from "../redux/api/userSlice";
 
 export const Chat = (props) => {
   const { userId } = props;
 
   const { data: friends = [] } = useGetUsersQuery();
-  const { data: frnd } = useGetCurrentUserQuery(userId);
 
   // Use first friend as default if no userId
   const initialUser =
