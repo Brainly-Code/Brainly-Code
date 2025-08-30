@@ -11,6 +11,7 @@ import {
 import { useGetUsersQuery } from "../redux/api/AdminSlice.jsx";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { useGetUserByIdQuery } from "../redux/api/userSlice.jsx";
 
 export const Chat = () => {
   const messagesEndRef = useRef(null);
@@ -21,6 +22,8 @@ export const Chat = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const token = jwtDecode(userInfo.access_token);
   const userId = token.sub;
+
+  const {data: currentUser}  = useGetUserByIdQuery(userId);
 
   const filteredUsers = users.filter(u => u.id !== userId);
   
@@ -77,8 +80,6 @@ export const Chat = () => {
     return () => socket.off("newDM", handleNewMessage);
   }, [selectedUser, userId, refetch]);
 
-  console.log(selectedUser)
-
 const handleSend = async () => {
   if (!newMessage.trim() || !selectedUser) return;
 
@@ -121,7 +122,7 @@ const handleSend = async () => {
               }`}
             >
               <img
-                src={u.avatar || userAvatar}
+                src={u?.photo ? u?.photo : userAvatar}
                 className="bg-white rounded-full h-[40px] w-[40px]"
                 alt={u.username}
               />
@@ -136,7 +137,7 @@ const handleSend = async () => {
           <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700 flex-shrink-0">
             <div className="flex items-center mt-7 gap-4">
               <img
-                src={selectedUser?.avatar || userAvatar}
+                src={selectedUser?.photo ? selectedUser?.photo : selectedUser?.avatar || userAvatar}
                 className="bg-white rounded-full h-[50px] w-[50px] sm:h-[60px] sm:w-[60px]"
                 alt={selectedUser?.username}
               />
@@ -165,7 +166,7 @@ const handleSend = async () => {
               >
                 {msg.senderId !== userId && (
                   <img
-                    src={selectedUser?.avatar || userAvatar}
+                    src={currentUser?.photo ? currentUser?.photo : selectedUser?.avatar || userAvatar}
                     className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
                     alt="avatar"
                   />
@@ -181,7 +182,7 @@ const handleSend = async () => {
                 </div>
                 {msg.senderId === userId && (
                   <img
-                    src={userAvatar}
+                    src={currentUser?.photo ? currentUser?.photo : selectedUser?.avatar || userAvatar}
                     className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
                     alt="avatar"
                   />
