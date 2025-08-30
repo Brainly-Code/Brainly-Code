@@ -134,7 +134,7 @@ const handleSend = async () => {
         <div className="flex-1 flex flex-col">
           {/* Header */} 
           <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700 flex-shrink-0">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center mt-7 gap-4">
               <img
                 src={selectedUser?.avatar || userAvatar}
                 className="bg-white rounded-full h-[50px] w-[50px] sm:h-[60px] sm:w-[60px]"
