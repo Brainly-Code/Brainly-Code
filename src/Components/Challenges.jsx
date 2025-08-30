@@ -10,6 +10,7 @@ import { BackgroundGradient } from './ui/BgGradient';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
 import { Link } from 'react-router-dom';
+import BgLoader from './ui/BgLoader';
 
 export const Challenges = () => {
   
@@ -26,7 +27,7 @@ export const Challenges = () => {
   : challenges?.filter(challenge => challenge.difficulty === filterLevel);
 
   if(isLoading) {
-    return <Loader />
+    return <BgLoader />
   }
 
   return (

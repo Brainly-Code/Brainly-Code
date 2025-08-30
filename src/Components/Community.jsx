@@ -52,8 +52,6 @@ export const Community = () => {
       </div>
     );
   }
-
-  console.log(communityUsers,currentUserId);
   // Pagination logic
   const filteredUsers = communityUsers?.filter(user => user.id !== currentUserId);
 

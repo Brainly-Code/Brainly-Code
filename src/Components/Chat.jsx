@@ -32,7 +32,6 @@ export const Chat = () => {
     }
   }, [messages]);
 
-  console.log(filteredUsers[0])
   // Auto-select first user when users load 
   useEffect(() => {
     if (!selectedUser && users.length > 0) {
@@ -75,8 +74,6 @@ export const Chat = () => {
     socket.on("newDM", handleNewMessage);
     return () => socket.off("newDM", handleNewMessage);
   }, [selectedUser, userId, refetch]);
-
-  console.log(selectedUser)
 
 const handleSend = async () => {
   if (!newMessage.trim() || !selectedUser) return;
@@ -141,7 +138,7 @@ const handleSend = async () => {
         </div>
 
         {/* Chat Window */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 mt-7 flex flex-col">
           {/* Header */} 
           <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700 flex-shrink-0">
             <div className="flex items-center gap-4">
@@ -165,7 +162,7 @@ const handleSend = async () => {
           </div>
 
           {/* Messages */}
-          <div className="bg-[#6B5EDD] flex-1 p-3 sm:p-5 overflow-y-auto space-y-4">
+          <div className="bg-[#6B5EDD] bg-opacity-60 flex-1 p-3 sm:p-5 overflow-y-auto space-y-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
