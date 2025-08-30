@@ -65,7 +65,6 @@ const Header = () => {
   ];
 
   const logoutHandler = async () => {
-    console.log("Logging out")
     try {
       await logoutApiCall().unwrap();
       dispatch(Logout());
