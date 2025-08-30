@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState,useRef } from "react";
 import { socket } from "../socket.ts"; // your socket instance
 import userAvatar from "../assets/user.png";
@@ -78,36 +80,25 @@ export const Chat = () => {
 
   console.log(selectedUser)
 
-const handleSend = async () => {
-  if (!newMessage.trim() || !selectedUser) return;
+  const handleSend = async () => {
+    if (!newMessage.trim() || !selectedUser) return;
 
-  const msgData = {
-    senderId: userId,
-    receiverId: selectedUser.id,
-    content: newMessage,
-    type: "text",
-    id: Date.now(), // temporary id for optimistic UI
+    const msgData = {
+      senderId: userId,
+      receiverId: selectedUser.id,
+      content: newMessage,
+      type: "text",
+    };
+
+    // Emit via socket
+    socket.emit("sendDM", msgData);
+
+    // Persist using RTK mutation
+    await sendMessage(msgData);
+    console.log("message sent")
+
+    setNewMessage("");
   };
-
-  // 1. Optimistically update local state
-  setMessages(prev => [...prev, msgData]);
-
-  setNewMessage("");
-
-  // 2. Emit via socket
-  socket.emit("sendDM", msgData);
-
-  // 3. Persist using RTK mutation
-  try {
-    await sendMessage(msgData).unwrap();
-    // optionally, you could replace the temp id with real id returned from backend
-  } catch (err) {
-    console.error("Message failed to send", err);
-    // Optionally remove message or mark as failed
-    setMessages(prev => prev.filter(m => m.id !== msgData.id));
-  }
-};
-
 
   return (
     <div className="bg-[#0D0056] h-full flex flex-col">
@@ -131,7 +122,7 @@ const handleSend = async () => {
               }`}
             >
               <img
-                src={u.photo || userAvatar}
+                src={u.avatar || userAvatar}
                 className="bg-white rounded-full h-[40px] w-[40px]"
                 alt={u.username}
               />
@@ -142,11 +133,11 @@ const handleSend = async () => {
 
         {/* Chat Window */}
         <div className="flex-1 flex flex-col">
-          {/* Header */} 
-          <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700 flex-shrink-0">
+          {/* Header */}
+          <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700">
             <div className="flex items-center gap-4">
               <img
-                src={selectedUser?.photo || userAvatar}
+                src={selectedUser?.avatar || userAvatar}
                 className="bg-white rounded-full h-[50px] w-[50px] sm:h-[60px] sm:w-[60px]"
                 alt={selectedUser?.username}
               />
@@ -198,7 +189,7 @@ const handleSend = async () => {
                 )}
               </div>
             ))}
-                  <div ref={messagesEndRef}/>
+               <div ref={messagesEndRef} />
           </div>
 
           {/* Input */}
