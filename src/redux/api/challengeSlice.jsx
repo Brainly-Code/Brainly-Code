@@ -82,7 +82,7 @@ const challengeApiSlice = apiSlice.injectEndpoints({
       query: (data) => ({
         url: `${CHALLENGE_URL}/challenge-completer`,
         method: "POST",
-        form: data
+        body: data
       })
     })
   })

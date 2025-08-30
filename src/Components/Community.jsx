@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Header from './ui/Header'
 import user from '../assets/whiteUser.png'
 import messenger from '../assets/messenger.png'
@@ -19,6 +19,11 @@ export const Community = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 3;
 
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSearchHints, setShowSearchHints] = useState(true);
+  const searchRef = useRef(null);
+
   const { userInfo } = useSelector(state => state.auth);
   const token = jwtDecode(userInfo.access_token);
   const currentUserId = token.sub;
@@ -31,18 +36,17 @@ export const Community = () => {
     setSelectedUser(communityUser);
   }
 
-  const {data: communityUsers, isLoading, error} = useGetUsersQuery();
-
+  const { data: communityUsers, isLoading, error } = useGetUsersQuery();
 
   const roleProvision = (role) => {
-    if(role === "USER") {
+    if (role === "USER") {
       return "Student";
-    }else {
+    } else {
       return "Instructor";
     }
   }
 
-  if(error) {
+  if (error) {
     toast.error("Sorry could not load the community users");
     return (
       <div className="bg-[#0D0056] min-h-screen flex flex-col items-center justify-center">
@@ -52,8 +56,16 @@ export const Community = () => {
       </div>
     );
   }
-  // Pagination logic
-  const filteredUsers = communityUsers?.filter(user => user.id !== currentUserId);
+
+  // Filter out current user
+  let filteredUsers = communityUsers?.filter(user => user.id !== currentUserId);
+
+  // Apply search filter
+  if (searchTerm.trim()) {
+    filteredUsers = filteredUsers?.filter(user =>
+      user.username.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
 
   // Pagination logic
   const totalPages = Math.ceil((filteredUsers?.length || 0) / usersPerPage);
@@ -73,14 +85,82 @@ export const Community = () => {
     setComment("");
   };
 
+  // Hide search hints when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target)
+      ) {
+        setShowSearchHints(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Hide search hints on Enter
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setShowSearchHints(false);
+    }
+  };
+
   return (
     <div className="bg-[#0D0056] min-h-screen flex flex-col relative">
       {!openChat && <Header />}
 
-      {/* Title */}
-      <h1 className="text-center text-white mt-6 font-bold text-2xl md:text-3xl">
-        Community
-      </h1>
+      <div className='flex gap-10 pl-[40rem]'>
+        {/* Title */}
+        <h1 className="text-center  text-white mt-10 font-bold text-2xl md:text-3xl">
+          Community
+        </h1>
+        {/* Search Bar */}
+        <div ref={searchRef} className="flex w-full flex-col items-center mt-10 mb-2">
+          <input
+            type="text"
+            className="w-full md:w-1/2 px-4 py-2 bg-[#6B5EDD] bg-opacity-70 focus:bg-opacity-10 text-gray-50 rounded-lg border border-[#6B5EDD] focus:outline-none focus:ring-2 focus:ring-[#2a28d4]"
+            placeholder="Search users by username..."
+            value={searchTerm}
+            onChange={e => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+              setShowSearchHints(true);
+            }}
+            onKeyDown={handleSearchKeyDown}
+            />
+          {/* Hints below search bar */}
+          {showSearchHints && (
+            <div className='w-full md:w-1/2 mt-0.3 p-2 z-10'>
+            {searchTerm.trim() && filteredUsers?.length > 0 && (
+              <div className="w-full md:w-1/2 bg-[#6B5EDD] bg-opacity-70 rounded-lg shadow mt-2 p-2 z-10">
+                <span className="text-gray-400 text-sm font-semibold">Suggestions:</span>
+                <ul>
+                  {filteredUsers.slice(0, 5).map(user => (
+                    <li
+                      key={user.id}
+                      className="cursor-pointer px-2 py-1 hover:bg-[#6B5EDD] rounded text-gray-200"
+                      onClick={() => {
+                        setSearchTerm(user.username);
+                        setCurrentPage(1);
+                        setShowSearchHints(false);
+                      }}
+                    >
+                      {user.username}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {searchTerm.trim() && filteredUsers?.length === 0 && (
+              <div className="w-full md:w-1/2  rounded-lg shadow mt-2 p-2 z-10">
+                <span className="text-gray-300 text-sm">No users with that username found.</span>
+              </div>
+            )}
+          </div>
+            )}
+        </div>
+      </div>
       <h5 className="text-white ml-6 md:ml-16 mt-10 font-bold text-lg">
         Need help?
       </h5>
@@ -88,41 +168,41 @@ export const Community = () => {
       {/* Cards Section */}
       <div className="flex flex-col md:flex-row flex-wrap justify-center items-center m-6 md:m-16 gap-6 md:gap-12">
         {
-        isLoading ? 
-          <BgLoader />
-        : (
-        paginatedUsers?.map((communityUser, i) => (
-          <div
-            key={i}
-            className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
-          >
-            {/* Profile Image */}
-            <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
-              <img
-                src={!communityUser?.photo ? user : communityUser?.photo}
-                alt="profile"
-                className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
-              />
-            </div>
+          isLoading ?
+            <BgLoader />
+            : (
+              paginatedUsers?.map((communityUser, i) => (
+                <div
+                  key={i}
+                  className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
+                >
+                  {/* Profile Image */}
+                  <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
+                    <img
+                      src={!communityUser?.photo ? user : communityUser?.photo}
+                      alt="profile"
+                      className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
+                    />
+                  </div>
 
-            {/* Info */}
-            <div className="flex flex-col mt-4 mb-4">
-              <span className="text-center text-lg font-medium">{communityUser?.username}</span>
-              <span className="text-center text-sm">{roleProvision(communityUser?.role)}</span>
-            </div>
+                  {/* Info */}
+                  <div className="flex flex-col mt-4 mb-4">
+                    <span className="text-center text-lg font-medium">{communityUser?.username}</span>
+                    <span className="text-center text-sm">{roleProvision(communityUser?.role)}</span>
+                  </div>
 
-            {/* Messenger Icon */}
-            <div>
-              <img
-                src={messenger}
-                alt="chat"
-                className="w-10 mx-auto cursor-pointer hover:scale-110 transition"
-                onClick={() => messangerHandler(communityUser)}
-              />
-            </div>
-          </div>
-        )
-        ))}
+                  {/* Messenger Icon */}
+                  <div>
+                    <img
+                      src={messenger}
+                      alt="chat"
+                      className="w-10 mx-auto cursor-pointer hover:scale-110 transition"
+                      onClick={() => messangerHandler(communityUser)}
+                    />
+                  </div>
+                </div>
+              )
+              ))}
       </div>
 
       {/* Pagination */}
@@ -183,7 +263,7 @@ export const Community = () => {
             </button>
 
             {/* Chat Component */}
-            <Chat/>
+            <Chat />
           </div>
         </div>
       )}

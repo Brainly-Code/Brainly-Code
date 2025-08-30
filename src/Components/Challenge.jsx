@@ -12,16 +12,16 @@ import { jwtDecode } from 'jwt-decode';
 
 const Challenge = () => {
   const [completedSteps, setCompletedSteps] = useState([]);
-  const { id } = useParams();
+  const id = useParams();
   const navigate = useNavigate();
   const { userInfo } = useSelector(state => state.auth);
 
   const token = jwtDecode(userInfo?.access_token);
 
-  const { data: challenge } = useGetChallengeByIdQuery(id);
-  const { data: instructions = [], isLoading: isInstructionsLoading, error } = useGetChallengeInstructionsQuery(id);
+  const { data: challenge } = useGetChallengeByIdQuery(id.id);
+  const { data: instructions = [], isLoading: isInstructionsLoading, error } = useGetChallengeInstructionsQuery(id.id);
 
-  const [completeChallenge] = useCompleteChallengeMutation();
+  const [completeChallenge, { isLoading: isCompleting }] = useCompleteChallengeMutation();
 
   const toggleStepCompletion = (instructionId) => {
     setCompletedSteps((prev) =>
@@ -31,31 +31,27 @@ const Challenge = () => {
     );
   };
 
+
   const handleContinueSubmit = async (e) => {
     e.preventDefault();
-  
-    const userId = Number(token?.sub);
-    const challengeId = Number(challenge?.id);
-  
-    // Guard against NaN or missing ids
+    const userId = token?.sub; 
+    const challengeId = Number(id.id);
+
     if (!Number.isInteger(userId) || !Number.isInteger(challengeId)) {
-      console.log({ userId, challengeId, tUserId: typeof token?.sub, tChId: typeof challenge?.id });
       toast.error("IDs invalid — please try again");
       return;
     }
-  
     if (completedSteps.length !== instructions.length) {
       toast.error("Please complete all steps first!");
       return;
     }
-  
     try {
       await completeChallenge({ userId, challengeId }).unwrap();
       toast.success("Congratulations, you have completed the challenge 🥳");
-      navigate(`/user/challenges`);
+      navigate(`/admin/completers/${challengeId}`);
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong!");
+      toast.error(error?.data?.message || "Failed to complete challenge");
     }
   };
   

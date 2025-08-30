@@ -109,7 +109,7 @@ const handleSend = async () => {
             sidebarOpen ? "block" : "hidden"
           } sm:block w-full sm:w-1/4 bg-[#1a2b3c] text-white p-4 space-y-3 border-r border-gray-700 h-[calc(100vh-2rem)] overflow-y-auto`}
         >
-          <h3 className="font-bold text-lg mb-4">Chats</h3>
+          <h3 className="font-bold pt-12 pl-[35%] text-lg">Chats</h3>
           {filteredUsers.map((u) => (
             <div
               key={u.id}
@@ -131,93 +131,104 @@ const handleSend = async () => {
           ))}
         </div>
 
-        {/* Chat Window */}
-        <div className="flex-1 flex flex-col">
-          {/* Header */} 
-          <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700 flex-shrink-0">
-            <div className="flex items-center mt-7 gap-4">
-              <img
-                src={selectedUser?.photo ? selectedUser?.photo : selectedUser?.avatar || userAvatar}
-                className="bg-white rounded-full h-[50px] w-[50px] sm:h-[60px] sm:w-[60px]"
-                alt={selectedUser?.username}
-              />
-              <h4 className="text-white text-lg sm:text-xl font-semibold">
-                {selectedUser?.username || "Select a chat"}
-              </h4>
-            </div>
-
-            {/* Toggle sidebar on mobile */}
-            <button
-              className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-            >
-              {sidebarOpen ? "Close" : "Chats"}
-            </button>
-          </div>
-
-          {/* Messages */}
-          <div className="bg-[#6B5EDD] bg-opacity-60 flex-1 p-3 sm:p-5 overflow-y-auto space-y-4">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex items-end gap-2 sm:gap-3 ${
-                  msg.senderId === userId ? "justify-end" : "justify-start"
-                }`}
-              >
-                {msg.senderId !== userId && (
-                  <img
-                    src={currentUser?.photo ? currentUser?.photo : selectedUser?.avatar || userAvatar}
-                    className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
-                    alt="avatar"
-                  />
-                )}
-                <div
-                  className={`px-3 py-2 rounded-lg max-w-[75%] sm:max-w-xs text-white text-sm sm:text-base ${
-                    msg.senderId === userId
-                      ? "bg-black rounded-br-none"
-                      : "bg-gray-900 rounded-bl-none"
-                  }`}
-                >
-                  {msg.content}
-                </div>
-                {msg.senderId === userId && (
-                  <img
-                    src={currentUser?.photo ? currentUser?.photo : selectedUser?.avatar || userAvatar}
-                    className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
-                    alt="avatar"
-                  />
-                )}
-              </div>
-            ))}
-               <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input */}
-          <div className="p-3 sm:p-4 flex justify-center bg-[#6B5EDD]">
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <textarea
-                className="flex-1 sm:w-72 h-10 sm:h-12 rounded-lg p-2 text-sm sm:text-base focus:outline-none resize-none bg-white text-black"
-                placeholder="Type something..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" &&
-                  !e.shiftKey &&
-                  (e.preventDefault(), handleSend())
-                }
-              />
-              <button
-                onClick={handleSend}
-                className="bg-white p-2 sm:p-3 rounded-lg hover:bg-gray-200 transition"
-              >
+        <div className="w-full h-[full%]">
+          {/* Chat Window */}
+          <div className="flex-1 flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700 flex-shrink-0">
+              <div className="flex items-center mt-7 gap-4">
                 <img
-                  src={send}
-                  className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]"
-                  alt="send"
+                  src={selectedUser?.photo ? selectedUser?.photo : selectedUser?.avatar || userAvatar}
+                  className="bg-white rounded-full h-[50px] w-[50px] sm:h-[60px] sm:w-[60px]"
+                  alt={selectedUser?.username}
                 />
+                <h4 className="text-white text-lg sm:text-xl font-semibold">
+                  {selectedUser?.username || "Select a chat"}
+                </h4>
+              </div>
+              {/* Toggle sidebar on mobile */}
+              <button
+                className="sm:hidden bg-[#6B5EDD] px-3 py-1 mt-8 rounded-lg text-white"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                {sidebarOpen ? "Close" : "Chats"}
               </button>
             </div>
-          </div>
+            {/* Messages */}
+            <div className="bg-[#6B5EDD] h-full  bg-opacity-60 flex-1 p-3 sm:p-5 overflow-y-auto space-y-4">
+              {
+                fetchedMessages?.length != 0  ? messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex items-end gap-2 sm:gap-3 ${
+                      msg.senderId === userId ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    {msg.senderId !== userId && (
+                      <img
+                        src={currentUser?.photo ? currentUser?.photo : selectedUser?.avatar || userAvatar}
+                        className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
+                        alt="avatar"
+                      />
+                    )}
+                    <div
+                      className={`px-3 py-2 rounded-lg max-w-[75%] sm:max-w-xs text-white text-sm sm:text-base ${
+                        msg.senderId === userId
+                          ? "bg-black rounded-br-none"
+                          : "bg-gray-900 rounded-bl-none"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                    {msg.senderId === userId && (
+                      <img
+                        src={currentUser?.photo ? currentUser?.photo : selectedUser?.avatar || userAvatar}
+                        className="bg-white rounded-full h-[30px] w-[30px] sm:h-[40px] sm:w-[40px]"
+                        alt="avatar"
+                      />
+                    )}
+                  </div>
+                )) : (
+                  <div className="mt-[rem]">
+                    <img
+                      src={selectedUser?.photo ? selectedUser?.photo : selectedUser?.avatar || userAvatar}
+                      className="bg-white rounded-full mx-auto h-[100px] m-3 w-[100px] sm:h-[60px] sm:w-[60px]"
+                      alt={selectedUser?.username}
+                    />
+                    <p className="text-white text-center text-lg">You haven't started chatting yet</p>
+                    <p className="text-gray-400 text-center">Start the chat</p>
+                  </div>
+                )
+              }
+                 <div ref={messagesEndRef} />
+            </div>
+            {/* Input */}
+            <div className="p-3 sm:p-4 flex justify-center bg-[#6B5EDD]">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <textarea
+                  className="flex-1 sm:w-72 h-10 sm:h-12 rounded-lg p-2 text-sm sm:text-base focus:outline-none resize-none bg-white text-black"
+                  placeholder="Type something..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    !e.shiftKey &&
+                    (e.preventDefault(), handleSend())
+                  }
+                />
+                <button
+                  onClick={handleSend}
+                  className="bg-white p-2 sm:p-3 rounded-lg hover:bg-gray-200 transition"
+                >
+                  <img
+                    src={send}
+                    className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]"
+                    alt="send"
+                  />
+                </button>
+              </div>
+            </div>
+        </div> 
         </div>
       </div>
     </div>
