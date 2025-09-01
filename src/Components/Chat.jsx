@@ -106,7 +106,7 @@ export const Chat = ({ chatWith }) => {
   };
 
   return (
-    <div className="bg-[#0D0056] h-screen flex">
+    <div className="bg-[#0D0056] h-[100%] flex">
       {/* Sidebar */}
       <div
         className={`${
@@ -158,7 +158,7 @@ export const Chat = ({ chatWith }) => {
                 className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
-                {sidebarOpen ? "Close" : "Chats"}
+                {sidebarOpen ? "Chats" : "Close"}
               </button>
             </div>
 
