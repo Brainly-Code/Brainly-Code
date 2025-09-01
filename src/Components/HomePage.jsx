@@ -35,11 +35,11 @@ export default function HomePage() {
     return <FaAccessibleIcon color="gray" size={30} />; // Default icon
   };
 
-    const { data: likedCourseIds } = useGetUserLikedCoursesQuery();
+    const { data: likedCourseIds,refetch } = useGetUserLikedCoursesQuery();
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
 
-  let { data: courses, error, isLoading, refetch } = useGetCoursesQuery();
+  let { data: courses, error, isLoading } = useGetCoursesQuery();
   const [likeCourse] = useLikeCourseMutation();
   console.log(courses)
   // Keep local liked state for optimistic updates
@@ -66,6 +66,8 @@ const isLiked = (courseId) => {
         ...prev,
         [courseId]: !prev[courseId], // toggle like after API confirms
       }));
+
+      refetch();
     } catch (err) {
       toast.error(err?.data?.message || "Failed to toggle like status");
     }

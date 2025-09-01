@@ -27,7 +27,8 @@ const CreateCourse = () => {
     e.preventDefault();
     
     try {
-      const res = await createCourse({ title, category, level, description, duration: parseInt(duration, 10) }).unwrap(); 
+      console.log("HERE")
+      const res = await createCourse({ title, category, level, description }).unwrap(); 
       console.log(res)
       navigate('/admin/myCourses')
       toast.success("Course created successfully")

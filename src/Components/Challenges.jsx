@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 
 export const Challenges = () => {
   
-  let { data: challenges, error, isLoading } = useGetChallengesQuery();
+  let { data: challenges,error, isLoading,refetch } = useGetChallengesQuery();
   const [toggleLike] = useToggleChallengeLikeMutation();
   const [challengesState, setChallengesState] = React.useState([]);
 
@@ -63,6 +63,8 @@ export const Challenges = () => {
           return ch;
         })
       );
+      
+      refetch();
     } catch (err) {
       toast.error("Failed to like challenge");
     }
@@ -141,15 +143,15 @@ export const Challenges = () => {
                   <p className="text-gray-400 text-sm sm:text-base">{challenge.description}</p>
 
                   <div className="flex justify-around h-1/6 mt-6">
-                  <img 
-                     src={challenge.userHasLiked ? liked : like}
-                   className='h-6 w-6 cursor-pointer'
-                   onClick={() => handleLikeClick(challenge.id)}/>
                     <Link to={`/user/challenge/${challenge.id}`}>
                       <button className="rounded-lg hover:bg-[#06325b96] bg-[#06325B] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-8 text-white font-bold text-sm">
                         Start
                       </button>
                     </Link>
+                    <img 
+                      src={challenge.userHasLiked ? liked : like}
+                      className='h-6 w-6 cursor-pointer'
+                      onClick={() => handleLikeClick(challenge.id)}/>
                   </div>
                 </div>
               </div>

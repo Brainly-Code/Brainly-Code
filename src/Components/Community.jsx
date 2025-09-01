@@ -278,7 +278,7 @@ export const Community = () => {
           <div className="relative w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-[90vh] bg-[#0D0056] rounded-xl shadow-2xl flex flex-col">
             {/* Close Button */}
             <button
-              className="absolute top-3 right-3 text-white text-xl font-bold hover:text-gray-300"
+              className="absolute top-3 right-3 text-white text-xl font-bold hover:text-gray-300 z-50"
               onClick={() => setOpenChat(false)}
             >
               ✕
