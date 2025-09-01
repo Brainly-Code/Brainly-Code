@@ -23,7 +23,28 @@ export const messagesApiSlice = apiSlice.injectEndpoints({
         { type: "Messages", id: `${senderId}-${receiverId}` },
       ],
     }),
-  }),
+
+    getUnreadCounts: builder.query({
+      query: (userId) => ({
+        url: `${CHAT_URL}/unread-count/${userId}`,
+        method: "GET"
+      })
+    }),
+
+    readMessages: builder.mutation({
+      query: ({ userId, otherUserId }) => ({
+        url: `/chat/read/${userId}/${otherUserId}`,
+        method: "GET"
+      })
+    }),
+
+    getUnreadBySender: builder.query({
+      query: ({userId, otherUserId}) => ({
+        url: `${CHAT_URL}/${userId}/${otherUserId}`,
+        method: "GET"
+      })
+    })
+}),
 });
 
-export const { useGetMessagesQuery, useSendMessageMutation } = messagesApiSlice;
+export const { useGetUnreadBySenderQuery, useReadMessagesMutation, useGetUnreadCountsQuery, useGetMessagesQuery, useSendMessageMutation } = messagesApiSlice;

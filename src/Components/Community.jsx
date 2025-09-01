@@ -6,6 +6,7 @@ import Footer from './ui/Footer'
 import conversation from '../assets/conversation.png'
 import Chat from './Chat'
 import { useGetUsersQuery } from '../redux/api/AdminSlice'
+import { useGetUnreadCountsQuery } from '../redux/api/messageSlice'
 import { toast } from 'react-toastify'
 import BgLoader from './ui/BgLoader'
 import { jwtDecode } from 'jwt-decode'
@@ -27,6 +28,11 @@ export const Community = () => {
   const { userInfo } = useSelector(state => state.auth);
   const token = jwtDecode(userInfo.access_token);
   const currentUserId = token.sub;
+
+  const { data: unreadCounts } = useGetUnreadCountsQuery(currentUserId);
+  // unreadCounts: [{ senderId: 2, _count: { id: 3 } }, ...]
+
+  const totalUnread = unreadCounts?.reduce((sum, u) => sum + u._count.id, 0);
 
   // Comment section state
   const [comment, setComment] = useState("");
@@ -171,38 +177,47 @@ export const Community = () => {
           isLoading ?
             <BgLoader />
             : (
-              paginatedUsers?.map((communityUser, i) => (
-                <div
-                  key={i}
-                  className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
-                >
-                  {/* Profile Image */}
-                  <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
-                    <img
-                      src={!communityUser?.photo ? user : communityUser?.photo}
-                      alt="profile"
-                      className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
-                    />
-                  </div>
+              paginatedUsers?.map((communityUser, i) => {
+                const unreadForUser = unreadCounts?.find(u => u.senderId === communityUser.id)?._count.id || 0;
+                return (
+                  <div
+                    key={i}
+                    className="text-white bg-[#6B5EDD] flex flex-col w-full sm:w-[80%] md:w-[30%] p-6 md:p-8 rounded-xl shadow-md"
+                  >
+                    {/* Profile Image */}
+                    <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
+                      <img
+                        src={!communityUser?.photo ? user : communityUser?.photo}
+                        alt="profile"
+                        className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
+                      />
+                    </div>
 
-                  {/* Info */}
-                  <div className="flex flex-col mt-4 mb-4">
-                    <span className="text-center text-lg font-medium">{communityUser?.username}</span>
-                    <span className="text-center text-sm">{roleProvision(communityUser?.role)}</span>
-                  </div>
+                    {/* Info */}
+                    <div className="flex flex-col mt-4 mb-4">
+                      <span className="text-center text-lg font-medium">{communityUser?.username}</span>
+                      <span className="text-center text-sm">{roleProvision(communityUser?.role)}</span>
+                      {unreadForUser > 0 && (
+                        <span className="text-center text-xs bg-red-500 text-white rounded-full px-2 py-0.5 mt-1">
+                          {unreadForUser} unread
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Messenger Icon */}
-                  <div>
-                    <img
-                      src={messenger}
-                      alt="chat"
-                      className="w-10 mx-auto cursor-pointer hover:scale-110 transition"
-                      onClick={() => messangerHandler(communityUser)}
-                    />
+                    {/* Messenger Icon */}
+                    <div>
+                      <img
+                        src={messenger}
+                        alt="chat"
+                        className="w-10 mx-auto cursor-pointer hover:scale-110 transition"
+                        onClick={() => messangerHandler(communityUser)}
+                      />
+                    </div>
                   </div>
-                </div>
-              )
-              ))}
+                )
+              })
+            )
+          }
       </div>
 
       {/* Pagination */}
@@ -237,15 +252,22 @@ export const Community = () => {
 
       {/* Floating Chat Button */}
       <div className="fixed bottom-6 right-6 z-40">
-        <img
-          src={conversation}
-          alt="chat"
-          className="w-14 h-14 cursor-pointer hover:scale-110 transition  p-2"
-          onClick={() => {
-            setOpenChat(true);
-            setSelectedUser(undefined); // Open general chat
-          }}
-        />
+        <div className="relative">
+          <img
+            src={conversation}
+            alt="chat"
+            className="w-14 h-14 cursor-pointer hover:scale-110 transition p-2"
+            onClick={() => {
+              setOpenChat(true);
+              setSelectedUser(undefined); // Open general chat
+            }}
+          />
+          {unreadCounts?.length > 0 && (
+            <span className="absolute top-1 -right-0  bg-gray-400 text-red-200 rounded-full px-2 py-1 text-xs font-bold">
+              {totalUnread}
+            </span>
+          )}
+        </div>
       </div>
 
       <Footer />
