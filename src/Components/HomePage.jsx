@@ -1,12 +1,14 @@
 import React from 'react'
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import { Link } from 'react-router-dom';
-import { useGetCoursesQuery } from '../redux/api/coursesSlice'
+import { useGetCoursesQuery,useGetUserLikedCoursesQuery,useLikeCourseMutation } from '../redux/api/coursesSlice'
 import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
 import { FloatingNav } from './ui/FloatingNav';
 import { BackgroundGradient } from './ui/BgGradient';
+import like from '../assets/like.png'
+import liked from '../assets/liked.png'
 import {
   FaJs,
   FaReact,
@@ -32,12 +34,43 @@ export default function HomePage() {
       return <FaAccessibleIcon color="purple" size={30} />;
     return <FaAccessibleIcon color="gray" size={30} />; // Default icon
   };
-  
+
+    const { data: likedCourseIds } = useGetUserLikedCoursesQuery();
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-  let { data: courses, error, isLoading } = useGetCoursesQuery();
 
-  
+  let { data: courses, error, isLoading, refetch } = useGetCoursesQuery();
+  const [likeCourse] = useLikeCourseMutation();
+  console.log(courses)
+  // Keep local liked state for optimistic updates
+  const [localLikes, setLocalLikes] = React.useState({});
+
+  React.useEffect(() => {
+  if (likedCourseIds) {
+    const initialLikes = {};
+    likedCourseIds.forEach(id => initialLikes[id] = true);
+    setLocalLikes(initialLikes);
+  }
+}, [likedCourseIds]);
+
+const isLiked = (courseId) => {
+  // prefer localLikes if it exists, otherwise fallback to backend likedCourseIds
+  return courseId in localLikes ? localLikes[courseId] : likedCourseIds?.includes(courseId);
+};
+
+  const handleLike = async (courseId) => {
+    try {
+      await likeCourse(courseId).unwrap();
+      // Update localLikes after successful backend request
+      setLocalLikes(prev => ({
+        ...prev,
+        [courseId]: !prev[courseId], // toggle like after API confirms
+      }));
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to toggle like status");
+    }
+  };
+      
   if(error){
     toast.error(error);
   }
@@ -141,6 +174,14 @@ export default function HomePage() {
                         Enroll now
                       </button>
                     </Link>
+                    <div className='ml-4 flex items-center gap-1'>
+                      <img 
+                          src={isLiked(course.id) ? liked : like}
+                        alt="like" 
+                        className='h-6 w-6 cursor-pointer'
+                        onClick={() => handleLike(course.id)}
+                      />
+                  </div>
                   </div>
                 </div>
               </div>

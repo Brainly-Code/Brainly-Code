@@ -61,7 +61,7 @@ const Modules = () => {
             </div>
             <div className='flex items-center gap-2'>
               <img src={star} alt="Star" className='w-5 h-5' />
-              <span>{course?.rating || 0}</span>
+              <span>{course?.likes || 0}</span>
             </div>
           </div>
         </div>

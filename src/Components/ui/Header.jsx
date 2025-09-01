@@ -15,24 +15,16 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userInfo } = useSelector((state) => state.auth);
-  // Local state for premium to react on changes properly
-  // const [isProMember, setIsProMember] = useState(false);
-  let decoded = null;
-  
-  // Decode token to get userId
-  let userId = null;
-  try {
-    if (userInfo?.access_token) {
-      const decoded = jwtDecode(userInfo.access_token);
-      userId = decoded.sub;
-    }else{
-      navigate('/login');
-    }
-  } catch (error) {
-    console.error('Invalid token', error);
-  }
+ const { userInfo } = useSelector((state) => state.auth);
 
+const userId = React.useMemo(() => {
+  if (!userInfo?.access_token) return null;
+  try {
+    return jwtDecode(userInfo.access_token).sub;
+  } catch {
+    return null;
+  }
+}, [userInfo]);
   // // Update local isProMember state whenever userInfo changes
   // useEffect(() => {
   //   const decoded = jwtDecode(userInfo.access_token);

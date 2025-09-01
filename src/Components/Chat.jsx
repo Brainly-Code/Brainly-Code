@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { useGetUserByIdQuery } from "../redux/api/userSlice.jsx";
 
-export const Chat = () => {
+export const Chat = ({ chatWith }) => {
   const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -28,7 +28,13 @@ export const Chat = () => {
   const { data: currentUser } = useGetUserByIdQuery(userId);
 
   const filteredUsers = users.filter((u) => u.id !== userId);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(
+    chatWith ? chatWith : filteredUsers.length > 0 ? filteredUsers[0] : null
+  );
+
+  useEffect(() => {
+    if (chatWith) setSelectedUser(chatWith);
+  }, [chatWith]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -44,7 +50,11 @@ export const Chat = () => {
   const [sendMessage] = useSendMessageMutation();
 
   useEffect(() => {
-    if (fetchedMessages) setMessages(fetchedMessages);
+    if (fetchedMessages) {
+      setMessages(fetchedMessages);
+    } else {
+      setMessages([]);
+    }
   }, [fetchedMessages]);
 
   useEffect(() => {
@@ -58,13 +68,12 @@ export const Chat = () => {
         (msg.senderId === selectedUser.id && msg.receiverId === userId)
       ) {
         setMessages((prev) => [...prev, msg]);
-        refetch();
       }
     };
 
     socket.on("newDM", handleNewMessage);
     return () => socket.off("newDM", handleNewMessage);
-  }, [selectedUser, userId, refetch]);
+  }, [selectedUser, userId]);
 
   const handleSend = async () => {
     if (!newMessage.trim() || !selectedUser) return;
@@ -77,8 +86,10 @@ export const Chat = () => {
     };
 
     socket.emit("sendDM", msgData);
-    await sendMessage(msgData);
     setNewMessage("");
+
+    await sendMessage(msgData);
+    refetch();
   };
 
   useEffect(() => {
@@ -134,7 +145,7 @@ export const Chat = () => {
         {selectedUser ? (
           <>
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-[#0A1C2B]">
+            <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-[#0A1C2B] sticky top-0 z-10">
               <div className="flex items-center gap-3">
                 <img
                   src={selectedUser?.photo || userAvatar}
@@ -201,7 +212,7 @@ export const Chat = () => {
             </div>
 
             {/* Input */}
-            <div className="p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700">
+            <div className="p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700 sticky bottom-0">
               <textarea
                 className="flex-1 rounded-lg p-2 text-sm bg-white text-black resize-none focus:outline-none h-10"
                 placeholder="Type a message..."
