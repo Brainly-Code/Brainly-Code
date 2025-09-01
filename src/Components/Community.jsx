@@ -263,7 +263,7 @@ export const Community = () => {
             </button>
 
             {/* Chat Component */}
-            <Chat />
+            <Chat chatWith={selectedUser}/>
           </div>
         </div>
       )}

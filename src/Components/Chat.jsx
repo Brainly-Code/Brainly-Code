@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useState,useRef } from "react";
 import { socket } from "../socket.ts"; // your socket instance
 import userAvatar from "../assets/user.png";
@@ -13,7 +12,7 @@ import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 import { useGetUserByIdQuery } from "../redux/api/userSlice.jsx";
 
-export const Chat = () => {
+export const Chat = ({chatWith}) => {
   const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -28,9 +27,16 @@ export const Chat = () => {
   const filteredUsers = users.filter(u => u.id !== userId);
   
   const [selectedUser, setSelectedUser] = useState(
-    filteredUsers.length > 0 ? filteredUsers[0] : null
+    chatWith ? chatWith : (filteredUsers.length > 0 ? filteredUsers[0] : null)
   );
 
+    useEffect(() => {
+    if (chatWith) {
+      setSelectedUser(chatWith);
+    }
+  }, [chatWith]);
+
+  
   useEffect(() => {
   if (messagesEndRef.current) {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -54,10 +60,13 @@ export const Chat = () => {
   const [sendMessage] = useSendMessageMutation();
 
   // Update messages when fetched from RTK Query
-  useEffect(() => {
-    if (fetchedMessages) setMessages(fetchedMessages);
-  }, [fetchedMessages]);
-
+useEffect(() => {
+  if (fetchedMessages) {
+    setMessages(fetchedMessages); // replace instead of merge
+  } else {
+    setMessages([]);
+  }
+}, [fetchedMessages]);
 
   // Join socket room and listen for new messages
   useEffect(() => {
@@ -72,7 +81,6 @@ export const Chat = () => {
         (msg.senderId === selectedUser.id && msg.receiverId === userId)
       ) {
         setMessages((prev) => [...prev, msg]);
-        refetch(); // optional: refetch RTK Query cache
       }
     };
 
@@ -92,12 +100,13 @@ const handleSend = async () => {
 
     // Emit via socket
     socket.emit("sendDM", msgData);
+    setNewMessage("");
 
     // Persist using RTK mutation
     await sendMessage(msgData);
+    refetch()
     console.log("message sent")
 
-    setNewMessage("");
   };
 
   return (
@@ -133,7 +142,7 @@ const handleSend = async () => {
 
         <div className="w-full h-[full%]">
           {/* Chat Window */}
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col  h-[calc(100vh-2rem)] ">
             {/* Header */}
             <div className="flex items-center justify-between gap-4 p-4 border-b border-gray-700 flex-shrink-0">
               <div className="flex items-center mt-7 gap-4">
@@ -203,7 +212,7 @@ const handleSend = async () => {
                  <div ref={messagesEndRef} />
             </div>
             {/* Input */}
-            <div className="p-3 sm:p-4 flex justify-center bg-[#6B5EDD]">
+            <div className="p-3 sm:p-4 flex justify-center bg-[#0D0056]">
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <textarea
                   className="flex-1 sm:w-72 h-10 sm:h-12 rounded-lg p-2 text-sm sm:text-base focus:outline-none resize-none bg-white text-black"
