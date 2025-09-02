@@ -177,8 +177,7 @@ const Courses = () => {
     title: "",
     level: "BEGINNER",
     description: "",
-    category: "",     // added
-    duration: "1 hour",      // added
+    category: "",     // added     // added
   });
 
   const [previewIcon, setPreviewIcon] = useState(null);

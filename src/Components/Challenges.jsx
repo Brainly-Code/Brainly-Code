@@ -5,16 +5,38 @@ import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
 import TextGenerateEffect from './ui/TextGenerate';
 import Loader from './ui/Loader';
-import { useGetChallengesQuery } from '../redux/api/challengeSlice';
+import { useGetChallengesQuery, useToggleChallengeLikeMutation } from '../redux/api/challengeSlice';
 import { BackgroundGradient } from './ui/BgGradient';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
 import { Link } from 'react-router-dom';
 import BgLoader from './ui/BgLoader';
+import like from '../assets/like.png'
+import liked from '../assets/liked.png'
+import { jwtDecode } from 'jwt-decode';
+import { useSelector } from 'react-redux';
 
 export const Challenges = () => {
   
-  let { data: challenges, error, isLoading } = useGetChallengesQuery();
+  let { data: challenges,error, isLoading,refetch } = useGetChallengesQuery();
+  const [toggleLike] = useToggleChallengeLikeMutation();
+  const [challengesState, setChallengesState] = React.useState([]);
+
+  console.log(challenges);
+
+  const { userInfo } = useSelector((state) => state.auth);
+  const token = jwtDecode(userInfo.access_token);
+
+    React.useEffect(() => {
+    if (challenges) {
+      const challengesWithLikeStatus = challenges.map(ch => {
+        const userHasLiked = ch.likesList?.some(like => like.userId === token.sub) || false;
+        return { ...ch, userHasLiked };
+      });
+      setChallengesState(challengesWithLikeStatus);
+    }
+  }, [challenges, token.sub]);
+
   
   if(error){
     toast.error(error);
@@ -23,8 +45,31 @@ export const Challenges = () => {
   const [filterLevel, setFilterLevel] = React.useState('ALL');
 
   const filteredChallenges = filterLevel === 'ALL' 
-  ? challenges
-  : challenges?.filter(challenge => challenge.difficulty === filterLevel);
+    ? challengesState
+    : challengesState?.filter(challenge => challenge.difficulty === filterLevel);
+
+  
+  const handleLikeClick = async (challengeId) => {
+    try {
+      const res = await toggleLike({ id: challengeId, userId: token.sub }).unwrap();
+      toast.success(res.message);
+
+      setChallengesState(prev =>
+        prev.map(ch => {
+          if (ch.id === challengeId) {
+            const likes = res.liked ? ch.likes + 1 : ch.likes - 1;
+            return { ...ch, userHasLiked: res.liked, likes };
+          }
+          return ch;
+        })
+      );
+      
+      refetch();
+    } catch (err) {
+      toast.error("Failed to like challenge");
+    }
+  };
+
 
   if(isLoading) {
     return <BgLoader />
@@ -97,12 +142,16 @@ export const Challenges = () => {
                   </h1>
                   <p className="text-gray-400 text-sm sm:text-base">{challenge.description}</p>
 
-                  <div className="flex justify-end h-1/6 mt-6">
+                  <div className="flex justify-around h-1/6 mt-6">
                     <Link to={`/user/challenge/${challenge.id}`}>
                       <button className="rounded-lg hover:bg-[#06325b96] bg-[#06325B] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] py-2 px-8 text-white font-bold text-sm">
                         Start
                       </button>
                     </Link>
+                    <img 
+                      src={challenge.userHasLiked ? liked : like}
+                      className='h-6 w-6 cursor-pointer'
+                      onClick={() => handleLikeClick(challenge.id)}/>
                   </div>
                 </div>
               </div>

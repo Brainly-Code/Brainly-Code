@@ -142,8 +142,6 @@ const Challenges = () => {
       difficulty: newChallengeData.difficulty,
       duration: newChallengeData.estimatedTime,
       relation: newChallengeData.context,
-      likes: 0,
-      completions: 0,
     };
 
     try {

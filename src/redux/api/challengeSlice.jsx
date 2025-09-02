@@ -21,11 +21,12 @@ const challengeApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    incrementChallenge: builders.mutation({
-      query: id => ({
-        url: `${CHALLENGE_URL}/like/${id}`,
-        method: "POST"
-      })
+    toggleChallengeLike: builders.mutation({
+      query: ({ id, userId }) => ({
+        url: `${CHALLENGE_URL}/${id}/like`,
+        method: "PATCH",
+        body: { userId },
+      }),
     }),
 
     getChallenges: builders.query({
@@ -91,7 +92,7 @@ const challengeApiSlice = apiSlice.injectEndpoints({
 export const {
   useCreateChallengeMutation,
   useUpdateChallengeMutation,
-  useIncrementChallengeMutation,
+  useToggleChallengeLikeMutation,
   useGetChallengesQuery,
   useGetChallengeByIdQuery,
   useGetChallengeInstructionsQuery,

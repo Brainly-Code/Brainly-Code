@@ -279,6 +279,7 @@ export const Community = () => {
             {/* Close Button */}
             <button
               className="absolute -top-8 text-3xl right-3 text-white text-xl font-bold hover:text-gray-300"
+
               onClick={() => setOpenChat(false)}
             >
               ✕
