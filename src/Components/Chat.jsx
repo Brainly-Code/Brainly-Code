@@ -158,7 +158,7 @@ export const Chat = ({ chatWith }) => {
                 className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
-                {sidebarOpen ? "Chats" : "Close"}
+                {sidebarOpen ? "Close" : "Chats"}
               </button>
             </div>
 

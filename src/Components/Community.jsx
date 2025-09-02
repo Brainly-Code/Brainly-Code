@@ -263,7 +263,7 @@ export const Community = () => {
             }}
           />
           {unreadCounts?.length > 0 && (
-            <span className="absolute top-1 -right-0  bg-gray-400 text-red-200 rounded-full px-2 py-1 text-xs font-bold">
+            <span className="absolute top-1 -right-0  bg-red-500 text-red-200 rounded-full px-2 py-1 text-xs font-bold">
               {totalUnread}
             </span>
           )}
@@ -274,11 +274,11 @@ export const Community = () => {
 
       {/* Chat Modal */}
       {openChat && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 overflow-hidden">
-          <div className="relative w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-[90vh] bg-[#0D0056] rounded-xl shadow-2xl flex flex-col">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 overflow-hidden">
+          <div className="relative w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-[90vh] bg-opacity-100 rounded-xl shadow-2xl flex flex-col">
             {/* Close Button */}
             <button
-              className="absolute top-3 right-3 text-white text-xl font-bold hover:text-gray-300"
+              className="absolute -top-8 text-3xl right-3 text-white text-xl font-bold hover:text-gray-300"
               onClick={() => setOpenChat(false)}
             >
               ✕
