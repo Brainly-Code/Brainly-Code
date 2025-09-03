@@ -43,6 +43,7 @@ import EditChallenge from './Admin/EditChallenge.jsx'
 import NotDoneError from './NotDoneError.jsx'
 import ChallengeCompleters from './Admin/ChallengeCompleters.jsx'
 import Chat from './Components/Chat.jsx'
+import Reviews from './Admin/Reviews.jsx'
 
 
 const router = createBrowserRouter(
@@ -92,6 +93,7 @@ const router = createBrowserRouter(
         <Route path=':moduleId/:lessonVideoId' element={<LessonVideoPlayer2 />} />
         <Route path='lesson/:id' element={< Lesson2 />} />
         <Route path='editChallenge/:id' element={<EditChallenge />} />
+        <Route path='reviews' element={<Reviews />} />
         {/* <Route path='challenges' element={<AllChallenges />} /> 
 
         <Route path='courses' element={<AllCourses />} /> 
