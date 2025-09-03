@@ -1,14 +1,10 @@
-import React from 'react'
-import BrainlyCodeIcon from './BrainlyCodeIcon';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { useGetCoursesQuery,useGetUserLikedCoursesQuery,useLikeCourseMutation } from '../redux/api/coursesSlice'
-import { Logout } from '../redux/Features/authSlice';
+import { useGetCoursesQuery, useGetUserLikedCoursesQuery, useLikeCourseMutation } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
-import { FloatingNav } from './ui/FloatingNav';
-import { BackgroundGradient } from './ui/BgGradient';
-import like from '../assets/like.png'
-import liked from '../assets/liked.png'
+import like from '../assets/like.png';
+import liked from '../assets/liked.png';
 import {
   FaJs,
   FaReact,
@@ -22,178 +18,213 @@ import Header from './ui/Header';
 import BgLoader from './ui/BgLoader';
 
 export default function HomePage() {
-  
   const getIconForCourse = (title) => {
     const key = title.toLowerCase();
-    if (key.includes("js")) return <FaJs color="orange" size={30} />;
-    if (key.includes("react")) return <FaReact color="blue" size={30} />;
-    if (key.includes("node")) return <FaNodeJs color="green" size={30} />;
-    if (key.includes("python")) return <FaPython color="green" size={30} />;
-    if (key.includes("html") || key.includes("css")) return <FaHtml5 color="red" size={30} />;
-    if (key.includes("data structure") || key.includes("algorithm"))
+    if (key.includes('js')) return <FaJs color="orange" size={30} />;
+    if (key.includes('react')) return <FaReact color="blue" size={30} />;
+    if (key.includes('node')) return <FaNodeJs color="green" size={30} />;
+    if (key.includes('python')) return <FaPython color="green" size={30} />;
+    if (key.includes('html') || key.includes('css')) return <FaHtml5 color="red" size={30} />;
+    if (key.includes('data structure') || key.includes('algorithm'))
       return <FaAccessibleIcon color="purple" size={30} />;
     return <FaAccessibleIcon color="gray" size={30} />; // Default icon
   };
 
-    const { data: likedCourseIds,refetch } = useGetUserLikedCoursesQuery();
-  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-
-
-  let { data: courses, error, isLoading } = useGetCoursesQuery();
+  const { data: likedCourseIds, refetch } = useGetUserLikedCoursesQuery();
+  const { data: courses, error, isLoading } = useGetCoursesQuery();
   const [likeCourse] = useLikeCourseMutation();
-  console.log(courses)
-  // Keep local liked state for optimistic updates
+
   const [localLikes, setLocalLikes] = React.useState({});
 
   React.useEffect(() => {
-  if (likedCourseIds) {
-    const initialLikes = {};
-    likedCourseIds.forEach(id => initialLikes[id] = true);
-    setLocalLikes(initialLikes);
-  }
-}, [likedCourseIds]);
+    if (likedCourseIds) {
+      const initialLikes = {};
+      likedCourseIds.forEach((id) => (initialLikes[id] = true));
+      setLocalLikes(initialLikes);
+    }
+  }, [likedCourseIds]);
 
-const isLiked = (courseId) => {
-  // prefer localLikes if it exists, otherwise fallback to backend likedCourseIds
-  return courseId in localLikes ? localLikes[courseId] : likedCourseIds?.includes(courseId);
-};
+  const isLiked = (courseId) => {
+    return courseId in localLikes ? localLikes[courseId] : likedCourseIds?.includes(courseId);
+  };
 
   const handleLike = async (courseId) => {
     try {
       await likeCourse(courseId).unwrap();
-      // Update localLikes after successful backend request
-      setLocalLikes(prev => ({
+      setLocalLikes((prev) => ({
         ...prev,
-        [courseId]: !prev[courseId], // toggle like after API confirms
+        [courseId]: !prev[courseId],
       }));
-
       refetch();
     } catch (err) {
-      toast.error(err?.data?.message || "Failed to toggle like status");
+      toast.error(err?.data?.message || 'Failed to toggle like status');
     }
   };
-      
-  if(error){
-    toast.error(error);
-  }
+
+  if (error) toast.error(error);
 
   const [filterLevel, setFilterLevel] = React.useState('ALL');
 
-  const filteredCourses = filterLevel === 'ALL' 
-  ? courses 
-  : courses?.filter(course => course.level === filterLevel);
+  const filteredCourses =
+    filterLevel === 'ALL' ? courses : courses?.filter((course) => course.level === filterLevel);
 
-
-  if(isLoading) {
-    return <BgLoader/>
-  }
+  if (isLoading) return <BgLoader />;
 
   return (
-    <div className='bg-[#070045] opacity-90'>
+    <div className="bg-[#070045] min-h-screen flex flex-col">
       <Header />
-    
-      <section>
-        <div className=' mt-[2rem] w-[50%] m-auto '>
-          <div className='text-center md:flex md:flex-nowrap md:justify-center items-center gap-5 m-auto mb-4'>
-            <span className='text-[#00ffee] lg:text-4xl text-xl font-bold'>Interactive</span>
-            <TextGenerateEffect className="text-white lg:text-4xl text-xl font-bold align-middle whitespace-nowrap" words={' Coding Courses'} />
+
+      {/* Hero Section */}
+      <section className="relative text-center py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row md:justify-center md:items-center gap-4 mb-6">
+            <span className="text-[#00ffee] text-2xl lg:text-5xl font-bold">Interactive</span>
+            <TextGenerateEffect
+              className="text-white text-2xl lg:text-5xl font-extrabold whitespace-nowrap"
+              words={'Coding Courses'}
+            />
           </div>
-          <div className="text-center text-white">
-            <p>
-              Learn to code through hands-on projects, interactive exercises, and real-world applications. 
-              Start your programming journey today!
-            </p>
-        </div>
+          <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-6">
+            Learn to code through hands-on projects, interactive exercises, and real-world
+            applications. Start your programming journey today!
+          </p>
+          <Link to="#courses">
+            <button className="px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
+              Explore Courses
+            </button>
+          </Link>
         </div>
       </section>
-      
-      <section className="mt-[3rem]">
-        <div className="mb-7 text-gray-300 px-4 sm:px-10 md:px-20 lg:px-[15rem] flex flex-wrap justify-center gap-4">
-          <button
-            onClick={() => setFilterLevel('ALL')}
-            className={`p-2 rounded-md ${
-              filterLevel === 'ALL' ? 'border border-white' : 'border-none'
-            }`}>
-            All Courses
-          </button>
 
-          <button
-            onClick={() => setFilterLevel('BEGINNER')}
-            className={`p-2 rounded-md ${
-              filterLevel === 'BEGINNER' ? 'border border-white' : 'border-none'
-            }`}>
-            Beginner
-          </button>
-
-          <button
-            onClick={() => setFilterLevel('INTERMEDIATE')}
-            className={`p-2 rounded-md ${
-              filterLevel === 'INTERMEDIATE' ? 'border border-white' : 'border-none'
-            }`}>
-            Intermediate
-          </button>
-
-          <button
-            onClick={() => setFilterLevel('ADVANCED')}
-            className={`p-2 rounded-md ${
-              filterLevel === 'ADVANCED' ? 'border border-white' : 'border-none'
-            }`}>
-            Advanced
-          </button>
-        </div>
-
-
-        <div className="mt-14 mb-14 px-4 sm:px-8 lg:px-[5rem]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-14">
-            {filteredCourses?.map((course) => (
-              <div key={course._id || course.id}>
-                <div className="h-full rounded-[22px] hover:shadow-[0_5px_5px_10px_rgba(33,111,184,0.75)] p-4 sm:p-6 lg:p-8 bg-opacity-0 shadow-[0_4px_4px_10px_rgba(33,111,184,0.25)]">
-                  <div className="flex justify-between items-center mb-4">
-                    {getIconForCourse(course.title)}
-                    <span
-                    className={`font-bold ${
-                      course.level === 'BEGINNER'
-                        ? 'text-blue-400'
-                        : course.level === 'INTERMEDIATE'
-                        ? 'text-purple-400'
-                        : course.level === 'ADVANCED'
-                        ? 'text-green-400'
-                        : 'text-gray-400'
+      {/* Filter Section */}
+            <section id="courses" className="mt-12">
+              <div className="flex flex-wrap justify-center gap-4 px-6">
+                {['ALL', 'BEGINNER', 'INTERMEDIATE', 'ADVANCED'].map((level) => (
+                  <button
+                    key={level}
+                    onClick={() => setFilterLevel(level)}
+                    className={`px-5 py-2 rounded-full transition-all duration-200 font-medium text-sm sm:text-base shadow-md ${
+                      filterLevel === level
+                        ? 'bg-gradient-to-r from-[#00ffee] to-purple-500 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    {capitalize(course.level)}
-                  </span>
-                  </div>
-
-                  <h1 className="text-xl sm:text-2xl font-bold text-neutral-300 dark:text-neutral-200">
-                    {course.title}
-                  </h1>
-                  <p className="text-gray-400 text-sm sm:text-base">{course.description}</p>
-
-                  <div className="flex justify-center mt-6">
-                    <Link to={`/user/module/${course.id}`}>
-                      <button className="rounded-full hover:from-[#30c7bd] hover:to-purple-600 bg-gradient-to-r from-[#00ffee] to-purple-500 px-8 sm:px-10 py-2 sm:py-3 text-white font-bold text-sm">
-                        Enroll now
-                      </button>
-                    </Link>
-                    <div className='ml-4 flex items-center gap-1'>
-                      <img 
+                    {level === 'ALL' ? 'All Courses' : level}
+                  </button>
+                ))}
+              </div>
+      
+              {/* Course Grid */}
+              <div className="mt-16 mb-20 px-6 sm:px-10 lg:px-20">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                  {filteredCourses?.map((course) => (
+                    <div
+                      key={course._id || course.id}
+                      className="group bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 hover:shadow-[0_8px_20px_rgba(0,0,0,0.4)] transition duration-300"
+                    >
+                      <div className="flex justify-between items-center mb-4">
+                        {getIconForCourse(course.title)}
+                        <span
+                          className={`font-semibold text-sm ${
+                            course.level === 'BEGINNER'
+                              ? 'text-blue-400'
+                              : course.level === 'INTERMEDIATE'
+                              ? 'text-purple-400'
+                              : course.level === 'ADVANCED'
+                              ? 'text-green-400'
+                              : 'text-gray-400'
+                          }`}
+                        >
+                          {course.level.charAt(0) + course.level.slice(1).toLowerCase()}
+                        </span>
+                      </div>
+                      <h2 className="text-xl font-bold text-white mb-2">{course.title}</h2>
+                      <p className="text-gray-400 text-sm line-clamp-3">{course.description}</p>
+      
+                      <div className="flex justify-between items-center mt-6">
+                        <Link to={`/user/module/${course.id}`}>
+                          <button className="px-6 py-2 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-sm shadow hover:scale-105 transition-transform">
+                            Enroll Now
+                          </button>
+                        </Link>
+                        <img
                           src={isLiked(course.id) ? liked : like}
-                        alt="like" 
-                        className='h-6 w-6 cursor-pointer'
-                        onClick={() => handleLike(course.id)}
-                      />
-                  </div>
-                  </div>
+                          alt="like"
+                          className="h-6 w-6 cursor-pointer hover:scale-110 transition-transform"
+                          onClick={() => handleLike(course.id)}
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
+            </section>
+
+            {/* Explore Challenges Section */}
+      <section className="relative py-20 px-6 bg-gradient-to-r from-[#0d0066] via-[#070045] to-[#0d0066] text-center">
+        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">🚀 Explore Challenges</h2>
+        <p className="text-gray-300 max-w-2xl mx-auto mb-12">
+          Sharpen your coding skills with hands-on challenges across different levels. 
+          Compete, practice, and grow while learning from real-world problems.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {[
+            { title: "Palindrome challenge", level: "Beginner", color: "from-blue-400 to-indigo-500" },
+            { title: "Full React Application", level: "Intermediate", color: "from-purple-400 to-pink-500" },
+            { title: "Fullstack", level: "Advanced", color: "from-green-400 to-emerald-500" },
+          ].map((challenge, idx) => (
+            <div
+              key={idx}
+              className={`p-6 rounded-2xl bg-gradient-to-r ${challenge.color} text-white shadow-lg hover:scale-105 transition-transform`}
+            >
+              <h3 className="text-xl font-bold mb-2">{challenge.title}</h3>
+              <span className="text-sm font-medium bg-black/30 px-3 py-1 rounded-full">
+                {challenge.level}
+              </span>
+            </div>
+          ))}
         </div>
+
+        <Link to="/challenges">
+          <button className="mt-10 px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
+            View All Challenges
+          </button>
+        </Link>
       </section>
 
-      {/* Footer */}
+      {/* Our Community Section */}
+      <section className="py-20 px-6 bg-[#070045] text-center">
+        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">🌍 Our Community</h2>
+        <p className="text-gray-300 max-w-2xl mx-auto mb-12">
+          Join a vibrant community of coders, learners, and mentors who help each other 
+          grow every single day.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto mb-12">
+          <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-md">
+            <h3 className="text-3xl font-bold text-[#00ffee]">10k+</h3>
+            <p className="text-gray-300">Active Learners</p>
+          </div>
+          <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-md">
+            <h3 className="text-3xl font-bold text-purple-400">500+</h3>
+            <p className="text-gray-300">Coding Challenges</p>
+          </div>
+          <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-md">
+            <h3 className="text-3xl font-bold text-green-400">200+</h3>
+            <p className="text-gray-300">Expert Mentors</p>
+          </div>
+        </div>
+
+        <Link to="/user/community">
+          <button className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-[#00ffee] text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
+            Join Our Community
+          </button>
+        </Link>
+      </section>
+
+
       <Footer />
     </div>
-  )
+  );
 }

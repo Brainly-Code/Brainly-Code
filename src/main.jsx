@@ -43,6 +43,7 @@ import EditChallenge from './Admin/EditChallenge.jsx'
 import NotDoneError from './NotDoneError.jsx'
 import ChallengeCompleters from './Admin/ChallengeCompleters.jsx'
 import Chat from './Components/Chat.jsx'
+import UserCourses from './Components/Courses.jsx'
 
 
 const router = createBrowserRouter(
@@ -64,6 +65,7 @@ const router = createBrowserRouter(
 
 
       <Route path='user' element={<Home />} >
+        <Route path="courses"  element={<UserCourses />} />
         <Route path="profile" element={<UpdateUser />} />
         <Route path='' element={<HomePage />} />
         <Route path='lesson/:id' element={<Lesson />} />
