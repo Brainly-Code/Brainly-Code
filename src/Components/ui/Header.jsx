@@ -56,15 +56,15 @@ const userId = React.useMemo(() => {
     { name: "Challenges", link: "/user/challenges", icon: "🏆" },
   ];
 
-  // const logoutHandler = async () => {
-  //   try {
-  //     await logoutApiCall().unwrap();
-  //     dispatch(Logout());
-  //     navigate('/login');
-  //   } catch (error) {
-  //     toast.error(error?.data?.message || error.message);
-  //   }
-  // };
+  const logoutHandler = async () => {
+    try {
+      await logoutApiCall().unwrap();
+      dispatch(Logout());
+      navigate('/login');
+    } catch (error) {
+      toast.error(error?.data?.message || error.message);
+    }
+  };
 
   // const handleUpgrade = async () => {
   //   if (isProMember) {
@@ -128,9 +128,9 @@ const userId = React.useMemo(() => {
             
 
             <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
-              <button>
-                <Link to="/user/community">
-                  Community
+              <button onClick={logoutHandler}>
+                <Link to="">
+                  Sign out
                 </Link>
               </button>
             </li>
