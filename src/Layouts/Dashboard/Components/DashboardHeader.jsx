@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -7,6 +7,7 @@ import profileFallback from "../../../assets/profile.png";
 
 import {
   useGetProfileImageQuery,
+  useGetUserByIdQuery,
   useLogoutMutation,
 } from "../../../redux/api/userSlice";
 import { Logout } from "../../../redux/Features/authSlice";
@@ -16,8 +17,11 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { AiOutlineLogout } from "react-icons/ai";
 import { jwtDecode } from "jwt-decode";
+import { useGetUnreadCountsQuery } from "../../../redux/api/messageSlice";
+import Chat from "../../../Components/Chat";
 
 const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
+  const [openChat, setOpenChat] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -33,6 +37,12 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
 
   const [logoutApiCall] = useLogoutMutation();
 
+  const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
+  console.log(unreadNotifications);
+
+  const {data: selectedUser} = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
+
+
   const logoutHandler = async () => {
     console.log("Logging out")
     try {
@@ -43,6 +53,10 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
       toast.error(error?.data?.message || error.message);
     }
   };
+  
+  const handleNotifications = async () => {
+    setOpenChat(true);
+  }
 
   if (loadingImage) return <div className="p-4 text-white">Loading...</div>;
 
@@ -67,10 +81,15 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
             </div>
 
             <div className="relative h-full flex-shrink-0">
-              <button className="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center shadow-sm">
-                <IoMdNotificationsOutline className="text-xl text-gray-200" />
+              <button onClick={handleNotifications} className="w-10 h-10 hover:border-gray-400 rounded-lg border border-gray-200 flex items-center justify-center shadow-sm">
+                <IoMdNotificationsOutline className="text-xl hover:text-gray-400 text-gray-200" />
                 <span className="absolute top-2 right-2 block w-1 h-1 rounded-full bg-red-500"></span>
               </button>
+              {unreadNotifications?.[0]?._count?.id > 0 && (
+                <div className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {unreadNotifications?.[0]?._count?.id > 9 ? '9+' : unreadNotifications?.[0]?._count?.id}
+                </div>
+              )}
             </div>
           </div>
 
@@ -98,6 +117,24 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
           </ul>
         </header>
       </div>
+
+            {/* Chat Modal */}
+            {openChat && (
+              <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 overflow-hidden">
+                <div className="relative w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-[90vh] bg-[#0D0056] rounded-xl shadow-2xl flex flex-col">
+                  {/* Close Button */}
+                  <button
+                    className="absolute -top-8 text-3xl right-3 text-white text-xl font-bold hover:text-gray-300"
+                    onClick={() => setOpenChat(false)}
+                  >
+                    ✕
+                  </button>
+      
+                  {/* Chat Component */}
+                  <Chat chatWith={selectedUser}/>
+                </div>
+              </div>
+            )}
     </div>
   );
 };

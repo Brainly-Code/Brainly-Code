@@ -31,15 +31,15 @@ export const FloatingNav = ({ navItems, className }) => {
     }
   });
 
-    const logoutHandler = async () => {
-      try {
-        await logoutApiCall().unwrap();
-        dispatch(Logout());
-        navigate('/login');
-      } catch (error) {
-        toast.error(error?.data?.message || error.message);
-      }
-    };
+    // const logoutHandler = async () => {
+    //   try {
+    //     await logoutApiCall().unwrap();
+    //     dispatch(Logout());
+    //     navigate('/login');
+    //   } catch (error) {
+    //     toast.error(error?.data?.message || error.message);
+    //   }
+    // };
 
   return (
     <AnimatePresence mode="wait">
@@ -66,9 +66,9 @@ export const FloatingNav = ({ navItems, className }) => {
               <span className="hidden sm:block text-sm">{navItem.name}</span>
             </Link>
           ))}
-          <button className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full" onClick={logoutHandler}>
+          <button className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full">
             <span>
-              <Link to="">Log out</Link>
+              <Link to="/user/community">Community</Link>
             </span>
             <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
           </button>
