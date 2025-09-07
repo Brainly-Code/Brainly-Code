@@ -19,12 +19,16 @@ export const Hero = () => {
   ];
 
   const {data: courses, isLoading, isError} = useGetCoursesQuery();
+
+
   if(isLoading) {
     return <Loader />
   }
+
   if(isError) {
     toast.error("Sorry Cannot get the courses!")
   }
+
 
   return (
     <div className="bg-[#0D0056] text-gray-50 min-h-screen">
