@@ -18,7 +18,6 @@ const PlaygroundCodeEditor = () => {
         <body>
           ${html}
           <script>
-            // Store original console.log
             const originalConsoleLog = console.log;
             console.log = function(...args) {
               args.forEach(arg => {
@@ -27,7 +26,6 @@ const PlaygroundCodeEditor = () => {
                     { type: 'console', data: arg },
                     '*'
                   );
-                  originalConsoleLog('Sent to parent:', arg);
                 } catch (err) {
                   originalConsoleLog('Error in postMessage:', err);
                 }
@@ -45,83 +43,85 @@ const PlaygroundCodeEditor = () => {
       </html>
     `;
 
-    setConsoleOutput([]); // Clear previous output
+    setConsoleOutput([]);
     setSrcDoc(codeWithConsoleCapture);
   };
 
   useEffect(() => {
     const handleMessage = (event) => {
-      // Temporarily allow all origins for debugging
-      console.log('Received message:', event.data); // Debug log
-      if (event.data?.type === 'console') {
+      if (event.data?.type === "console") {
         setConsoleOutput((prev) => {
-          const newLog = typeof event.data.data === 'string'
-            ? event.data.data
-            : JSON.stringify(event.data.data, null, 2);
-          const newLogs = [...prev, newLog];
-          return newLogs.slice(-100); // Keep last 100 logs
+          const newLog =
+            typeof event.data.data === "string"
+              ? event.data.data
+              : JSON.stringify(event.data.data, null, 2);
+          return [...prev, newLog].slice(-100);
         });
       }
     };
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
   }, []);
 
   return (
     <div className="p-4 h-full">
-      <div className="flex h-[35rem]">
+      {/* Responsive wrapper: stacks on mobile, side-by-side on md+ */}
+      <div className="flex flex-col md:flex-row h-auto md:h-[35rem] gap-4">
+        
         {/* Editors */}
-        <div className="bg-[#1C2526] w-[50%]">
-          <div className="border-b-2">
-            <h1 className="text-gray-300 mt-[1rem] text-center">Editor</h1>
+        <div className="bg-[#1C2526] w-full md:w-1/2 rounded-lg">
+          <div className="border-b border-gray-700">
+            <h1 className="text-gray-300 py-2 text-center text-lg font-semibold">
+              Editor
+            </h1>
           </div>
-          <div className="flex gap-1 p-[3rem] h-[30rem]">
-            <div className="w-1/3">
-              <h2 className="text-gray-500 text-sm text-center">index.html</h2>
+          <div className="flex flex-col sm:flex-row gap-2 p-4 h-[24rem] md:h-[30rem] overflow-auto">
+            <div className="flex-1 flex flex-col">
+              <h2 className="text-gray-500 text-sm text-center mb-1">index.html</h2>
               <textarea
                 value={html}
                 onChange={(e) => setHtml(e.target.value)}
                 placeholder="HTML"
                 aria-label="HTML code editor"
-                className="text-gray-300 m-1 bg-[#1C2526] p-2 text-sm rounded h-full w-full"
+                className="flex-1 text-gray-300 bg-[#1C2526] border border-gray-700 rounded p-2 text-sm resize-none"
               />
             </div>
-            <div className="w-1/3">
-              <h2 className="text-gray-500 text-sm text-center">index.css</h2>
+            <div className="flex-1 flex flex-col">
+              <h2 className="text-gray-500 text-sm text-center mb-1">index.css</h2>
               <textarea
                 value={css}
                 onChange={(e) => setCss(e.target.value)}
                 placeholder="CSS"
-                className="text-gray-300 m-1 bg-[#1C2526] p-2 text-sm rounded h-full w-full"
+                className="flex-1 text-gray-300 bg-[#1C2526] border border-gray-700 rounded p-2 text-sm resize-none"
               />
             </div>
-            <div className="w-1/3">
-              <h2 className="text-gray-500 text-sm text-center">index.js</h2>
+            <div className="flex-1 flex flex-col">
+              <h2 className="text-gray-500 text-sm text-center mb-1">index.js</h2>
               <textarea
                 value={js}
                 onChange={(e) => setJs(e.target.value)}
                 placeholder="JavaScript"
-                className="text-gray-300 m-1 bg-[#1C2526] p-2 text-sm rounded h-full w-full"
+                className="flex-1 text-gray-300 bg-[#1C2526] border border-gray-700 rounded p-2 text-sm resize-none"
               />
             </div>
           </div>
         </div>
 
         {/* Output */}
-        <div className="bg-white h-[100%] w-[50%] p-1">
+        <div className="bg-white w-full md:w-1/2 p-3 rounded-lg shadow">
           <h1 className="text-gray-800 text-center font-semibold">Output</h1>
           <iframe
             ref={iframeRef}
             title="Live Preview"
-            className="w-full h-[50vh] mt-2 rounded border"
+            className="w-full h-[40vh] md:h-[50vh] mt-2 rounded border"
             sandbox="allow-scripts allow-same-origin"
             srcDoc={srcDoc}
           />
           <div className="text-center mt-2">
             <button
               onClick={() => setShowConsole(!showConsole)}
-              className="px-4 py-1 bg-gray-800 text-white rounded"
+              className="px-4 py-1 bg-gray-800 text-white rounded text-sm"
             >
               {showConsole ? "Hide Console" : "Show Console"}
             </button>
@@ -142,13 +142,13 @@ const PlaygroundCodeEditor = () => {
         </div>
       </div>
 
-      <br />
+      {/* Run button */}
       <div className="flex justify-center">
         <button
           type="button"
           onClick={runCode}
           aria-label="Run code and check solution"
-          className="mt-2 px-6 py-2 bg-gradient-to-r hover:from-[#00ffffa2] hover:to-[#8342f3] from-[#00FFFF] to-[#8F57EF] text-white rounded-lg"
+          className="mt-4 px-6 py-2 bg-gradient-to-r hover:from-[#00ffffa2] hover:to-[#8342f3] from-[#00FFFF] to-[#8F57EF] text-white rounded-lg text-sm sm:text-base"
         >
           Run and Check Solution
         </button>

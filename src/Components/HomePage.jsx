@@ -32,6 +32,8 @@ export default function HomePage() {
 
   const { data: likedCourseIds, refetch } = useGetUserLikedCoursesQuery();
   const { data: courses, error, isLoading } = useGetCoursesQuery();
+  const max = 3;
+  const courseCount = 0;
   const [likeCourse] = useLikeCourseMutation();
 
   const [localLikes, setLocalLikes] = React.useState({});
@@ -73,7 +75,6 @@ export default function HomePage() {
   return (
     <div className="bg-[#070045] min-h-screen flex flex-col">
       <Header />
-
       {/* Hero Section */}
       <section className="relative text-center py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]">
         <div className="max-w-4xl mx-auto">
@@ -81,23 +82,65 @@ export default function HomePage() {
             <span className="text-[#00ffee] text-2xl lg:text-5xl font-bold">Interactive</span>
             <TextGenerateEffect
               className="text-white text-2xl lg:text-5xl font-extrabold whitespace-nowrap"
-              words={'Coding Courses'}
+              words={'Programming'}
             />
           </div>
           <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-6">
             Learn to code through hands-on projects, interactive exercises, and real-world
             applications. Start your programming journey today!
           </p>
-          <Link to="#courses">
-            <button className="px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
-              Explore Courses
-            </button>
-          </Link>
         </div>
       </section>
 
-      {/* Filter Section */}
+            {/* Explore Challenges Section */}
+      <section className="relative py-20 px-6 bg-gradient-to-r from-[#0d0066] via-[#070045] to-[#0d0066] text-center">
+        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">🚀 Explore Challenges</h2>
+        <p className="text-gray-300 max-w-2xl mx-auto mb-12">
+          Sharpen your coding skills with hands-on challenges across different levels. 
+          Compete, practice, and grow while learning from real-world problems.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {[
+            { title: "Palindrome challenge", level: "Beginner", color: "from-blue-400 to-indigo-500" },
+            { title: "Full React Application", level: "Intermediate", color: "from-purple-400 to-pink-500" },
+            { title: "Fullstack", level: "Advanced", color: "from-green-400 to-emerald-500" },
+          ].map((challenge, idx) => (
+            <div
+              key={idx}
+              className={`p-6 rounded-2xl bg-gradient-to-r ${challenge.color} text-white shadow-lg hover:scale-105 transition-transform`}
+            >
+              <h3 className="text-xl font-bold mb-2">{challenge.title}</h3>
+              <span className="text-sm font-medium bg-black/30 px-3 py-1 rounded-full">
+                {challenge.level}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <Link to="/user/challenges">
+          <button className="mt-10 px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
+            View All Challenges
+          </button>
+        </Link>
+      </section>
+
+       {/* Filter Section */}
             <section id="courses" className="mt-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8 text-center">Courses</h2>
+              <div className="max-w-4xl mx-auto text-center">
+              <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-6">
+              <span className="text-[#00ffee] text-2xl lg:text-4xl font-bold">Interactive</span>
+              <TextGenerateEffect
+                className="text-white text-2xl lg:text-4xl font-extrabold whitespace-nowrap"
+                words={'Coding courses'}
+              />
+              </div>
+              <p className="text-gray-300 text-md md:text-xl max-w-2xl mx-auto mt-6 mb-6">
+                BrainlyCode courses provides basic,intermediate and advanced knowledge and skills to using
+                different programming languages
+              </p>
+              </div>
               <div className="flex flex-wrap justify-center gap-4 px-6">
                 {['ALL', 'BEGINNER', 'INTERMEDIATE', 'ADVANCED'].map((level) => (
                   <button
@@ -117,7 +160,7 @@ export default function HomePage() {
               {/* Course Grid */}
               <div className="mt-16 mb-20 px-6 sm:px-10 lg:px-20">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                  {filteredCourses?.map((course) => (
+                  {filteredCourses?.slice(0,3).map((course) => (
                     <div
                       key={course._id || course.id}
                       className="group bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 hover:shadow-[0_8px_20px_rgba(0,0,0,0.4)] transition duration-300"
@@ -155,48 +198,21 @@ export default function HomePage() {
                         />
                       </div>
                     </div>
-                  ))}
+                  )
+                  )}
                 </div>
+                <Link to="/user/courses" className='mt-7 flex items-center'>
+                <button className="px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform mx-auto">
+                  Explore Courses
+                </button>
+              </Link>
               </div>
             </section>
-
-            {/* Explore Challenges Section */}
-      <section className="relative py-20 px-6 bg-gradient-to-r from-[#0d0066] via-[#070045] to-[#0d0066] text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">🚀 Explore Challenges</h2>
-        <p className="text-gray-300 max-w-2xl mx-auto mb-12">
-          Sharpen your coding skills with hands-on challenges across different levels. 
-          Compete, practice, and grow while learning from real-world problems.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[
-            { title: "Palindrome challenge", level: "Beginner", color: "from-blue-400 to-indigo-500" },
-            { title: "Full React Application", level: "Intermediate", color: "from-purple-400 to-pink-500" },
-            { title: "Fullstack", level: "Advanced", color: "from-green-400 to-emerald-500" },
-          ].map((challenge, idx) => (
-            <div
-              key={idx}
-              className={`p-6 rounded-2xl bg-gradient-to-r ${challenge.color} text-white shadow-lg hover:scale-105 transition-transform`}
-            >
-              <h3 className="text-xl font-bold mb-2">{challenge.title}</h3>
-              <span className="text-sm font-medium bg-black/30 px-3 py-1 rounded-full">
-                {challenge.level}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <Link to="/challenges">
-          <button className="mt-10 px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
-            View All Challenges
-          </button>
-        </Link>
-      </section>
 
       {/* Our Community Section */}
       <section className="py-20 px-6 bg-[#070045] text-center">
         <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">🌍 Our Community</h2>
-        <p className="text-gray-300 max-w-2xl mx-auto mb-12">
+        <p className="text-gray-300 sm:text-md text-sm max-w-2xl mx-auto mb-12">
           Join a vibrant community of coders, learners, and mentors who help each other 
           grow every single day.
         </p>
