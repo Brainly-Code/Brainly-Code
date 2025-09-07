@@ -9,6 +9,12 @@ import {
 } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useLogoutMutation } from "../../redux/api/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { useGetUnreadCountsQuery } from "../../redux/api/messageSlice";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
@@ -17,10 +23,15 @@ export const FloatingNav = ({ navItems, className }) => {
   const [visible, setVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const {userInfo} = useSelector((state) => state.auth);
+  const decoded = userInfo?.access_token ? jwtDecode(userInfo.access_token) : null;
+  const userId = decoded?.sub;
   useMotionValueEvent(scrollYProgress, "change", (current) => {
     // Show nav whenever scroll is beyond 5%
     setVisible(current > 0.05);
   });
+
+  const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
 
   return (
     <AnimatePresence mode="wait">
@@ -46,14 +57,16 @@ export const FloatingNav = ({ navItems, className }) => {
               {navItem.name}
             </Link>
           ))}
-
-          <Link
-            to="/user/community"
-            className="hidden sm:flex border text-xs sm:text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full hover:bg-white/10 transition"
-          >
-            Community
-            <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
-          </Link>
+          <button className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-4 py-2 rounded-full">
+            <span>
+              <Link to="/user/community">Community</Link>
+            </span>
+            {unreadNotifications?.[0]?._count?.id > 0 && (
+                <div className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {unreadNotifications?.[0]?._count?.id > 9 ? '9+' : unreadNotifications?.[0]?._count?.id}
+                </div>
+              )}
+          </button>
           {/* Mobile Hamburger */}
           <div className="sm:hidden flex items-center">
             <button onClick={() => setMenuOpen((p) => !p)}>

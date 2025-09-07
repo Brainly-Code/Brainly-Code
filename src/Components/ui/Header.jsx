@@ -61,6 +61,7 @@ const userId = React.useMemo(() => {
       await logoutApiCall().unwrap();
       dispatch(Logout());
       navigate('/login');
+      toast.success('Logged out successfully');
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
@@ -89,7 +90,7 @@ const userId = React.useMemo(() => {
 
   return (
     <div>
-      <div className='border-gray-300 py-6 rounded-none border-b-[1px]'>
+      <div className='py-6 rounded-none'>
         <header className="flex items-center mx-auto text-white w-5/6 justify-between">
           <FloatingNav navItems={navItems} className="" />
           <BrainlyCodeIcon className="ml-7 sm:ml-1" />

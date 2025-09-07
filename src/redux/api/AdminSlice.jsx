@@ -47,6 +47,13 @@ const AdminSlice = apiSlice.injectEndpoints({
         url: `${ADMIN_URL}/challenge-completers/${challengeId}`,
         method: "GET"
       })
+    }),
+
+    getGraphStats: builder.query({
+      query: () => ({
+        url: `${ADMIN_URL}/graph-stats`,
+        method: "GET",
+      })
     })
 
   }),

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { socket } from "../socket.ts";
+import { socket } from "../socket"; // Update extension if needed
 import userAvatar from "../assets/user.png";
 import send from "../assets/send.png";
 import {
@@ -8,29 +8,27 @@ import {
   useGetUnreadCountsQuery,
   useReadMessagesMutation,
 } from "../redux/api/messageSlice";
-import { useGetUsersQuery } from "../redux/api/AdminSlice.jsx";
+import { useGetUsersQuery } from "../redux/api/AdminSlice";
+import { useGetUserByIdQuery } from "../redux/api/userSlice";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { useGetUserByIdQuery } from "../redux/api/userSlice.jsx";
 
-export const Chat = ({ chatWith }) => {
+export const Chat = ({ chatWith }) => { // Add chatWith as a prop
   const messagesEndRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { data: users = [] } = useGetUsersQuery();
+  const { data: users = [], isLoading: usersLoading } = useGetUsersQuery();
   const { userInfo } = useSelector((state) => state.auth);
   const token = jwtDecode(userInfo.access_token);
   const userId = token.sub;
 
   const { data: unreadCounts = [], refetch: refetchUnread } = useGetUnreadCountsQuery(userId);
   const [readMessages] = useReadMessagesMutation();
-  const { data: currentUser } = useGetUserByIdQuery(userId);
+  const { data: currentUser, isLoading: currentUserLoading } = useGetUserByIdQuery(userId);
 
   const filteredUsers = users.filter((u) => u.id !== userId);
-  const [selectedUser, setSelectedUser] = useState(
-    chatWith ? chatWith : filteredUsers.length > 0 ? filteredUsers[0] : null
-  );
+  const [selectedUser, setSelectedUser] = useState(chatWith || (filteredUsers.length > 0 ? filteredUsers[0] : null));
 
   useEffect(() => {
     if (chatWith) setSelectedUser(chatWith);
@@ -67,12 +65,19 @@ export const Chat = ({ chatWith }) => {
         (msg.senderId === userId && msg.receiverId === selectedUser.id) ||
         (msg.senderId === selectedUser.id && msg.receiverId === userId)
       ) {
-        setMessages((prev) => [...prev, msg]);
+        setMessages((prev) => {
+          // Avoid duplicates by checking if message already exists
+          if (prev.some((m) => m.id === msg.id)) return prev;
+          return [...prev, msg];
+        });
       }
     };
 
     socket.on("newDM", handleNewMessage);
-    return () => socket.off("newDM", handleNewMessage);
+    return () => {
+      socket.emit("leaveRoom", roomId); // Clean up room
+      socket.off("newDM", handleNewMessage);
+    };
   }, [selectedUser, userId]);
 
   const handleSend = async () => {
@@ -81,15 +86,20 @@ export const Chat = ({ chatWith }) => {
     const msgData = {
       senderId: userId,
       receiverId: selectedUser.id,
-      content: newMessage,
+      content: newMessage.trim(),
       type: "text",
     };
 
     socket.emit("sendDM", msgData);
     setNewMessage("");
-
     await sendMessage(msgData);
-    refetch();
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (newMessage.trim()) handleSend();
+    }
   };
 
   useEffect(() => {
@@ -105,137 +115,139 @@ export const Chat = ({ chatWith }) => {
     return found ? found._count.id : 0;
   };
 
+  // Close sidebar on outside click (for mobile)
+  const sidebarRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+        setSidebarOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  if (usersLoading || currentUserLoading) {
+    return <div className="text-white text-center">Loading...</div>;
+  }
+
   return (
-    <div className="bg-[#0D0056] h-[100%] flex">
-      {/* Sidebar */}
-      <div
-        className={`${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } sm:translate-x-0 fixed sm:static top-0 left-0 h-full w-64 bg-[#1a2b3c] border-r border-gray-700 text-white p-4 transition-transform duration-300 overflow-y-auto z-20`}
-      >
-        <h3 className="font-bold text-xl mb-6 text-center">Chats</h3>
-        {filteredUsers.map((u) => (
-          <div
-            key={u.id}
-            onClick={() => {
-              setSelectedUser(u);
-              setSidebarOpen(false);
-            }}
-            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition ${
-              selectedUser?.id === u.id ? "bg-[#6B5EDD]" : "hover:bg-[#2a3b4c]"
-            }`}
-          >
-            <img
-              src={u?.photo || userAvatar}
-              className="bg-white rounded-full h-10 w-10"
-              alt={u.username}
-            />
-            <span className="truncate">{u.username}</span>
-            {getUnreadForUser(u.id) > 0 && selectedUser?.id !== u.id && (
-              <span className="ml-auto bg-red-500 text-white rounded-full px-2 text-xs font-bold">
-                {getUnreadForUser(u.id)}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Chat Window */}
-      <div className="flex-1 flex flex-col">
-        {selectedUser ? (
-          <>
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-[#0A1C2B] sticky top-0 z-10">
-              <div className="flex items-center gap-3">
-                <img
-                  src={selectedUser?.photo || userAvatar}
-                  className="bg-white rounded-full h-12 w-12"
-                  alt={selectedUser?.username}
-                />
-                <h4 className="text-white text-lg font-semibold">{selectedUser?.username}</h4>
-              </div>
-              <button
-                className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                {sidebarOpen ? "Close" : "Chats"}
-              </button>
+    <div className="bg-[#0D0056] h-full flex flex-col">
+      <div className="flex flex-col sm:flex-row h-full w-full bg-[#0A1C2B] rounded-lg shadow-lg overflow-hidden">
+        {/* Sidebar */}
+        <div
+          ref={sidebarRef}
+          className={`${sidebarOpen ? "block" : "hidden"} sm:block w-full sm:w-1/4 bg-[#1a2b3c] text-white p-4 space-y-3 border-r border-gray-700 h-[calc(100vh-2rem)] overflow-y-auto`}
+        >
+          <h3 className="font-bold pt-12 pl-[35%] text-lg">Chats</h3>
+          {filteredUsers.map((u) => (
+            <div
+              key={u.id}
+              onClick={() => {
+                setSelectedUser(u);
+                setSidebarOpen(false);
+              }}
+              className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${selectedUser?.id === u.id ? "bg-[#6B5EDD]" : "hover:bg-[#2a3b4c]"}`}
+            >
+              <img
+                src={u?.photo || userAvatar}
+                className="bg-white rounded-full h-[40px] w-[40px]"
+                alt={u.username}
+              />
+              <span className="truncate">{u.username}</span>
+              {getUnreadForUser(u.id) > 0 && selectedUser?.id !== u.id && (
+                <span className="ml-auto bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold">
+                  {getUnreadForUser(u.id)}
+                </span>
+              )}
             </div>
-
-            {/* Messages */}
-            <div className="flex-1 bg-[#101b2d] p-4 overflow-y-auto space-y-4">
-              {messages.length > 0 ? (
-                messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex items-end gap-2 ${
-                      msg.senderId === userId ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    {msg.senderId !== userId && (
-                      <img
-                        src={selectedUser?.photo || userAvatar}
-                        className="bg-white rounded-full h-8 w-8"
-                        alt="avatar"
-                      />
-                    )}
-                    <div
-                      className={`px-4 py-2 rounded-2xl max-w-xs text-sm text-white shadow-md ${
-                        msg.senderId === userId
-                          ? "bg-[#6B5EDD] rounded-br-none"
-                          : "bg-gray-800 rounded-bl-none"
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
-                    {msg.senderId === userId && (
-                      <img
-                        src={currentUser?.photo || userAvatar}
-                        className="bg-white rounded-full h-8 w-8"
-                        alt="avatar"
-                      />
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center text-center h-full text-gray-400">
+          ))}
+        </div>
+        {/* Chat Window */}
+        <div className="flex-1 flex flex-col">
+          {selectedUser ? (
+            <>
+              <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-[#0A1C2B] sticky top-0 z-10">
+                <div className="flex items-center gap-3">
                   <img
                     src={selectedUser?.photo || userAvatar}
-                    className="bg-white rounded-full h-20 w-20 mb-3"
-                    alt=""
+                    className="bg-white rounded-full h-12 w-12"
+                    alt={selectedUser?.username}
                   />
-                  <p className="text-white text-lg">No messages yet</p>
-                  <p>Start the conversation 🎉</p>
+                  <h4 className="text-white text-lg font-semibold">{selectedUser?.username}</h4>
                 </div>
-              )}
-              <div ref={messagesEndRef} />
+                <button
+                  className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                >
+                  {sidebarOpen ? "Close" : "Chats"}
+                </button>
+              </div>
+              <div className="flex-1 bg-[#101b2d] p-4 overflow-y-auto space-y-4">
+                {messages.length > 0 ? (
+                  messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex items-end gap-2 ${msg.senderId === userId ? "justify-end" : "justify-start"}`}
+                    >
+                      {msg.senderId !== userId && (
+                        <img
+                          src={selectedUser?.photo || userAvatar}
+                          className="bg-white rounded-full h-8 w-8"
+                          alt="avatar"
+                        />
+                      )}
+                      <div
+                        className={`px-4 py-2 rounded-2xl max-w-xs text-sm text-white shadow-md ${msg.senderId === userId ? "bg-[#6B5EDD] rounded-br-none" : "bg-gray-800 rounded-bl-none"}`}
+                      >
+                        {msg.content}
+                      </div>
+                      {msg.senderId === userId && (
+                        <img
+                          src={currentUser?.photo || userAvatar}
+                          className="bg-white rounded-full h-8 w-8"
+                          alt="avatar"
+                        />
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center h-full text-gray-400">
+                    <img
+                      src={selectedUser?.photo || userAvatar}
+                      className="bg-white rounded-full h-20 w-20 mb-3"
+                      alt=""
+                    />
+                    <p className="text-white text-lg">No messages yet</p>
+                    <p>Start the conversation 🎉</p>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+              <div className="p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700 sticky bottom-0">
+                <textarea
+                  className="flex-1 rounded-lg p-2 text-sm bg-white text-black resize-none focus:outline-none h-10"
+                  placeholder="Type a message..."
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <button
+                  onClick={handleSend}
+                  className="bg-[#6B5EDD] p-2 rounded-lg hover:bg-[#5a4dd3] transition"
+                  disabled={!newMessage.trim()}
+                >
+                  <img src={send} className="w-5 h-5" alt="send" />
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-300">
+              <h2 className="text-white text-2xl font-semibold mb-2">Welcome 👋</h2>
+              <p>Select a friend from the sidebar to start chatting</p>
             </div>
-
-            {/* Input */}
-            <div className="p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700 sticky bottom-0">
-              <textarea
-                className="flex-1 rounded-lg p-2 text-sm bg-white text-black resize-none focus:outline-none h-10"
-                placeholder="Type a message..."
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())
-                }
-              />
-              <button
-                onClick={handleSend}
-                className="bg-[#6B5EDD] p-2 rounded-lg hover:bg-[#5a4dd3] transition"
-              >
-                <img src={send} className="w-5 h-5" alt="send" />
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-300">
-            <h2 className="text-white text-2xl font-semibold mb-2">Welcome 👋</h2>
-            <p>Select a friend from the sidebar to start chatting</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
