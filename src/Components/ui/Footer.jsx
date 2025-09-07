@@ -3,10 +3,10 @@ import BrainlyCodeIcon from "../BrainlyCodeIcon";
 const Footer = () => {
   return (
     <footer className="mt-8">
-      <div className="bg-[#07032B] bg-opacity-90 rounded-lg px-6 py-8 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 text-gray-100">
+      <div className="bg-black/20 bg-opacity-50 rounded-lg px-6 py-8 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-8 text-gray-100">
         
         {/* Logo and description */}
-        <div>
+        <div >
           <BrainlyCodeIcon />
           <p className="text-xs text-gray-400 mt-6">
             Making coding fun and accessible for the next generation of developers.

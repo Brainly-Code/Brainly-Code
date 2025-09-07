@@ -4,6 +4,11 @@ import Introductory from "./ui/Introductory";
 import TextGenerateEffect from "./ui/TextGenerate";
 import { FaArrowRight } from "react-icons/fa";
 import Footer from "./ui/Footer";
+import { motion } from "framer-motion";
+import { Button } from "./ui/Button";
+import { useGetCoursesQuery } from "../redux/api/coursesSlice";
+import Loader from "./ui/Loader";
+import { toast } from "react-toastify";
 
 export const Hero = () => {
   const navItems = [
@@ -13,15 +18,35 @@ export const Hero = () => {
     { name: "Challenges", link: "/challenges", icon: "🏆" },
   ];
 
+  const {data: courses, isLoading, isError} = useGetCoursesQuery();
+  if(isLoading) {
+    return <Loader />
+  }
+  if(isError) {
+    toast.error("Sorry Cannot get the courses!")
+  }
+
   return (
-    <div className="bg-[#070045] text-gray-50 min-h-screen">
-      {/* Header */} 
-      <section id="header" className="max-w-7xl mx-auto">
-        <header className="flex flex-wrap border-b-[1px] justify-between items-center gap-4 py-4">
+    <div className="bg-[#0D0056] text-gray-50 min-h-screen">
+      <header className="flex w-full backdrop-blur-xl fixed px-[3rem] flex-wrap justify-between items-center gap-8 py-4">
           {/* Left: Logo */}
-          <div className="flex-shrink-0">
-            <BrainlyCodeIcon className="ml-2 sm:ml-7" />
+          <div className="mt-4 flex-shrink-0">
+            <BrainlyCodeIcon className="sm:ml-7" />
           </div>
+          <ul className="lg:flex md:flex hidden gap-4 items-center">
+            <li className="font-medium text-gray-400 hover:text-gray-200 p-4 hover:underline text-sm">
+              <a href={"/#why-b-code"}>About Us</a>
+            </li>
+            <li className="font-medium text-gray-400 hover:text-gray-200 p-4 hover:underline text-sm">
+              <a href={"/#paths"}>Paths</a>
+            </li>
+            <li className="font-medium text-gray-400 hover:text-gray-200 p-4 hover:underline text-sm">
+              <a href={"/user/community"}>Community</a>
+            </li>
+            <li className="font-medium text-gray-400 hover:text-gray-200 p-4 hover:underline text-sm">
+              <a href={"/user/community"}>Contact us</a>
+            </li>
+          </ul>
 
           <ul className="flex gap-4 items-center">
             <li className="font-semibold text-gray-300 text-sm">
@@ -36,7 +61,9 @@ export const Hero = () => {
 
         </header>
 
-              {/* Hero Section */}
+      {/* Header */} 
+      <section id="header" className="max-w-7xl pt-[3rem] mx-auto">
+        {/* Hero Section */}
         {/* Hero Section */}
         <div className="flex flex-wrap md:flex-nowrap justify-between items-center gap-8 py-16">
 
@@ -89,10 +116,10 @@ export const Hero = () => {
       </section>
 
       {/* Learning Paths */}
-      <section className="max-w-7xl mx-auto px-6 py-12 text-center">
+      <section id="paths" className="max-w-7xl mx-auto px-6 py-12 text-center">
         <h1 className="text-2xl font-bold mb-9">Learning Paths</h1>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((_, index) => (
+          {courses?.map((_, index) => (
             <div key={index} className="flex flex-col items-center">
               <div className="rounded-md bg-gradient-to-r from-green-800 to-purple-950 w-64 h-44 flex justify-center items-center">
                 <div className="rounded-full bg-blue-900 w-16 h-16 flex items-center justify-center">
@@ -110,10 +137,12 @@ export const Hero = () => {
                     <p>8 modules</p>
                     <p>8 lessons</p>
                   </div>
-                  <button className="text-[#00ffee] flex items-center gap-2">
-                    View Course
-                    <FaArrowRight size={18} />
-                  </button>
+                  <Link to="/user/courses">
+                    <button className="text-[#00ffee] px-3 hover:font-medium py-3 rounded-full text-gray-300  flex hover:bg-[#00CED1] items-center gap-2">
+                      View Course
+                      <FaArrowRight size={18} />
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -121,11 +150,34 @@ export const Hero = () => {
         </div>
 
         <Link to="/login">
-          <button className="bg-gradient-to-l from-[#8F57EF] to-[#00FFFF] px-8 py-3 rounded-full mt-12 hover:opacity-90 transition">
+          <button className="bg-gradient-to-l hover:px-9 hover:py-3 from-[#8F57EF] to-[#00FFFF] px-8 py-3 rounded-full mt-12 hover:opacity-90 transition">
             View All Courses
           </button>
         </Link>
       </section>
+
+      <section className="container mx-auto py-16">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.03] p-8 md:p-12 backdrop-blur"
+      >
+        <div className="absolute -top-16 -left-16 h-64 w-64 rounded-full bg-gradient-to-r from-cyan-500/30 to-violet-500/30 blur-3xl" />
+        <div className="absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-gradient-to-r from-fuchsia-500/30 to-violet-500/30 blur-3xl" />
+        <div className="relative z-10">
+          <h3 className="text-2xl md:text-3xl font-bold text-white">Ready to start your coding journey?</h3>
+          <p className="mt-2 max-w-2xl text-white/70">Join thousands of learners building real projects with BrainlyCode. New lessons every week and a friendly community to support you.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Button asChild size="lg" className="hover:bg-gradient-to-l hover:from-[#8F57EF] hover:to-[#00FFFF] rounded-full text-white animate-shimmer">
+              <Link to="/login">Create Free Account</Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg" className="bg-white/10 text-white border-white/20 hover:bg-white/20">
+              <Link to="user/community">Join the Community</Link>
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+    </section>
 
       {/* Footer */}
       <Footer />

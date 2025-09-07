@@ -13,7 +13,9 @@ import { cn } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLogoutMutation } from "../../redux/api/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
+import { useGetUnreadCountsQuery } from "../../redux/api/messageSlice";
 
 export const FloatingNav = ({ navItems, className }) => {
   const { scrollYProgress } = useScroll();
@@ -22,6 +24,9 @@ export const FloatingNav = ({ navItems, className }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const {userInfo} = useSelector((state) => state.auth);
+  const decoded = userInfo?.access_token ? jwtDecode(userInfo.access_token) : null;
+  const userId = decoded?.sub;
   useMotionValueEvent(scrollYProgress, "change", (current) => {
     // Show nav whenever scroll is beyond 5%
     if (current > 0.05) {
@@ -31,15 +36,7 @@ export const FloatingNav = ({ navItems, className }) => {
     }
   });
 
-    // const logoutHandler = async () => {
-    //   try {
-    //     await logoutApiCall().unwrap();
-    //     dispatch(Logout());
-    //     navigate('/login');
-    //   } catch (error) {
-    //     toast.error(error?.data?.message || error.message);
-    //   }
-    // };
+    const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
 
   return (
     <AnimatePresence mode="wait">
@@ -70,6 +67,11 @@ export const FloatingNav = ({ navItems, className }) => {
             <span>
               <Link to="/user/community">Community</Link>
             </span>
+            {unreadNotifications?.[0]?._count?.id > 0 && (
+                <div className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {unreadNotifications?.[0]?._count?.id > 9 ? '9+' : unreadNotifications?.[0]?._count?.id}
+                </div>
+              )}
             <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
           </button>
         </motion.div>

@@ -16,6 +16,7 @@ import {
 import Footer from './ui/Footer';
 import Header from './ui/Header';
 import BgLoader from './ui/BgLoader';
+import { useGetChallengesQuery } from '../redux/api/challengeSlice';
 
 export default function HomePage() {
   const getIconForCourse = (title) => {
@@ -34,6 +35,7 @@ export default function HomePage() {
   const { data: courses, error, isLoading } = useGetCoursesQuery();
   const [likeCourse] = useLikeCourseMutation();
 
+  const { data: challenges , isLoading: gettingChallenges} = useGetChallengesQuery();
   const [localLikes, setLocalLikes] = React.useState({});
 
   React.useEffect(() => {
@@ -162,31 +164,27 @@ export default function HomePage() {
 
             {/* Explore Challenges Section */}
       <section className="relative py-20 px-6 bg-gradient-to-r from-[#0d0066] via-[#070045] to-[#0d0066] text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">🚀 Explore Challenges</h2>
+        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">Explore Challenges</h2>
         <p className="text-gray-300 max-w-2xl mx-auto mb-12">
           Sharpen your coding skills with hands-on challenges across different levels. 
           Compete, practice, and grow while learning from real-world problems.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {[
-            { title: "Palindrome challenge", level: "Beginner", color: "from-blue-400 to-indigo-500" },
-            { title: "Full React Application", level: "Intermediate", color: "from-purple-400 to-pink-500" },
-            { title: "Fullstack", level: "Advanced", color: "from-green-400 to-emerald-500" },
-          ].map((challenge, idx) => (
+          {challenges?.map((challenge, idx) => (
             <div
               key={idx}
-              className={`p-6 rounded-2xl bg-gradient-to-r ${challenge.color} text-white shadow-lg hover:scale-105 transition-transform`}
+              className={`p-6 rounded-2xl bg-gradient-to-r ${challenge?.color} text-white shadow-lg hover:scale-105 transition-transform`}
             >
-              <h3 className="text-xl font-bold mb-2">{challenge.title}</h3>
+              <h3 className="text-xl font-bold mb-2">{challenge?.title}</h3>
               <span className="text-sm font-medium bg-black/30 px-3 py-1 rounded-full">
-                {challenge.level}
+                {challenge?.level}
               </span>
             </div>
           ))}
         </div>
 
-        <Link to="/challenges">
+        <Link to="/user/challenges">
           <button className="mt-10 px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
             View All Challenges
           </button>
@@ -195,7 +193,7 @@ export default function HomePage() {
 
       {/* Our Community Section */}
       <section className="py-20 px-6 bg-[#070045] text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">🌍 Our Community</h2>
+        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">Our Community</h2>
         <p className="text-gray-300 max-w-2xl mx-auto mb-12">
           Join a vibrant community of coders, learners, and mentors who help each other 
           grow every single day.

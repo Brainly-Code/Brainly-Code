@@ -38,13 +38,11 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const [logoutApiCall] = useLogoutMutation();
 
   const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
-  console.log(unreadNotifications);
 
   const {data: selectedUser} = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
 
 
   const logoutHandler = async () => {
-    console.log("Logging out")
     try {
       await logoutApiCall().unwrap();
       dispatch(Logout());

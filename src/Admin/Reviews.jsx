@@ -10,6 +10,7 @@ const Reviews = () => {
 
   const { data: comments, isLoading, error } = useGetCommentsQuery();
 
+  if(!comments) return <div className='text-center mt-[10rem] text-white p-4'>No comments available yet.</div>;
   // Sort comments based on filter
   const sortedComments = comments?.slice().sort((a, b) => {
     if (sortOrder === 'recent') {

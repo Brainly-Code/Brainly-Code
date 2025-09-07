@@ -16,7 +16,9 @@ import {
   ComposedChart,
 } from "recharts";
 import { useGetUsersQuery } from "../../../redux/api/AdminSlice.jsx";
+import Loader from "../../../Components/ui/Loader.jsx";
 
+  
   // Fallback data in case backend is not ready
   const fallbackData = [
     { month: "Jan", Users: 50 },
@@ -32,116 +34,45 @@ import { useGetUsersQuery } from "../../../redux/api/AdminSlice.jsx";
     { month: "Nov", Users: 55,},
   ];
 
+
 const GraphSection = () => {
+  const {
+    data: graphStats,
+    isLoading,
+    isError,
+  } = useGetUsersQuery(); // only call once!
 
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  const { data: users } = useGetUsersQuery();
-
-
-  
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Ensure the data is in the correct format
-        const formattedData = Array.isArray(users)
-          ? users.map()
-          : fallbackData;
-        setData(formattedData);
-      } catch (error) {
-        console.error(
-          "Failed to fetch data from backend, using fallback",
-          error
-        );
-        setData(fallbackData);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [ users ]);
+    if (graphStats && Array.isArray(graphStats)) {
+      const formattedData = graphStats.map((item, idx) => ({
+        id: idx,
+        month: item.month,
+        Users: item.Users,
+      }));
+      setData(formattedData);
+    } else {
+      setData(fallbackData);
+    }
+  }, [graphStats]);
 
-  if (loading) {
-    return (
-      <div className="w-full h-[270px] p-4 rounded-xl">
-        <Skeleton width="w-full" height="h-[270px]" rounded="rounded-xl" />
-      </div>
-    );
-  }
+  if (isLoading) return <Loader />;
+  if (isError) return <p className="text-red-500">Failed to fetch graph data</p>;
 
   return (
-  <div className="overflow-visible md:pl-6 md:pt-6 sm:pl-3 lg:pl-8 lg:pt-8 sm:pt-3 rounded-xl bg-[#FFFFFF10]  w-full ">
-      <div className="w-full  bg-[#090048] h-[370px] p-4 rounded-xl">
-      <h2 className="text-lg font-semibold text-white mb-6">Users Overview</h2>
-      <ResponsiveContainer width="100%" height="80%">
-        <ComposedChart
-          data={data}
-          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-        >
-          <CartesianGrid strokeDasharray="1 5" vertical={false} />
-          <XAxis
-            dataKey="month"
-            tick={{ fontSize: 13, fill: "#888" }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis
-            yAxisId="left"
-            orientation="left"
-            tick={{ fontSize: 12, fill: "#888" }}
-            axisLine={false}
-            tickLine={false}
-            label={{
-              value: "Users",
-              angle: -90,
-              position: "insideLeft",
-              offset: 20,
-              fontWeight: "normal",
-              fill: "#fff",
-              fontSize: 12,
-            }}
-          />
-
-          <Tooltip contentStyle={{ borderRadius: 8, fontSize: 13 }} />
-          <Legend
-            iconType="circle"
-            iconSize={8}
-            layout="horizontal"
-            verticalAlign="top"
-            align="right"
-            wrapperStyle={{
-              top: -45,
-              left: 200,
-              fontSize: 14,
-              fontWeight: 500,
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-            }}
-          />
-          <Bar
-            yAxisId="left"
-            dataKey="Users"
-            fill="#19179B"
-            name="Users"
-            radius={[1, 1, 0, 0]}
-            barSize={30}
-          />
-          <Line
-            yAxisId="right"
-            type="natural"
-            dataKey="Users"
-            stroke="#fff"
-            strokeWidth={2}
-            dot={{ r: 0, stroke: "#0f172a", strokeWidth: 0, fill: "#fff" }}
-            
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
-    </div>
-  </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <ComposedChart data={data}>
+        <XAxis dataKey="month" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="Users" fill="#19179B" />
+        <Line type="natural" dataKey="Users" stroke="#fff" />
+      </ComposedChart>
+    </ResponsiveContainer>
   );
 };
+
 
 export default GraphSection;

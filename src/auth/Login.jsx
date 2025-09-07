@@ -78,6 +78,11 @@ const Login = () => {
   return (
     <>
       <div className="min-h-screen bg-[#070045] text-white flex flex-col items-center justify-between">
+        <button className='py-3 ml-5 px-4 mt-4 text-gray-200 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-400  font-semibold hover:opacity-90 transition text-sm lg:absolute lg:top-4 lg:left-4'>
+            <Link to="/">
+              Back to Home
+            </Link>
+        </button>
         <header className="flex flex-col items-center pt-6 w-full">
           <div className="w-full max-w-md px-4 sm:px-6 lg:px-8">
             <div className="bg-[#070045] rounded-lg border-[#3A3A5A] border p-8 shadow-lg">
