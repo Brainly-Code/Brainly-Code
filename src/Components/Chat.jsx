@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { socket } from "../socket"; // Update extension if needed
+import { socket } from "../socket";
 import userAvatar from "../assets/user.png";
 import send from "../assets/send.png";
 import {
@@ -10,53 +10,103 @@ import {
 } from "../redux/api/messageSlice";
 import { useGetUsersQuery } from "../redux/api/AdminSlice";
 import { useGetUserByIdQuery } from "../redux/api/userSlice";
+import { useNotification } from "./ui/UseNotification";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
 
-export const Chat = ({ chatWith }) => { // Add chatWith as a prop
+export const Chat = ({ chatWith }) => {
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [page, setPage] = useState(1); // For pagination
+  const [hasMore, setHasMore] = useState(true); // Track if more messages are available
+  const messagesPerPage = 20; // Adjust based on your backend
   const { data: users = [], isLoading: usersLoading } = useGetUsersQuery();
   const { userInfo } = useSelector((state) => state.auth);
-  const token = jwtDecode(userInfo.access_token);
-  const userId = token.sub;
+  const token = userInfo?.access_token ? jwtDecode(userInfo.access_token) : null;
+  const userId = token?.sub;
 
-  const { data: unreadCounts = [], refetch: refetchUnread } = useGetUnreadCountsQuery(userId);
+  const { data: unreadCounts = [], refetch: refetchUnread } = useGetUnreadCountsQuery(userId, { skip: !userId });
   const [readMessages] = useReadMessagesMutation();
-  const { data: currentUser, isLoading: currentUserLoading } = useGetUserByIdQuery(userId);
+  const { data: currentUser, isLoading: currentUserLoading } = useGetUserByIdQuery(userId, { skip: !userId });
 
   const filteredUsers = users.filter((u) => u.id !== userId);
   const [selectedUser, setSelectedUser] = useState(chatWith || (filteredUsers.length > 0 ? filteredUsers[0] : null));
+
+  const { data: fetchedMessages, isFetching: isFetchingMessages } = useGetMessagesQuery(
+    selectedUser
+      ? { userId: selectedUser.id, otherUserId: userId, page, limit: messagesPerPage }
+      : { userId: null, otherUserId: null },
+    { skip: !selectedUser || !userId }
+  );
+
+  const [sendMessage] = useSendMessageMutation();
+  const notify = useNotification();
 
   useEffect(() => {
     if (chatWith) setSelectedUser(chatWith);
   }, [chatWith]);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (fetchedMessages) {
+      // Prepend older messages when fetching new pages
+      setMessages((prev) => {
+        const newMessages = fetchedMessages.filter((msg) => !prev.some((m) => m.id === msg.id));
+        return page === 1 ? newMessages : [...newMessages, ...prev];
+      });
+      setHasMore(fetchedMessages.length === messagesPerPage); // Assume more if full page returned
+    } else if (page === 1) {
+      setMessages([]);
+      setHasMore(true);
+    }
+  }, [fetchedMessages, page]);
+
+  // Auto-scroll to bottom unless user has scrolled up
+  useEffect(() => {
+    if (!chatContainerRef.current) return;
+
+    const chatContainer = chatContainerRef.current;
+    const isScrolledToBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 50;
+
+    if (isScrolledToBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
-  const { data: fetchedMessages, refetch } = useGetMessagesQuery(
-    selectedUser ? { userId: selectedUser.id, otherUserId: userId } : { userId: null, otherUserId: null },
-    { skip: !selectedUser }
-  );
-
-  const [sendMessage] = useSendMessageMutation();
-
+  // Track scroll position to show/hide scroll-to-bottom button and load older messages
   useEffect(() => {
-    if (fetchedMessages) {
-      setMessages(fetchedMessages);
-    } else {
-      setMessages([]);
+    const chatContainer = chatContainerRef.current;
+    if (!chatContainer) return;
+
+    const handleScroll = () => {
+      const isScrolledToBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 50;
+      setShowScrollButton(!isScrolledToBottom);
+
+      // Load older messages when scrolling near the top
+      if (chatContainer.scrollTop < 100 && hasMore && !isFetchingMessages) {
+        setPage((prev) => prev + 1);
+      }
+    };
+
+    chatContainer.addEventListener("scroll", handleScroll);
+    return () => chatContainer.removeEventListener("scroll", handleScroll);
+  }, [hasMore, isFetchingMessages]);
+
+  // Reset scroll and page when switching users
+  useEffect(() => {
+    if (selectedUser && chatContainerRef.current) {
+      setPage(1); // Reset pagination
+      setHasMore(true);
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      setShowScrollButton(false);
     }
-  }, [fetchedMessages]);
+  }, [selectedUser]);
 
   useEffect(() => {
-    if (!selectedUser) return;
+    if (!selectedUser || !userId) return;
     const roomId = [userId, selectedUser.id].sort().join("-");
     socket.emit("joinRoom", roomId);
 
@@ -66,22 +116,28 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
         (msg.senderId === selectedUser.id && msg.receiverId === userId)
       ) {
         setMessages((prev) => {
-          // Avoid duplicates by checking if message already exists
           if (prev.some((m) => m.id === msg.id)) return prev;
           return [...prev, msg];
         });
+
+        if (msg.senderId !== userId) {
+          notify("📩 New Message", {
+            body: `${selectedUser?.username}: ${msg.content}`,
+            icon: selectedUser?.photo || userAvatar,
+          });
+        }
       }
     };
 
     socket.on("newDM", handleNewMessage);
     return () => {
-      socket.emit("leaveRoom", roomId); // Clean up room
+      socket.emit("leaveRoom", roomId);
       socket.off("newDM", handleNewMessage);
     };
-  }, [selectedUser, userId]);
+  }, [selectedUser, userId, notify]);
 
   const handleSend = async () => {
-    if (!newMessage.trim() || !selectedUser) return;
+    if (!newMessage.trim() || !selectedUser || !userId) return;
 
     const msgData = {
       senderId: userId,
@@ -103,7 +159,7 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
   };
 
   useEffect(() => {
-    if (selectedUser) {
+    if (selectedUser && userId) {
       readMessages({ userId, otherUserId: selectedUser.id }).then(() => {
         refetchUnread();
       });
@@ -115,7 +171,6 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
     return found ? found._count.id : 0;
   };
 
-  // Close sidebar on outside click (for mobile)
   const sidebarRef = useRef(null);
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -127,7 +182,18 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  if (usersLoading || currentUserLoading) {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setShowScrollButton(false);
+  };
+
+  // Format timestamp for messages
+  const formatTimestamp = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  if (usersLoading || currentUserLoading || !userId) {
     return <div className="text-white text-center">Loading...</div>;
   }
 
@@ -164,7 +230,7 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
           ))}
         </div>
         {/* Chat Window */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col relative">
           {selectedUser ? (
             <>
               <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-[#0A1C2B] sticky top-0 z-10">
@@ -183,11 +249,17 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
                   {sidebarOpen ? "Close" : "Chats"}
                 </button>
               </div>
-              <div className="flex-1 bg-[#101b2d] p-4 overflow-y-auto space-y-4">
+              <div
+                ref={chatContainerRef}
+                className="flex-1 bg-[#101b2d] mt-[1.5rem] p-4 overflow-y-auto space-y-4 max-h-[calc(100vh-140px)] scroll-smooth"
+              >
+                {isFetchingMessages && page > 1 && (
+                  <div className="text-center text-gray-400 text-sm">Loading older messages...</div>
+                )}
                 {messages.length > 0 ? (
                   messages.map((msg) => (
                     <div
-                      key={msg.id}
+                      key={msg.id} // Fallback: key={`${msg.id}-${msg.createdAt}`} if duplicates occur
                       className={`flex items-end gap-2 ${msg.senderId === userId ? "justify-end" : "justify-start"}`}
                     >
                       {msg.senderId !== userId && (
@@ -201,6 +273,9 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
                         className={`px-4 py-2 rounded-2xl max-w-xs text-sm text-white shadow-md ${msg.senderId === userId ? "bg-[#6B5EDD] rounded-br-none" : "bg-gray-800 rounded-bl-none"}`}
                       >
                         {msg.content}
+                        <div className="text-xs text-gray-400 mt-1">
+                          {msg.createdAt && formatTimestamp(msg.createdAt)}
+                        </div>
                       </div>
                       {msg.senderId === userId && (
                         <img
@@ -224,6 +299,27 @@ export const Chat = ({ chatWith }) => { // Add chatWith as a prop
                 )}
                 <div ref={messagesEndRef} />
               </div>
+              {showScrollButton && (
+                <button
+                  onClick={scrollToBottom}
+                  className="absolute bottom-16 right-4 bg-[#6B5EDD] p-2 rounded-full shadow-md hover:bg-[#5a4dd3] transition"
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    />
+                  </svg>
+                </button>
+              )}
               <div className="p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700 sticky bottom-0">
                 <textarea
                   className="flex-1 rounded-lg p-2 text-sm bg-white text-black resize-none focus:outline-none h-10"

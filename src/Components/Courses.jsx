@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetCoursesQuery, useGetUserLikedCoursesQuery, useLikeCourseMutation } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
@@ -27,16 +27,20 @@ export default function UserCourses() {
     if (key.includes('html') || key.includes('css')) return <FaHtml5 color="red" size={30} />;
     if (key.includes('data structure') || key.includes('algorithm'))
       return <FaAccessibleIcon color="purple" size={30} />;
-    return <FaAccessibleIcon color="gray" size={30} />; // Default icon
+    return <FaAccessibleIcon color="gray" size={30} />;
   };
 
   const { data: likedCourseIds, refetch } = useGetUserLikedCoursesQuery();
   const { data: courses, error, isLoading } = useGetCoursesQuery();
   const [likeCourse] = useLikeCourseMutation();
 
-  const [localLikes, setLocalLikes] = React.useState({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSearchHints, setShowSearchHints] = useState(false);
+  const searchRef = useRef();
 
-  React.useEffect(() => {
+  const [localLikes, setLocalLikes] = useState({});
+
+  useEffect(() => {
     if (likedCourseIds) {
       const initialLikes = {};
       likedCourseIds.forEach((id) => (initialLikes[id] = true));
@@ -61,12 +65,40 @@ export default function UserCourses() {
     }
   };
 
+  // Filtered courses based on search
+  let filteredBySearch = courses || [];
+  if (searchTerm.trim()) {
+    filteredBySearch = filteredBySearch.filter((course) =>
+      course.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchHints(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Hide suggestions on Enter
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setShowSearchHints(false);
+    }
+  };
+
   if (error) toast.error(error);
 
-  const [filterLevel, setFilterLevel] = React.useState('ALL');
+  const [filterLevel, setFilterLevel] = useState('ALL');
 
   const filteredCourses =
-    filterLevel === 'ALL' ? courses : courses?.filter((course) => course.level === filterLevel);
+    filterLevel === 'ALL'
+      ? filteredBySearch
+      : filteredBySearch?.filter((course) => course.level === filterLevel);
 
   if (isLoading) return <BgLoader />;
 
@@ -74,8 +106,52 @@ export default function UserCourses() {
     <div className="bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045] min-h-screen flex flex-col">
       <Header />
 
-      {/* Hero Section */}
+      {/* Hero Section with Search */}
       <section className="relative text-center py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]">
+        <div ref={searchRef} className="flex w-[40%] mx-auto mb-[5rem] flex-col items-center">
+          <input
+            type="text"
+            className="w-full md:w-1/2 px-4 py-2 bg-[#6B5EDD] bg-opacity-70 focus:bg-opacity-10 text-gray-50 rounded-lg border border-[#6B5EDD] focus:outline-none focus:ring-2 focus:ring-[#2a28d4]"
+            placeholder="Search courses by title..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setShowSearchHints(true);
+            }}
+            onKeyDown={handleSearchKeyDown}
+          />
+
+          {/* Search suggestions */}
+          {showSearchHints && (
+            <div className="w-full md:w-1/2 mt-1 p-2 z-10">
+              {searchTerm.trim() && filteredBySearch?.length > 0 && (
+                <div className="bg-[#6B5EDD] bg-opacity-70 rounded-lg shadow mt-2 p-2 z-10">
+                  <span className="text-gray-400 text-sm font-semibold">Suggestions:</span>
+                  <ul>
+                    {filteredBySearch.slice(0, 5).map((course) => (
+                      <li
+                        key={course.id}
+                        className="cursor-pointer px-2 py-1 hover:bg-[#6B5EDD] rounded text-gray-200"
+                        onClick={() => {
+                          setSearchTerm(course.title);
+                          setShowSearchHints(false);
+                        }}
+                      >
+                        {course.title}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {searchTerm.trim() && filteredBySearch?.length === 0 && (
+                <div className="rounded-lg shadow mt-2 p-2 z-10">
+                  <span className="text-gray-300 text-sm">No courses with that title found.</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row md:justify-center md:items-center gap-4 mb-6">
             <span className="text-[#00ffee] text-2xl lg:text-5xl font-bold">Interactive</span>
@@ -88,11 +164,6 @@ export default function UserCourses() {
             Learn to code through hands-on projects, interactive exercises, and real-world
             applications. Start your programming journey today!
           </p>
-          <Link to="/user/courses">
-            <button className="px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
-              Explore Courses
-            </button>
-          </Link>
         </div>
       </section>
 
@@ -106,7 +177,7 @@ export default function UserCourses() {
               className={`px-5 py-2 rounded-full transition-all duration-200 font-medium text-sm sm:text-base shadow-md ${
                 filterLevel === level
                   ? 'bg-gradient-to-r from-[#00ffee] to-purple-500 text-white'
-                  : 'bg-transparent text-gray-700 hover:bg-gray-400'
+                  : 'bg-transparent text-gray-300 hover:bg-gray-600'
               }`}
             >
               {level === 'ALL' ? 'All Courses' : level}
@@ -119,7 +190,7 @@ export default function UserCourses() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {filteredCourses?.map((course) => (
               <div
-                key={course._id || course.id}
+                key={course.id || course.id}
                 className="group bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-6 hover:shadow-[0_8px_20px_rgba(0,0,0,0.4)] transition duration-300"
               >
                 <div className="flex justify-between items-center mb-4">
