@@ -89,7 +89,7 @@ const Challenges = () => {
   if (isLoading) return <BgLoader />;
 
   return (
-    <div className="bg-[#070045] opacity-90 h-full">
+    <div className="bg-[#0D0056] h-full">
       <Header />
 
       {/* Hero */}
