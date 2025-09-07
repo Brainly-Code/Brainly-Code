@@ -21,7 +21,7 @@ const menu = [
 ];
 const SideBar = () => {
   return (
-    <div className="sticky flex flex-col justify-center top-0">
+    <div className="sticky flex flex-col justify-center top-0 ">
       <div className="flex justify-center  my-10">
         <BrainlyCodeIcon className=" mx-auto  " />
       </div>

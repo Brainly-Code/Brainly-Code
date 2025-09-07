@@ -104,7 +104,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
               />
 
             </li>
-
+            
             <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-full sm:rounded-3xl px-2 pt-1 to-purple-400 sm:px-5 sm:py-2 text-gray-300">
               <button
                 onClick={logoutHandler}

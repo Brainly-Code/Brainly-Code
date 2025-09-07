@@ -99,7 +99,7 @@ const Challenge = () => {
           { mostLikedChallenge && (
             <div
               key={mostLikedChallenge.id}
-              className=" max-w-[25rem] justify-between bg-[#070045] h-[17rem]  rounded-2xl border border-[#3A3A5A] p-6"
+              className=" max-w-[25rem]  flex flex-col gap-6 justify-between bg-[#070045] h-[17rem]  rounded-2xl border border-[#3A3A5A] p-6"
             >
               <div className="flex justify-between mb-2">
                 <span

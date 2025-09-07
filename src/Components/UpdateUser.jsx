@@ -101,7 +101,7 @@ const Profile = () => {
 
 
   return (
-    <div className="h-full w-full bg-[#110167] p-4">
+    <div className="min-h-screen w-full bg-[#110167] p-4">
                 <button
             onClick={handleBack}
             className="py-2 px-4 rounded-md bg-[rgba(217,217,217,0.2)] text-white hover:bg-gray-700 font-bold"
