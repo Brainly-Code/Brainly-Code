@@ -40,7 +40,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
 
   const {data: selectedUser} = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
-  console.log(selectedUser)
 
   const logoutHandler = async () => {
     try {

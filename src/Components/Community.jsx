@@ -127,14 +127,14 @@ export const Community = () => {
   };
 
   return (
-    <div className="bg-[#0D0056] min-h-screen flex flex-col relative">
+    <div className="bg-[#0D0056] w-[60rem] md:w-[180%] lg:w-full h-[135rem] md:min-h-[200%] lg:min-h-screen flex flex-col">
       {!openChat && <Header />}
 
       <div className='flex gap-10 pl-[40rem]'>
         {/* Title */}
         <h1 className="text-center  text-white mt-10 font-bold text-2xl md:text-3xl">
           Community
-        </h1>
+        </h1> 
         {/* Search Bar */}
         <div ref={searchRef} className="flex w-full flex-col items-center mt-10 mb-2">
           <input

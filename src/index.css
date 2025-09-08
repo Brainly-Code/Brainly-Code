@@ -10,3 +10,16 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
+
+  /* For Chrome, Safari, Edge */
+input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px #070045 inset !important; /* your background */
+  -webkit-text-fill-color: #fff !important; /* text color */
+  transition: background-color 5000s ease-in-out 0s; /* hack to prevent flash */
+}
+
+/* Firefox */
+input:-moz-autofill {
+  box-shadow: 0 0 0px 1000px #1a1a1a inset !important;
+  -moz-text-fill-color: #fff !important;
+}

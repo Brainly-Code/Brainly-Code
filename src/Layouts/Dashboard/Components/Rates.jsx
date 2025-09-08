@@ -140,7 +140,7 @@ const Challenge = () => {
                   </div>
                 </div>
                 <div className="">
-                  <Link to={`/challenge/module/${mostLikedChallenge.id}`}>
+                  <Link to={`/admin/editChallenge/${mostLikedChallenge.id}`}>
                     <button
                       className="py-2 px-2 rounded-md bg-[#06325B]"
                       onClick={() =>
@@ -205,9 +205,11 @@ const Challenge = () => {
                     </p>
                   </div>
                   <div className="">
-                    <button className="py-2 px-2 rounded-md bg-[#06325B]">
-                      view
-                    </button>
+                    <Link to={`/admin/module/${course.id}`}>
+                      <button className="py-2 px-2 rounded-md bg-[#06325B]">
+                        view
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

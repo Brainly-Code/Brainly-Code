@@ -3,9 +3,13 @@ import { apiSlice } from "./apiSlice";
 export const commentApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getComments: builder.query({
-      query: () => '/comments',
-      providesTags: ['Comment'],
+      query: () => ({
+        url: '/comments',
+        method: "GET",
+        providesTags: ['Comment']
+    })
     }),
+
     addComment: builder.mutation({
       query: (newComment) => ({
         url: '/comments',

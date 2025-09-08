@@ -9,6 +9,7 @@ const Reviews = () => {
   const commentsPerPage = 5;
 
   const { data: comments, isLoading, error } = useGetCommentsQuery();
+  console.log(comments)
 
   if(!comments) return <div className='text-center mt-[10rem] text-white p-4'>No comments available yet.</div>;
   // Sort comments based on filter
