@@ -10,7 +10,7 @@ import { userRoleContext } from "./../../Contexts/UserRoleContext.js";
 import Footer from "../../Components/ui/Footer.jsx";
 import { FiHome } from "react-icons/fi";
 import { FaRegUser, FaStar } from "react-icons/fa";
-import { MdContacts } from "react-icons/md";
+import { MdContacts, MdOutlineReviews } from "react-icons/md";
 import { BsGraphUp } from "react-icons/bs";
 import review from "../../assets/review.png"
 const DashboardLayout = () => {
@@ -66,7 +66,7 @@ const DashboardLayout = () => {
                 <p className="text-xs">Challenges</p>
               </button>
               <button className="flex flex-col items-center" onClick={() => navigate('/admin/reviews')}>
-                <span><img src={review} className="w-6"/></span>
+                <span><MdOutlineReviews size={22}/></span>
                 <p className="text-xs">Reviews</p>
               </button>
             </aside>

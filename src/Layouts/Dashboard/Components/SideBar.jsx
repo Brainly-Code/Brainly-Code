@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FiHome } from "react-icons/fi";
-import { FaRegUser, FaStar } from "react-icons/fa";
+import { FaRegUser, FaStar, FaStreetView } from "react-icons/fa";
 import { MdContacts } from "react-icons/md";
 import { BsGraphUp } from "react-icons/bs";
 import BrainlyCodeIcon from "../../../Components/BrainlyCodeIcon";
 import review from "../../../assets/review.png"
+import { AiFillAlert, AiFillCustomerService } from "react-icons/ai";
+import { MdOutlineReviews } from "react-icons/md";
 
 const menu = [
   { name: "Dashboard", to: "/admin", icon: <FiHome size={22} /> },
@@ -16,7 +18,7 @@ const menu = [
     to: "/admin/challenges",
     icon: <BsGraphUp size={22} />,
   },
-  { name: "Reviews", to:"/admin/reviews", icon: <img src={review} className="w-8"/>}
+  { name: "Reviews", to:"/admin/reviews", icon: <MdOutlineReviews size={22}/>}
   // { name: "Premium", to: "/admin/users/premium", icon: <FaStar size={22} /> },
 ];
 const SideBar = () => {
