@@ -10,7 +10,7 @@ import {
   FaChartLine,
 } from "react-icons/fa";
 import { PiStudentDuotone } from "react-icons/pi";
-import { useGetDashboardStatsQuery } from "../../../redux/api/AdminSlice";
+import { useGetDashboardStatsQuery, useGetGraphStatsQuery } from "../../../redux/api/AdminSlice";
 
 const DashboardStats = () => {
   const {data: stats} = useGetDashboardStatsQuery();

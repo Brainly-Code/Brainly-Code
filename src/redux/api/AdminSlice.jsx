@@ -65,5 +65,6 @@ export const {
   useDeleteUserMutation,
   useCreateCourseMutation, // ✅ export this to use in components
   useCreateLessonSolutionMutation,
-  useGetChallengeCompletersQuery
+  useGetChallengeCompletersQuery,
+  useGetGraphStatsQuery
 } = AdminSlice;
