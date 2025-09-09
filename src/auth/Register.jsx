@@ -1,4 +1,4 @@
-import { FaGoogle, FaGithub } from 'react-icons/fa';
+import { FaGoogle, FaGithub, FaEyeSlash, FaEye } from 'react-icons/fa';
 import BrainlyCodeIcon from '../Components/BrainlyCodeIcon';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -13,6 +13,8 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('USER'); // Default to USER
+  const [isError, setIsError] = useState('')
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -39,14 +41,19 @@ const Register = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     try {
       const res = await register({ role, username, email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
       navigate(redirect);
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+       setIsError(error?.data?.message[0] || error.message[0]);
+      console.log(isError);
+      toast.error("Registration failed");
     }
   };
+
+  console.log(isError);
 
   return (
     <div className='min-h-screen bg-[#070045] text-white flex flex-col items-center justify-between'>
@@ -83,18 +90,26 @@ const Register = () => {
                   placeholder="Email"
                 />
               </div>
-              <div className="w-full mb-4">
+              <div className="w-full mb-4 relative">
                 <input
-                  autoComplete='true'
-                  type="password"
-                  onChange={e => setPassword(e.target.value)}
-                  required
+                  type={showPassword ? 'text' : 'password'}
                   id="password"
                   name="password"
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full py-3 px-4 rounded-full bg-[#070045] text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 border-[#3A3A5A] border focus:ring-[#8A2BE2]"
                   placeholder="Password"
+                  value={password}
+                  required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 focus:outline-none"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
+              {isError && (<div className="w-full mb-4 text-center text-red-500 text-sm">{isError}</div>)}
               <div className="flex items-center w-full mb-6 text-sm">
                 <input
                   type="checkbox"
