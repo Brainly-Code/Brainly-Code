@@ -52,10 +52,10 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   }, [searchActive]);
 
   const [logoutApiCall] = useLogoutMutation();
-  const { data: unreadNotifications } = useGetUnreadCountsQuery(userId);
-  const { data: selectedUser } = useGetUserByIdQuery(
-    unreadNotifications ? unreadNotifications?.[0]?.senderId : 1
-  );
+
+  const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
+
+  const {data: selectedUser} = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
 
   const logoutHandler = async () => {
     try {
