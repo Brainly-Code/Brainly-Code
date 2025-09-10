@@ -150,7 +150,6 @@ const Register = () => {
           </div>
         </div>
       </header>
-      <Footer />
     </div>
   );
 };

@@ -76,10 +76,10 @@ const DashboardLayout = () => {
               <main className="p-2">
                 <Outlet />
               </main>
+              <Footer />
             </div>
           </div>
 
-          <Footer />
         </div>
       </SearchContext.Provider>
     </userRoleContext.Provider>

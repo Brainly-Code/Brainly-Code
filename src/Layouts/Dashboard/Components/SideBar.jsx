@@ -23,7 +23,7 @@ const menu = [
 ];
 const SideBar = () => {
   return (
-    <div className="sticky flex flex-col justify-center top-0 ">
+    <div className="flex fixed flex-col justify-center mt-20 ">
       <div className="  bg-opacity-60 ml-[1rem] md:ml-[2rem] gap-4 w-[50px]  md:w-[150px] flex flex-col  ">
         {menu.map((item, i) => (
           <Link 

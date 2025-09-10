@@ -27,10 +27,10 @@ const Modules = () => {
 
 
   const [createModule, 
-    // { isLoading: isCreatingModule, isError: isCreateError }
+    { isLoading: isCreatingModule, isError: isCreateModuleError }
   ] = useCreateModuleMutation();
   const [createVideo, 
-    // { isLoading: isCreatingVideo, isError: isCreateVideoError }
+    { isLoading: isCreatingVideo, isError: isCreateVideoError }
   ] = useCreateVideoMutation();
 
   const combinedItems = [
@@ -223,8 +223,7 @@ const Modules = () => {
               <button
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 onClick={handleSubmit}
-              >
-                Add
+              >{isCreatingModule || isCreatingVideo ? 'Adding...' : 'Add'}
               </button>
             </div>
           </div>
@@ -232,8 +231,6 @@ const Modules = () => {
       )}
 
       {/* Placeholder: Submodule and Lesson modals logic here (optional) */}
-
-      <Footer />
     </div>
   );
 };

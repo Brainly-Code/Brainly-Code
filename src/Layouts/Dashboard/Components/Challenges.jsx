@@ -20,7 +20,7 @@ const Challenges = () => {
   const [showAddChallengeModal, setShowAddChallengeModal] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedDifficultyFilter, setSelectedDifficultyFilter] = useState("ALL");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [newChallengeData, setNewChallengeData] = useState({
     title: "",
