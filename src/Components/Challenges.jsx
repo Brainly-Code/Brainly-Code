@@ -147,7 +147,7 @@ const Challenges = () => {
             <button
               key={level}
               onClick={() => setFilterLevel(level)}
-              className={`py-2 px-5 border rounded-md font-semibold ${
+              className={`py-1 px-4 sm:py-2 sm:px-5 border rounded-md font-semibold${
                 filterLevel === level
                   ? "bg-[#2a28d4] text-white"
                   : "bg-transparent text-gray-300 hover:bg-[#6B5EDD] hover:text-white"
