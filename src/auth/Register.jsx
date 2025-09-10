@@ -26,11 +26,11 @@ const Register = () => {
   const redirect = sp.get('redirect') || (role === 'ADMIN' ? '/admin' : '/user');
 
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:3000/autho/google";
+    window.location.href = "https://backend-hx6c.onrender.com/autho/google";
   };
   
   const handleGithubLogin = () => {
-    window.location.href = "http://localhost:3000/autho/github";
+    window.location.href = "https://backend-hx6c.onrender.com/autho/github";
   };
 
   useEffect(() => {
