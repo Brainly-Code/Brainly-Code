@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,9 +8,8 @@ import profileFallback from "../../../assets/profile.png";
 import {
   useGetProfileImageQuery,
   useLogoutMutation,
-  useUpgradeToProMutation,
 } from "../../../redux/api/userSlice";
-import { Logout, setCredentials } from "../../../redux/Features/authSlice";
+import { Logout } from "../../../redux/Features/authSlice";
 
 import { FiSearch } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
@@ -33,20 +32,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const imagePath = image?.path ? image.path : profileFallback;
 
   const [logoutApiCall] = useLogoutMutation();
-  const [upgradeToPro, { isLoading: isUpgrading }] = useUpgradeToProMutation();
-  const [showProModal, setShowProModal] = useState(false);
-
-  // FIXED here: isPremium is inside user object!
-  const isProMember = userInfo?.user?.isPremium;
-
-  const proFeatures = [
-    "Ad-free experience",
-    "Priority customer support",
-    "Exclusive content access",
-    "Higher upload limits",
-    "Early access to new features",
-    "Custom profile badges",
-  ];
 
   const logoutHandler = async () => {
     try {
@@ -55,27 +40,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
       navigate("/login");
     } catch (error) {
       toast.error(error?.data?.message || error.message);
-    }
-  };
-
-  const handleUpgrade = async () => {
-    if (!userInfo || !userId) {
-      toast.error("Please provide a user ID");
-      return;
-    }
-
-    if (isProMember) {
-      toast.info("You are already a Pro Member!");
-      return;
-    }
-
-    try {
-      const res = await upgradeToPro(userId).unwrap();
-      dispatch(setCredentials({ ...res }));
-      toast.success("Congratulations! You are now a Pro Member!");
-      setShowProModal(false);
-    } catch (err) {
-      toast.error(err?.data?.message || "Failed to upgrade membership.");
     }
   };
 
@@ -119,15 +83,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
                 style={{ cursor: "pointer" }}
               />
 
-              {/* Show Upgrade button only if NOT Pro */}
-              {!isProMember && (
-                <button
-                  onClick={() => setShowProModal(true)}
-                  className="bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white text-sm px-4 py-2 rounded-full font-semibold shadow-md hover:opacity-90 transition duration-300 mr-3"
-                >
-                  Upgrade to Pro
-                </button>
-              )}
             </li>
 
             <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-full sm:rounded-3xl px-2 pt-1 to-purple-400 sm:px-5 sm:py-2 text-gray-300">
@@ -142,59 +97,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
           </ul>
         </header>
       </div>
-
-      {/* Pro Modal */}
-      {showProModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-          <div className="relative w-full max-w-2xl bg-[#00052B] p-6 sm:p-8 rounded-lg border border-[#3A3A5A] animate-fadeIn">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-3xl font-bold text-center flex-grow">Go Pro!</h3>
-              <button
-                onClick={() => setShowProModal(false)}
-                className="text-gray-400 hover:text-white transition duration-200 focus:outline-none"
-                aria-label="Close"
-              >
-                <FaTimesCircle className="text-3xl" />
-              </button>
-            </div>
-
-            <p className="text-gray-300 text-center mb-8">
-              Experience the ultimate Brainly Code journey with these powerful features:
-            </p>
-
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-              {proFeatures.map((feature, index) => (
-                <li key={index} className="flex items-center text-lg text-gray-200">
-                  <FaCheckCircle className="text-[#2DD4BF] mr-3 text-xl flex-shrink-0" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <button
-              onClick={handleUpgrade}
-              disabled={isUpgrading || isProMember}
-              className="w-full py-4 rounded-full bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white font-bold text-xl shadow-lg hover:opacity-90 transition duration-300 flex items-center justify-center"
-            >
-              {isUpgrading ? (
-                <span className="w-6 h-6 border-2 border-white border-b-transparent rounded-full animate-spin"></span>
-              ) : isProMember ? (
-                "Already Pro"
-              ) : (
-                "Upgrade Now!"
-              )}
-            </button>
-
-            {!isProMember && (
-              <p className="text-gray-400 mt-4 text-sm text-center">
-                <a href="/membership-benefits" className="text-[#8A2BE2] hover:underline">
-                  Learn more about Pro benefits
-                </a>
-              </p>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

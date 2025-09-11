@@ -11,15 +11,22 @@ export default defineConfig({
     host: true,
     port: 5173,
     allowedHosts: [
-      'a92e55e941da.ngrok-free.app',
-      '8f12417a0f58.ngrok-free.app',
-      'localhost:3000'
+      'localhost://3000',
+      'backend-hx6c.onrender.com'
     ],
   },
   plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
-    }
-  }
+    },
+    // 👇 allow .mjs, .js, .ts, etc.
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json']
+  },
+  optimizeDeps: {
+    include: [
+      'framer-motion',
+      'lucide-react'
+    ]
+  },
 })

@@ -6,7 +6,6 @@ import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import TextGenerateEffect from './ui/TextGenerate';
 import { FloatingNav } from './ui/FloatingNav';
-import Loader from './ui/Loader';
 import { BackgroundGradient } from './ui/BgGradient';
 import {
   FaJs,
@@ -18,6 +17,7 @@ import {
 } from 'react-icons/fa';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
+import BgLoader from './ui/BgLoader';
 
 export default function HomePage() {
   
@@ -50,13 +50,13 @@ export default function HomePage() {
 
 
   if(isLoading) {
-    return <Loader/>
+    return <BgLoader/>
   }
 
   return (
     <div className='bg-[#070045] opacity-90'>
       <Header />
-
+    
       <section>
         <div className=' mt-[2rem] w-[50%] m-auto '>
           <div className='text-center md:flex md:flex-nowrap md:justify-center items-center gap-5 m-auto mb-4'>

@@ -1,10 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { toast } from 'react-toastify';
 import { Logout } from '../redux/Features/authSlice';
-import { useLogoutMutation } from '../redux/api/userSlice';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import profile from '../assets/profile.png'
 import Loader from './ui/Loader';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
@@ -12,36 +8,80 @@ import CodeEditor from './CodeEditor';
 import Footer from './ui/Footer';
 import Progress from './ui/Progress';
 import { useGetLessonByIdQuery } from '../redux/api/LessonSlice';
+import Header from './ui/Header';
+import { useParams } from 'react-router-dom';
+import { useCreateMiniModuleMutation } from '../redux/api/subModuleSlice';
+import { useCreateCourseProgressMutation, useCreateModuleProgressMutation, useGetCourseProgressQuery, useGetLessonProgressQuery, useGetMiniModuleProgressQuery, useGetModuleProgressQuery, useTrackCourseProgressMutation, useTrackMiniModuleProgressMutation, useTrackModuleProgressMutation } from '../redux/api/progressSlice';
+import { useSelector } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 
-const Lesson = () => {
+const courseId = 3;
+const moduleId = 14;
+const miniModuleId = 9;
+const Lesson = (
+// {  
+//   courseId,
+//   moduleId,
+//   miniModuleId
+// }
+) => {
+
+
   const { id } = useParams();
+  const lessonId = id.id;
+  const { userInfo } = useSelector(state => state.auth);
+  const token = jwtDecode(userInfo?.access_token);
+  const userId = token.sub;
 
+  const [startMiniModuleProgress] = useCreateMiniModuleMutation();
+  const [startModuleProgress] = useCreateModuleProgressMutation();
+  const [startCourseProgress] = useCreateCourseProgressMutation();
+  const [trackMiniModuleProgress] = useTrackMiniModuleProgressMutation();
+  const [trackModuleProgress] = useTrackModuleProgressMutation();
+  const [trackCourseProgress] = useTrackCourseProgressMutation();
+  const { data: lessonProgress } = useGetLessonProgressQuery(lessonId);
+  const { data: moduleProgress } = useGetModuleProgressQuery(moduleId);
+  const { data: miniModuleProgress } = useGetMiniModuleProgressQuery(miniModuleId);
+  const { data: courseProgress } = useGetCourseProgressQuery(courseId);
+
+  useEffect(() => {
+    if (!miniModuleProgress && !moduleProgress && !courseProgress) {
+      (async () => {
+        try {
+          await startMiniModuleProgress({userId, miniModuleId }).unwrap();
+          await startModuleProgress({userId, moduleId }).unwrap();
+          await startCourseProgress({userId, courseId }).unwrap();
+          toast.success("Course started");
+        } catch (error) {
+          console.log(error);
+          toast.error(error?.data?.message);
+        }
+      })();
+    }
+  }, [miniModuleProgress, moduleProgress, courseProgress, startMiniModuleProgress, startModuleProgress, startCourseProgress, userId]);
+  
+
+  useEffect(() => {
+    if( lessonProgress?.data[0]?.completed === true ) {
+      if(courseProgress && moduleProgress && miniModuleProgress) {
+      (async () => {
+        try {
+          await trackMiniModuleProgress(miniModuleProgress?.data[0]?.id, {miniModuleId}).unwrap();
+          await trackModuleProgress(moduleProgress?.data[0]?.id, {moduleId}).unwrap();
+          await trackCourseProgress(courseProgress?.data[0]?.id, {courseId}).unwrap();
+        } catch (error) {
+          console.log(error);
+          toast.error(error?.data?.message);
+        }
+      })()
+    }}
+  }, [courseProgress, moduleProgress, miniModuleProgress, lessonProgress, trackMiniModuleProgress, trackModuleProgress, trackCourseProgress]
+)
   
   const { data: lesson, error, isLoading } = useGetLessonByIdQuery(id);
   
   if(error){
     toast.error(error);
-  }
-
-  const navItems = [
-    { name: "Courses", link: "/user", icon: "📚" },
-    { name: "Playground", link: "/user/playground", icon: "🎮" },
-    { name: "Challenges", link: "/user/challenges", icon: "🏆" },
-    { name: "Community", link: "/user/community", icon: "👤"}
-  ];
-  
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [ logoutApiCall ] = useLogoutMutation();
-  
-  const logoutHandler = async () => {
-    try {
-      await logoutApiCall().unwrap();
-      dispatch(Logout());
-      navigate('/login');
-    } catch (error) {
-      toast.error(error?.data?.message || error.message);
-    }
   }
   
   if(isLoading) {
@@ -51,24 +91,7 @@ const Lesson = () => {
   return (
     <div className='bg-[#0D0056] w-full'>
       <div className='py-6 rounded-none'>
-        <header className="flex items-center mx-auto text-white w-5/6 justify-between">
-            <FloatingNav navItems={navItems} className=""/>
-            <BrainlyCodeIcon className="ml-7 sm:ml-1"/>
-            <ul className=" flex items-center h-1/4">
-              <li className="">
-                  <Link to="/user/profile">
-                    <img src={profile} className=' h-1/2 w-1/2 md:h-3/4 sm:w-1/2 md:w-2/4' />
-                  </Link>
-              </li>
-              <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
-                <button onClick={logoutHandler} className=''>
-                  <Link to="">
-                   Sign out
-                   </Link>
-                </button>
-              </li>
-            </ul>
-        </header>
+        <Header />
       </div> 
 
       <div className="text-center">
@@ -109,7 +132,7 @@ const Lesson = () => {
          <CodeEditor lessonId={lesson?.id} />
       </div>
 
-      <Progress lessonId = {lesson?.id} />
+      <Progress />
 
       <Footer />
     

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateProfileImageMutation, useUpdateUserMutation } from "../redux/api/userSlice";
@@ -11,6 +12,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
   const token = jwtDecode(userInfo.access_token);
+  const navigate = useNavigate();
 
   const { data: user } = useGetCurrentUserQuery(token.sub);
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
@@ -30,12 +32,21 @@ const Profile = () => {
     setEmail(user?.email || '');
   }, [user]);
 
-const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  setImageFile(file);
-  toast.success("Image added successfully");
-};
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    toast.success("Image added successfully");
+  };
+
+  const handleBack = () => {
+  if (user?.role === "ADMIN") {
+    navigate("/admin"); // admin dashboard route
+  } else {
+    navigate("/user"); // user dashboard route
+  }
+  };
 
  const submitHandler = async (e) => {
   e.preventDefault();
@@ -91,9 +102,19 @@ const handleImageChange = (e) => {
 
   return (
     <div className="h-full w-full bg-[#110167] p-4">
+                <button
+            onClick={handleBack}
+            className="py-2 px-4 rounded-md bg-[rgba(217,217,217,0.2)] text-white hover:bg-gray-700 font-bold"
+          >
+            Back
+          </button>
       <div className="flex justify-center md:space-x-4">
         <div className="md:w-1/3">
           <h1 className="text-xl font-bold mb-7 text-[#989898] text-center">Update Profile</h1>
+          <div className="mb-4">
+
+        </div>
+
           <form onSubmit={submitHandler}>
             <div className="w-48 h-48 overflow-hidden hover:cursor-pointer bg-white rounded-full mx-auto flex items-center justify-center">
               <label htmlFor="image" className="cursor-pointer">
