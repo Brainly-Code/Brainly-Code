@@ -84,7 +84,7 @@ export default function HomePage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative text-center h-screen py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]">
+      <section className="relative text-center h-screen md:pt-[25rem] lg:pt-[6rem] pt-[5rem] py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]">
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col my-[5rem] md:flex-row md:justify-center md:items-center gap-4 mb-6">
             <span className="text-[#00ffee] text-2xl lg:text-5xl font-bold">
@@ -105,7 +105,7 @@ export default function HomePage() {
       {/* Explore Challenges Section */}
       <section className="relative py-20 px-6 bg-gradient-to-r from-[#0d0066] via-[#070045] to-[#0d0066] text-center">
         <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">
-          🚀 Explore Challenges
+           Explore Challenges
         </h2>
         <p className="text-gray-300 max-w-2xl mx-auto mb-12">
           Sharpen your coding skills with hands-on challenges across different
