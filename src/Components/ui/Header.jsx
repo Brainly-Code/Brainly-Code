@@ -15,25 +15,16 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userInfo } = useSelector((state) => state.auth);
-  // Local state for premium to react on changes properly
-  // const [isProMember, setIsProMember] = useState(false);
-  let decoded = null;
-  
-  // Decode token to get userId
-  let userId = null;
-  try {
-    if (userInfo?.access_token) {
-      const decoded = jwtDecode(userInfo.access_token);
-      userId = decoded.sub;
-      console.log(decoded?.isPremium)
-    }else{
-      navigate('/login');
-    }
-  } catch (error) {
-    console.error('Invalid token', error);
-  }
+ const { userInfo } = useSelector((state) => state.auth);
 
+const userId = React.useMemo(() => {
+  if (!userInfo?.access_token) return null;
+  try {
+    return jwtDecode(userInfo.access_token).sub;
+  } catch {
+    return null;
+  }
+}, [userInfo]);
   // // Update local isProMember state whenever userInfo changes
   // useEffect(() => {
   //   const decoded = jwtDecode(userInfo.access_token);
@@ -59,10 +50,10 @@ const Header = () => {
   // const [showUpgradeMessage, setShowUpgradeMessage] = useState(false);
 
   const navItems = [
-    { name: "Courses", link: "/user", icon: "📚" },
+    { name: "Home", link: "/user", icon: "📚" },
+    { name: "Courses", link: "/user/courses", icon: "📚" },
     { name: "Playground", link: "/user/playground", icon: "🎮" },
     { name: "Challenges", link: "/user/challenges", icon: "🏆" },
-    { name: "Community", link: "/user/community", icon: "👤" }
   ];
 
   const logoutHandler = async () => {
@@ -70,6 +61,7 @@ const Header = () => {
       await logoutApiCall().unwrap();
       dispatch(Logout());
       navigate('/login');
+      toast.success('Logged out successfully');
     } catch (error) {
       toast.error(error?.data?.message || error.message);
     }
@@ -98,7 +90,7 @@ const Header = () => {
 
   return (
     <div>
-      <div className='border-gray-300 py-6 rounded-none border-b-[1px]'>
+      <div className='py-6 rounded-none'>
         <header className="flex items-center mx-auto text-white w-5/6 justify-between">
           <FloatingNav navItems={navItems} className="" />
           <BrainlyCodeIcon className="ml-7 sm:ml-1" />

@@ -177,8 +177,7 @@ const Courses = () => {
     title: "",
     level: "BEGINNER",
     description: "",
-    category: "",     // added
-    duration: "1 hour",      // added
+    category: "",     // added     // added
   });
 
   const [previewIcon, setPreviewIcon] = useState(null);
@@ -423,7 +422,7 @@ const toggleDropdown = (courseId) => {
           All Courses {`(${filteredCourses.length || "0"})`}
         </h1>
 
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 justify-center gap-6">
+        <div className="grid 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1 justify-center gap-2 md:gap-6">
           {filteredCourses.map((course) => (
             <div key={course._id || course.id} className="flex justify-center">
               <div className="sm:min-w-[20rem] max-w-[20rem] w-full bg-[#070045] min-h-[19rem] rounded-2xl border border-[#3A3A5A] p-6 flex flex-col justify-between">

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { diffLines } from 'diff';
+import { diffLines, diffWords } from 'diff';
 import { useGetLessonSolutionQuery } from "../redux/api/LessonSlice";
 import { Navigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
@@ -16,16 +16,16 @@ const compareCode = (studentCode, solutionCode) => {
 }
 
 
-const ChallengeCodeEditor = (
- 
-) => {
+const ChallengeCodeEditor = ({ solutionCode }) => {
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");
   const [js, setJs] = useState("");
 
   const [srcDoc, setSrcDoc] = useState("");
   const [consoleOutput, setConsoleOutput] = useState([]);
-  const [feedback, setFeedback] = useState([]);
+  const [studentCode, setStudentCode] = useState("");
+  const [diffs, setDiffs] = useState([]);
+  const [feedback, setFeedback] = useState("");
   const [hasPassed, setHasPassed] = useState(false);
   const [showConsole, setShowConsole] = useState(false);
   const iframeRef = useRef(null);
@@ -74,9 +74,19 @@ const ChallengeCodeEditor = (
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const {data: solution, isLoading} = useGetLessonSolutionQuery(4);
-  const solutionCode = solution?.solution;
+  useEffect(() => {
+    if (solutionCode && studentCode) {
+      const differences = diffWords(solutionCode, studentCode);
+      setDiffs(differences);
+      setFeedback(
+        differences.some(d => d.added || d.removed)
+          ? "Your code does not match the solution. Please review the highlighted differences."
+          : "Great job! Your code matches the solution."
+      );
+    }
+  }, [studentCode, solutionCode]);
 
+  const {data: solution, isLoading} = useGetLessonSolutionQuery(4);
   const checkSolution = () => {
     if (!solutionCode) {
       setFeedback([{ value: "Solution not available. Please try again later.", index: 0 }]);
@@ -86,10 +96,14 @@ const ChallengeCodeEditor = (
     const solution = solutionCode;
     const studentCode = `${html}`;
     const differences = compareCode(studentCode, solution);
-    setFeedback(differences);
-    // console.log(feedback);
+    setDiffs(differences);
+    setFeedback(
+      differences.some(d => d.removed || d.added)
+        ? "Your code does not match the solution. Please review the highlighted differences."
+        : "Great job! Your code matches the solution."
+    );
 
-    if(feedback[0].value) {
+    if(differences[0]?.value) {
       setHasPassed(true);
     }else{
       setHasPassed(false);
@@ -98,6 +112,17 @@ const ChallengeCodeEditor = (
 
     console.log(hasPassed);
   }
+
+  const handleSubmit = async () => {
+    const allCorrect = instructions.every((inst, idx) => userAnswers[idx].trim() === inst.solutionCode.trim());
+    if (allCorrect) {
+      await completeChallenge({ userId, challengeId });
+      toast.success("Challenge completed!");
+      // navigate or update UI
+    } else {
+      toast.error("Some answers are incorrect. Please review your code.");
+    }
+  };
 
   // if(error) {
   //   Navigate('/error')
@@ -181,26 +206,30 @@ const ChallengeCodeEditor = (
         </div>
       </div>
 
-      {feedback[0]?.value && feedback.length > 0 && (
+      {diffs.length > 0 && (
         <div className="mt-4 p-2 bg-gray-800 text-white rounded">
           <h3 className="font-semibold">Feedback</h3>
-          { hasPassed === false ? (
-            <pre
-              className={`${
-                feedback[0]?.added ? 'text-green-400' : feedback[0]?.removed ? 'text-red-400' : 'text-white'
-              }`}
-            >
-              answer:{feedback[0].value}, is wrong
-            </pre>
-          ) : (
-            <pre
-              className={`${
-                feedback[0]?.added ? 'text-green-400' : feedback[0]?.removed ? 'text-red-400' : 'text-white'
-              }`}
-            >
-              answer:{feedback[0].value}, is correct
-            </pre>
-          )}
+          <div className="flex flex-col gap-2">
+            {diffs.map((part, idx) => (
+              <div key={idx} className="flex items-center">
+                <span
+                  className={`w-2.5 h-2.5 rounded-full mr-2 ${
+                    part.added ? 'bg-green-400' : part.removed ? 'bg-red-400' : 'bg-gray-600'
+                  }`}
+                />
+                <pre
+                  className={`${
+                    part.added ? 'text-green-400' : part.removed ? 'text-red-400' : 'text-white'
+                  }`}
+                >
+                  {part.value}
+                </pre>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 text-sm text-gray-300">
+            {feedback}
+          </div>
         </div>
       )}
 
@@ -229,6 +258,40 @@ const ChallengeCodeEditor = (
             </button>
           )
         }
+      </div>
+
+      {/* Instructions and Submission */}
+      <div className="mt-8">
+        <h2 className="text-white text-lg font-semibold mb-4">Instructions</h2>
+        <div className="bg-[#222] p-4 rounded">
+          <p className="text-gray-300 text-sm mb-4">
+            Please follow the instructions below to complete the challenge:
+          </p>
+          <ol className="list-decimal list-inside text-gray-300 text-sm">
+            <li className="mb-2">
+              Implement the required features in the code editor.
+            </li>
+            <li className="mb-2">
+              Use the "Run and Check Solution" button to test your code.
+            </li>
+            <li>
+              Once you are satisfied with your solution, click on the "Submit Challenge" button.
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <h2 className="text-white text-lg font-semibold mb-2">Submission</h2>
+        <p className="text-gray-300 text-sm mb-4">
+          When you are ready to submit your challenge, click the button below:
+        </p>
+        <button
+          onClick={handleSubmit}
+          className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Submit Challenge
+        </button>
       </div>
     </div>
   );

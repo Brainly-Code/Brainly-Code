@@ -32,6 +32,20 @@ const coursesApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
+
+    likeCourse: builder.mutation({
+      query: (id) => ({
+        url: `${COURSE_URL}/like/${id}`,
+        method: "POST",
+      }),
+    }),
+
+    getUserLikedCourses: builder.query({
+      query: () => ({
+        url: `${COURSE_URL}/liked-courses`, // make sure your backend has this route
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -42,4 +56,6 @@ export const {
   useGetCourseByIdQuery,
   useGetCoursesByCreatorQuery,
   useDeleteCourseMutation, 
+  useLikeCourseMutation,
+    useGetUserLikedCoursesQuery,
 } = coursesApiSlice

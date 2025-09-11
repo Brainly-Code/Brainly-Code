@@ -9,7 +9,6 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
   const [open, setOpen] = useState(false);
   const [showAddSubModuleForm, setShowAddSubModuleForm] = useState(false);
   const [newSubmoduleTitle, setNewSubmoduleTitle] = useState('');
-  console.log(moduleId);
 
   // RTK Query mutation hook
   const [createMiniModule, { isLoading }] = useCreateMiniModuleMutation();

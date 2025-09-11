@@ -37,7 +37,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
     // Get specific user by ID
     getUserById: builder.query({
       query: (id) => ({
-        url: `${USER_URL}/user/${id}`,
+        url: `${USER_URL}/${id}`,
         method: "GET",
       }),
     }),
@@ -96,12 +96,20 @@ export const userApiSlice = apiSlice.injectEndpoints({
         // Add payment-related body here if needed
       }),
     }),
+
+    refreshToken: builder.mutation({
+      query: () => ({
+        url: `${AUTH_URL}/refresh`,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
 export const {
   useRegisterMutation,
   useLoginMutation,
+  useRefreshTokenMutation,
   useLogoutMutation,
   useGetCurrentUserQuery,
   useGetUserByIdQuery,

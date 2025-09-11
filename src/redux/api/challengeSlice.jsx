@@ -13,11 +13,20 @@ const challengeApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
-    incrementChallenge: builders.mutation({
-      query: id => ({
-        url: `${CHALLENGE_URL}/like/${id}`,
-        method: "POST"
+    updateChallenge: builders.mutation({
+      query: ({ id, data }) => ({
+        url: `${CHALLENGE_URL}/${id}`,
+        method: "PUT",
+        body: data
       })
+    }),
+
+    toggleChallengeLike: builders.mutation({
+      query: ({ id, userId }) => ({
+        url: `${CHALLENGE_URL}/${id}/like`,
+        method: "PATCH",
+        body: { userId },
+      }),
     }),
 
     getChallenges: builders.query({
@@ -40,13 +49,56 @@ const challengeApiSlice = apiSlice.injectEndpoints({
         method: "GET"
       })
     }),
+
+    createChallengeInstruction: builders.mutation({
+      query: (data) => ({
+        url: `${CHALLENGE_INSTRUCTIONS_URL}`,
+        method: "POST",
+        body: data
+      })
+    }),
+
+    updateChallengeInstruction: builders.mutation({
+      query: ({ id, data }) => ({
+        url: `${CHALLENGE_INSTRUCTIONS_URL}/${id}`,
+        method: "PUT",
+        body: data
+      })
+    }),
+
+    deleteChallengeInstruction: builders.mutation({
+      query: (id) => ({
+        url: `${CHALLENGE_INSTRUCTIONS_URL}/${id}`,
+        method: "DELETE"
+      })
+    }),
+
+    challengeInstructionCompletion: builders.mutation({
+      query: (instructionId) => ({
+        url: `${CHALLENGE_URL}/${CHALLENGE_INSTRUCTIONS_URL}/${instructionId}`
+      })
+    }),
+
+    completeChallenge: builders.mutation({
+      query: (data) => ({
+        url: `${CHALLENGE_URL}/challenge-completer`,
+        method: "POST",
+        body: data
+      })
+    })
   })
 });
 
 export const {
   useCreateChallengeMutation,
-  useIncrementChallengeMutation,
+  useUpdateChallengeMutation,
+  useToggleChallengeLikeMutation,
   useGetChallengesQuery,
   useGetChallengeByIdQuery,
   useGetChallengeInstructionsQuery,
+  useCreateChallengeInstructionMutation,
+  useUpdateChallengeInstructionMutation,
+  useDeleteChallengeInstructionMutation,
+  useChallengeInstructionCompletionMutation,
+  useCompleteChallengeMutation
 } = challengeApiSlice;

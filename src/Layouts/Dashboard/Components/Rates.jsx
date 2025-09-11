@@ -99,7 +99,7 @@ const Challenge = () => {
           { mostLikedChallenge && (
             <div
               key={mostLikedChallenge.id}
-              className=" max-w-[25rem] justify-between bg-[#070045] h-[17rem]  rounded-2xl border border-[#3A3A5A] p-6"
+              className=" max-w-[25rem]  flex flex-col gap-6 justify-between bg-[#070045] h-[17rem]  rounded-2xl border border-[#3A3A5A] p-6"
             >
               <div className="flex justify-between mb-2">
                 <span
@@ -140,7 +140,7 @@ const Challenge = () => {
                   </div>
                 </div>
                 <div className="">
-                  <Link to={`/challenge/module/${mostLikedChallenge.id}`}>
+                  <Link to={`/admin/editChallenge/${mostLikedChallenge.id}`}>
                     <button
                       className="py-2 px-2 rounded-md bg-[#06325B]"
                       onClick={() =>
@@ -205,9 +205,11 @@ const Challenge = () => {
                     </p>
                   </div>
                   <div className="">
-                    <button className="py-2 px-2 rounded-md bg-[#06325B]">
-                      view
-                    </button>
+                    <Link to={`/admin/module/${course.id}`}>
+                      <button className="py-2 px-2 rounded-md bg-[#06325B]">
+                        view
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

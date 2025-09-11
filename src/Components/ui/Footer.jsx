@@ -3,10 +3,10 @@ import BrainlyCodeIcon from "../BrainlyCodeIcon";
 const Footer = () => {
   return (
     <footer className="mt-8">
-      <div className="bg-[#07032B] bg-opacity-90 rounded-lg px-6 py-8 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 text-gray-100">
+      <div className="bg-black/20 bg-opacity-50 rounded-lg px-6 py-8 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 grid-cols-2 gap-8 text-gray-100">
         
         {/* Logo and description */}
-        <div>
+        <div >
           <BrainlyCodeIcon />
           <p className="text-xs text-gray-400 mt-6">
             Making coding fun and accessible for the next generation of developers.
@@ -17,10 +17,10 @@ const Footer = () => {
         <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Learn</h1>
           <ul className="space-y-1">
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Courses</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Playgrounds</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Challenges</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Projects</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Courses</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Playgrounds</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Challenges</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Projects</a></li>
           </ul>
         </div>
 
@@ -28,10 +28,10 @@ const Footer = () => {
         <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Resources</h1>
           <ul className="space-y-1">
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Blog</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Documentation</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">FAQ</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Support</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Blog</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Documentation</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">FAQ</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Support</a></li>
           </ul>
         </div>
 
@@ -39,10 +39,10 @@ const Footer = () => {
         <div className="sm:text-center">
           <h1 className="text-xl font-bold mb-3">Company</h1>
           <ul className="space-y-1">
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">About us</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Careers</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Privacy Policy</a></li>
-            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/">Terms of service</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">About us</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Careers</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Privacy Policy</a></li>
+            <li><a className="text-xs text-gray-400 hover:text-gray-200" href="/user">Terms of service</a></li>
           </ul>
         </div>
       </div>

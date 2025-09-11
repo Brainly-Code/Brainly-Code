@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaStopwatch } from 'react-icons/fa';
 import { CiUndo, CiRedo } from 'react-icons/ci';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
@@ -20,6 +20,7 @@ const Challenges = () => {
   const [showAddChallengeModal, setShowAddChallengeModal] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedDifficultyFilter, setSelectedDifficultyFilter] = useState("ALL");
+  const navigate = useNavigate();
 
   const [newChallengeData, setNewChallengeData] = useState({
     title: "",
@@ -141,8 +142,6 @@ const Challenges = () => {
       difficulty: newChallengeData.difficulty,
       duration: newChallengeData.estimatedTime,
       relation: newChallengeData.context,
-      likes: 0,
-      completions: 0,
     };
 
     try {
@@ -296,8 +295,8 @@ const Challenges = () => {
                       <span className="text-white text-sm">{challenge.likes} likes</span>
                       <span className="text-white text-sm">{challenge.completions} completions</span>
                     </div>
-                    <Link to={`/user/challenge/${challenge._id}`}>
-                      <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-6 py-2 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300">
+                    <Link to={`/admin/editChallenge/${challenge.id}`}>
+                      <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-6 py-2 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300" onClick={() => navigate(`/editChallenge/${challenge._id}`)}>
                         View
                       </button>
                     </Link>

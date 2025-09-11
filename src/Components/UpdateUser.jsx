@@ -21,7 +21,7 @@ const Profile = () => {
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [hash, setHash] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [imageFile, setImageFile] = useState(null);
 
@@ -51,7 +51,7 @@ const Profile = () => {
  const submitHandler = async (e) => {
   e.preventDefault();
 
-  if (hash !== confirmPassword) {
+  if (password !== confirmPassword) {
     toast.error("Passwords do not match");
     return;
   }
@@ -72,7 +72,7 @@ const Profile = () => {
     const profileData = new FormData();
     profileData.append("username", username);
     profileData.append("email", email);
-    profileData.append("hash", hash);
+    profileData.append("password", password);
 
 
     if (cloudinaryUrl) {
@@ -101,7 +101,7 @@ const Profile = () => {
 
 
   return (
-    <div className="h-full w-full bg-[#110167] p-4">
+    <div className="min-h-screen w-full bg-[#110167] p-4">
                 <button
             onClick={handleBack}
             className="py-2 px-4 rounded-md bg-[rgba(217,217,217,0.2)] text-white hover:bg-gray-700 font-bold"
@@ -165,8 +165,8 @@ const Profile = () => {
               <input
                 type="password"
                 className="form-input p-2 bg-[rgba(217,217,217,0.2)] rounded-md w-full text-white"
-                value={hash}
-                onChange={(e) => setHash(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
