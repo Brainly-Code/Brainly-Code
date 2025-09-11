@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  userInfo: localStorage.getItem("userInfo")
-    ? JSON.parse(localStorage.getItem("userInfo"))
-    : null,
+  userInfo: null, // only stored in memory
 };
 
 const authSlice = createSlice({
@@ -11,24 +9,20 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.userInfo = action.payload;
+      state.userInfo = action.payload; // includes access_token
+    },
 
-      // Save to localStorage
-      localStorage.setItem("userInfo", JSON.stringify(action.payload));
-
-      // Set expiration to 30 days from now
-      const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000;
-      localStorage.setItem("expirationTime", expirationTime.toString());
+    updateAccessToken: (state, action) => {
+      if (state.userInfo) {
+        state.userInfo.access_token = action.payload;
+      }
     },
 
     Logout: (state) => {
       state.userInfo = null;
-      localStorage.removeItem("userInfo");
-      localStorage.removeItem("expirationTime");
     },
   },
 });
 
-export const { setCredentials, Logout } = authSlice.actions;
-
+export const { setCredentials, updateAccessToken, Logout } = authSlice.actions;
 export default authSlice.reducer;

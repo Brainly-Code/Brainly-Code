@@ -96,12 +96,20 @@ export const userApiSlice = apiSlice.injectEndpoints({
         // Add payment-related body here if needed
       }),
     }),
+
+    refreshToken: builder.mutation({
+      query: () => ({
+        url: `${AUTH_URL}/refresh`,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
 export const {
   useRegisterMutation,
   useLoginMutation,
+  useRefreshTokenMutation,
   useLogoutMutation,
   useGetCurrentUserQuery,
   useGetUserByIdQuery,
