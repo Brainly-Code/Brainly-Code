@@ -71,29 +71,30 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
 
       {showAddSubModuleForm && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-[#4a38f1] text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
-            <h3 className="text-2xl font-semibold mb-4">Add sub-module</h3>
+          <div className="bg-[#0D0056] p-8 rounded-xl shadow-xl w-[90%] max-w-md">
+            <h3 className="text-xl font-semibold mb-4 text-center">Add sub-module</h3>
             <div className="mb-4">
               <label className="block font-medium mb-1">Title:</label>
               <input
                 type="text"
                 value={newSubmoduleTitle}
                 onChange={(e) => setNewSubmoduleTitle(e.target.value)}
-                className="w-full opacity-90 p-2 border rounded"
+                className="w-full bg-[#040430] opacity-90 p-2 rounded-lg"
+                placeholder='Title'
                 disabled={isLoading}
               />
             </div>
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowAddSubModuleForm(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                className="bg-gray-700 text-white px-4 py-1 rounded-xl hover:bg-gray-600"
                 disabled={isLoading}
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubModuleSubmit}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                className="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700"
                 disabled={isLoading}
               >
                 {isLoading ? 'Adding...' : 'Add'}
