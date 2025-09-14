@@ -56,8 +56,9 @@ const Login = () => {
       dispatch(setCredentials({ user: res.user, access_token: res.access_token }));
       const redirectPath = redirectFromQuery || getDefaultRedirect(res.user.role);
       navigate(redirectPath, { replace: true });
+      window.location.reload();
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      window.location.reload(); 
     }
   };
 
