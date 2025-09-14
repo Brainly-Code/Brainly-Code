@@ -31,31 +31,19 @@ const Register = () => {
   };
 
   useEffect(() => {
-    const refreshSession = async () => {
-      try {
-        const res = await refresh().unwrap();
-        dispatch(setCredentials(res));
-        navigate(redirectFromQuery, { replace: true });
-      } catch {
-        dispatch(Logout());
-      }
-    };
-
-    if (!userInfo) {
-      refreshSession();
-    } else {
+    if (userInfo) {
       navigate(redirectFromQuery, { replace: true });
     }
-  }, [userInfo, dispatch, navigate, redirectFromQuery]);
+  }, [userInfo, navigate, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
       const res = await register({ username, email, password }).unwrap();
-      dispatch(setCredentials(res)); // store user info only
+      dispatch(setCredentials({ user: res.user, access_token: res.access_token }));
       navigate(redirectFromQuery, { replace: true });
     } catch (error) {
-      const message = error?.data?.message || error?.message || 'Registration failed';
+      const message = error?.data?.message || error?.message || "Registration failed";
       setIsError(message);
       toast.error(message);
     }

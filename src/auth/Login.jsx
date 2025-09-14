@@ -20,7 +20,8 @@ const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
   const [refresh] = useRefreshTokenMutation();
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const { user, access_token } = useSelector((state) => state.auth);
+
 
   const handleGoogleLogin = () => {
     window.location.href = "https://backend-hx6c.onrender.com/autho/google";
@@ -39,37 +40,21 @@ const Login = () => {
 
   // Auto-refresh session if user is already logged in
   useEffect(() => {
-    const refreshSession = async () => {
-      try {
-        const res = await refresh().unwrap();
-        // Store only temporary session info (no localStorage for token)
-        dispatch(setCredentials(res));
-        const redirectPath = redirectFromQuery || getDefaultRedirect(res.role);
-        if (location.pathname === '/login' || location.pathname === '/register') {
-          navigate(redirectPath, { replace: true });
-        }
-      } catch {
-        dispatch(Logout());
-      }
-    };
-
-    if (!userInfo) {
-      refreshSession();
-    } else {
-      const redirectPath = redirectFromQuery || getDefaultRedirect(userInfo.role);
-      if (location.pathname === '/login' || location.pathname === '/register') {
-        navigate(redirectPath, { replace: true });
-      }
+  if (access_token) {
+    const redirectPath = redirectFromQuery || getDefaultRedirect(acess_token?.role);
+    if (location.pathname === '/login' || location.pathname === '/register') {
+      navigate(redirectPath, { replace: true });
     }
-  }, [userInfo, dispatch, navigate, location.pathname, redirectFromQuery]);
+  }
+}, [access_token, navigate, location.pathname, redirectFromQuery]);
+
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      // Login API call, token is set in HttpOnly cookie
       const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials(res)); // store only user info in memory
-      const redirectPath = redirectFromQuery || getDefaultRedirect(res.role);
+      dispatch(setCredentials({ user: res.user, access_token: res.access_token }));
+      const redirectPath = redirectFromQuery || getDefaultRedirect(res.user.role);
       navigate(redirectPath, { replace: true });
     } catch (error) {
       toast.error(error?.data?.message || error.message);
@@ -91,7 +76,7 @@ const Login = () => {
         <Link to="/">Back to Home</Link>
       </button>
 
-      <header className="flex flex-col sm:absolute sm:top-40 sm:mt-[5rem] lg:mt-[0] lg:top-20 items-center lg:pt-6 w-full">
+      <header className="flex flex-col sm:absolute sm:top-10 sm:mt-[rem] lg:mt-[0] lg:top-20 items-center lg:pt-6 w-full">
         <div className="w-full max-w-md px-4 sm:px-6 lg:px-8">
           <div className="bg-[#070045] rounded-lg border-[#3A3A5A] border p-8 shadow-lg">
             <h1 className="text-center text-3xl font-bold mb-2">Welcome Back</h1>
@@ -197,7 +182,7 @@ const Login = () => {
             )}
 
             {!open && (
-              <p className="text-gray-400">
+              <p className="text-center text-gray-400">
                 Don't have an account?{' '}
                 <Link to={'/register'} className="ml-1 text-[#8A2BE2] hover:underline">
                   Sign Up

@@ -1,41 +1,42 @@
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
-import { Logout, updateAccessToken } from "../Features/authSlice";
+
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://backend-hx6c.onrender.com",
+  baseUrl: "https://backend-hx6c.onrender.com", // Use production URL
+  credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const token = getState().auth?.userInfo?.access_token;
+    const token = getState().auth.accessToken;
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
     return headers;
   },
-  credentials: "include", // cookie for refresh
 });
-
-const baseQueryWithReauth = async (args, api, extraOptions) => {
-  let result = await baseQuery(args, api, extraOptions);
-
-  if (result.error && result.error.status === 401) {
-    console.log("Access token expired, refreshing...");
-    const refreshResult = await baseQuery(
-      { url: "/auth/refresh", method: "POST" },
-      api,
-      extraOptions
-    );
-
-    if (refreshResult.data) {
-      api.dispatch(updateAccessToken(refreshResult.data.access_token));
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      api.dispatch(Logout());
-    }
-  }
-
-  return result;
-};
 
 export const apiSlice = createApi({
-  baseQuery: baseQueryWithReauth,
+  baseQuery,
   tagTypes: ["User", "Videos", "Comment"],
-  endpoints: () => ({}),
+  endpoints: (builder) => ({
+    login: builder.mutation({
+      query: (credentials) => ({
+        url: "/auth/login",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
+    register: builder.mutation({
+      query: (data) => ({
+        url: "/auth/register",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    refreshToken: builder.mutation({
+      query: () => ({
+        url: "/auth/refresh",
+        method: "POST",
+      }),
+    }),
+  }),
 });
+
+export const { useLoginMutation, useRegisterMutation, useRefreshTokenMutation } = apiSlice;

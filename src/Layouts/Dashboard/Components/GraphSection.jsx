@@ -40,7 +40,6 @@ const GraphSection = () => {
     isLoading,
     isError,
   } = useGetGraphStatsQuery(); // only call once!
-  console.log(graphStats);
 
   const [data, setData] = useState([]);
 
