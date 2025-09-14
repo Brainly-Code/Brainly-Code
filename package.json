@@ -36,11 +36,8 @@
     "react-router-dom": "^7.8.1",
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.0",
-<<<<<<< HEAD
     "redux-persist": "^6.0.0",
     "socket.io-client": "^4.8.1",
-=======
->>>>>>> 0e1ffdfca916a21066ea6ec0447ecf42bd8cf541
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
