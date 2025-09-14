@@ -155,8 +155,8 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
 
 {showAddForm && (
   <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-    <div className="bg-white text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
-      <h3 className="text-2xl font-semibold mb-4">Add Content</h3>
+    <div className="bg-[#0D0056] text-white p-8 rounded-xl shadow-xl w-[90%] max-w-md h-full overflow-y-auto">
+      <h3 className="text-2xl font-semibold mb-4 text-center">Add Content</h3>
 
       {/* Radio Toggle */}
       <div className="mb-4 flex gap-6">
@@ -167,7 +167,7 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
             value="lesson"
             checked={uploadType === 'lesson'}
             onChange={() => setUploadType('lesson')}
-            className="mr-2"
+            className="mr-2 "
           />
           Lesson
         </label>
@@ -195,7 +195,8 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
                 name={field}
                 value={formData[field]}
                 onChange={handleInputChange}
-                className="w-full p-2 border rounded"
+                className="w-full p-2 bg-[#040430] rounded-lg"
+                placeholder={field}
                 disabled={isLoading}
               />
             </div>
@@ -227,16 +228,16 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
         </>
       )}
 
-      <div className="flex justify-end gap-4 mt-6">
+      <div className="flex justify-center gap-4 mt-6">
         <button
           onClick={() => setShowAddForm(false)}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          className="bg-gray-700 text-white px-4 py-1 rounded-xl hover:bg-gray-600"
         >
           Cancel
         </button>
         <button
           onClick={handleSubmit}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700"
         >
           Add
         </button>

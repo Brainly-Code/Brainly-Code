@@ -8,7 +8,7 @@ const Home = () => {
   // const { userInfo, accessToken, loading } = useSelector((state) => state.auth);
   // const dispatch = useDispatch();
   // const [searchParams] = useSearchParams();
-  // const token = searchParams.get("token"); 
+  // const token = searchParams.get("token");
 
   // // Store token from URL (e.g., Google/GitHub login)
   // useEffect(() => {

@@ -13,6 +13,14 @@ import { toast } from 'react-toastify';
 import Loader from './../Components/ui/Loader';
 import VideoItem from './AdminVideoItem';
 import { useCreateVideoMutation, useGetVideosForCourseQuery } from '../redux/api/videoApi';
+import file from '../assets/file.png';
+import Delete from '../assets/bin.png'
+import { 
+  useCreateCourseResourceMutation, 
+  useGetResourcesForCourseQuery, 
+  useDeleteResourceMutation 
+} from '../redux/api/resourcesSlice';
+
 
 const Modules = () => {
   const { id } = useParams();
@@ -22,8 +30,13 @@ const Modules = () => {
   const [videoTitle, setVideoTitle] = useState('');
   const [videoFile, setVideoFile] = useState(null);
   const { data: course, error: courseError, isLoading: isCourseLoading } = useGetCourseByIdQuery(id);
-  const { data: modules } = useGetModulesForCourseQuery(id);
-  const { data: videos } = useGetVideosForCourseQuery(id);
+  const { data: resources, refetch:refetchResources } = useGetResourcesForCourseQuery(id);
+  const [createCourseResource, { isLoading: isUploadingFile }] = useCreateCourseResourceMutation();
+  const { data: modules, refetch:refetchModules } = useGetModulesForCourseQuery(id);
+  const { data: videos, refetch:refetchVideos } = useGetVideosForCourseQuery(id);
+  const [fileTitle, setFileTitle] = useState('');
+  const [fileUpload, setFileUpload] = useState(null);
+
 
 
   const [createModule, 
@@ -36,6 +49,7 @@ const Modules = () => {
   const combinedItems = [
     ...(videos?.map(video => ({ ...video, type: 'video' })) || []),
     ...(modules?.map(module => ({ ...module, type: 'module' })) || []),
+    ...(resources?.map(resource => ({ ...resource, type: 'file'})) || [])
   ];
 
   combinedItems.sort((a, b) => a.number - b.number);
@@ -66,10 +80,63 @@ const Modules = () => {
         console.error(err);
         toast.error(err?.data?.message || 'Error uploading video');
       }
+    } else if (uploadType === 'file') {
+    try {
+      const formData = new FormData();
+      formData.append('title', fileTitle);
+      formData.append('courseId', id);
+      formData.append('file', fileUpload);
+      formData.append('type', uploadType);
+      await createCourseResource({courseId:id,formData}).unwrap();// RTK mutation for course resources
+      setFileTitle('');
+      setFileUpload(null);
+      toast.success('File uploaded successfully!');
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.data?.message || 'Error uploading file');
     }
-
-    setShowAddModuleForm(false);
+  }
+      setShowAddModuleForm(false);
+      refetchResources();
+      refetchModules();
+      refetchVideos();
   };
+
+
+  const [deleteResource] = useDeleteResourceMutation();
+  const [deletingId, setDeletingId] = useState(null);
+
+
+  const handleDeleteResource = async (resourceId) => {
+    setDeletingId(resourceId);
+    try {
+      await deleteResource(resourceId).unwrap();
+      toast.success('Resource deleted successfully!');
+      refetchResources();
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.data?.message || 'Failed to delete resource');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+
+
+    const handleViewInBrowser = (url) => {
+    const extension = url.split('.').pop().toLowerCase();
+    if (['docx', 'doc', 'pptx', 'ppt', 'xlsx'].includes(extension)) {
+      const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
+      window.open(officeUrl, '_blank');
+    }
+    else if(extension === 'pdf') {
+          window.open(url, '_blank');
+    } 
+    else {
+      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+      window.open(googleViewerUrl, '_blank');
+    }
+};
 
   if (courseError) {
     toast.error(courseError?.data?.message || 'Error fetching course');
@@ -128,6 +195,52 @@ const Modules = () => {
                   />
                 );
               }
+
+          if (item.type === 'file') {
+            const openFile = () => {
+              if (item.url) {
+                handleViewInBrowser(item.url);
+              } else {
+                toast.error("File URL not available");
+              }
+            };
+
+            const isDeleting = deletingId === item.id;
+
+            return (
+              <div
+                key={`file-${item.id}`}
+                onClick={!isDeleting ? openFile : undefined} // disable open when deleting
+                className={`bg-[#6B5EDD] rounded-xl p-3 sm:p-4 md:p-6 cursor-pointer hover:bg-[#5a4dcf] transition ${
+                  isDeleting ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                <div className="flex items-center justify-between w-full text-left">
+                  <div className="flex items-center space-x-2">
+                    <input type="radio" className="mr-3" />
+                    <span className="font-bold">
+                      {isDeleting ? "Deleting..." : item.title}
+                    </span>
+                  </div>
+                  <span className="text-xl flex justify-between w-12 gap-2 h-6">
+                    {!isDeleting && (
+                      <img
+                        src={Delete}
+                        alt="delete icon"
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent opening the file
+                          handleDeleteResource(item.id);
+                        }}
+                        className="cursor-pointer"
+                      />
+                    )}
+                    <img src={file} alt="file icon" />
+                  </span>
+                </div>
+              </div>
+            );
+          }
+
               return null;
             })
           ) : (
@@ -147,9 +260,9 @@ const Modules = () => {
 
       {/* ADD MODULE MODAL */}
       {showAddModuleForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white text-black p-8 rounded-xl shadow-xl w-[90%] max-w-md">
-            <h3 className="text-2xl font-semibold mb-4">Add Content</h3>
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+          <div className="bg-[#0D0056] text-white p-8 rounded-xl shadow-xl w-[90%] max-w-md">
+            <h3 className="text-xl font-semibold text-center mb-4">Add Content</h3>
 
             {/* Radio button selector */}
             <div className="mb-4">
@@ -164,7 +277,7 @@ const Modules = () => {
                 />
                 Module
               </label>
-              <label>
+              <label className="mr-4">
                 <input
                   type="radio"
                   name="contentType"
@@ -175,19 +288,56 @@ const Modules = () => {
                 />
                 Video
               </label>
+              <label>
+                <input
+                  type="radio"
+                  name="contentType"
+                  value="file"
+                  checked={uploadType === 'file'}
+                  onChange={() => setUploadType('file')}
+                  className="mr-2"
+                />
+                File
+              </label>
             </div>
+
 
             {/* Module input */}
             {uploadType === 'module' && (
               <div className="mb-4">
-                <label className="block font-medium mb-1">Module Title:</label>
+                <label className="block font-medium mb-1 text-center">Module Title:</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full p-2 border rounded"
+                  className="w-full p-1 py-2 bg-[#040430] rounded-lg "
+                  placeholder='Module title'
                 />
               </div>
+            )}
+
+             {uploadType === 'file' && (
+              <>
+                <div className="mb-4">
+                  <label className="block font-medium mb-1">File Title:</label>
+                  <input
+                    type="text"
+                    value={fileTitle}
+                    onChange={(e) => setFileTitle(e.target.value)}
+                    className="w-full p-2 rounded-lg  bg-[#040430]"
+                    placeholder='File title'
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block font-medium mb-1">Upload File (PDF/PPT/PPTX):</label>
+                  <input
+                    type="file"
+                    accept=".pdf,.ppt,.pptx"
+                    onChange={(e) => setFileUpload(e.target.files[0])}
+                    className="w-full p-2 rounded"
+                  />
+                </div>
+              </>
             )}
 
             {/* Video input */}
@@ -199,7 +349,8 @@ const Modules = () => {
                     type="text"
                     value={videoTitle}
                     onChange={(e) => setVideoTitle(e.target.value)}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 rounded-lg bg-[#040430]"
+                    placeholder="Video title"
                   />
                 </div>
                 <div className="mb-4">
@@ -207,23 +358,24 @@ const Modules = () => {
                   <input
                     type="file"
                     onChange={(e) => setVideoFile(e.target.files[0])}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 rounded"
                   />
                 </div>
               </>
             )}
 
-            <div className="flex justify-end gap-4">
+
+            <div className="flex justify-center gap-4">
               <button
                 onClick={() => setShowAddModuleForm(false)}
-                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                className="bg-gray-700 text-white px-4 py-1 rounded-xl hover:bg-gray-600"
               >
                 Cancel
               </button>
               <button
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                className="bg-blue-600 text-white px-4 py-1 rounded-lg hover:bg-blue-700"
                 onClick={handleSubmit}
-              >{isCreatingModule || isCreatingVideo ? 'Adding...' : 'Add'}
+              >{isCreatingModule || isCreatingVideo || isUploadingFile ? 'Adding...' : 'Add'}
               </button>
             </div>
           </div>

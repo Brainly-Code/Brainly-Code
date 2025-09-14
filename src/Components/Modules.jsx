@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom';
 import paint from '../assets/paint.png';
 import time from '../assets/time.png';
 import star from '../assets/star.png';
+import file from '../assets/file.png';
 import Footer from './ui/Footer';
 import { ModuleItem } from './ModuleItem';
 import { useGetModulesForCourseQuery } from '../redux/api/moduleSlice';
@@ -14,6 +15,7 @@ import { toast } from 'react-toastify';
 import Loader from './ui/Loader';
 import VideoItem from './VideoItem'; // import the new component
 import { useGetVideosForCourseQuery } from '../redux/api/videoApi'; // hypothetical API slice
+import { useGetResourcesForCourseQuery } from '../redux/api/resourcesSlice';
 
 const Modules = () => {
 
@@ -23,11 +25,29 @@ const Modules = () => {
 
   const { data: modules } = useGetModulesForCourseQuery(id);
   const { data: videos } = useGetVideosForCourseQuery(id);
+  const { data: resources } = useGetResourcesForCourseQuery(id);
+
 
   const combinedItems = [
   ...(videos?.map(video => ({ ...video, type: 'video' })) || []),
   ...(modules?.map(module => ({ ...module, type: 'module' })) || []),
+  ...(resources?.map(resource => ({ ...resource, type: 'file'})) || [])
   ];
+
+    const handleViewInBrowser = (url) => {
+    const extension = url.split('.').pop().toLowerCase();
+    if (['docx', 'doc', 'pptx', 'ppt', 'xlsx'].includes(extension)) {
+      const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
+      window.open(officeUrl, '_blank');
+    }
+    else if(extension === 'pdf') {
+          window.open(url, '_blank');
+    } 
+    else {
+      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+      window.open(googleViewerUrl, '_blank');
+    }
+};
 
 // Sort by the number field
   combinedItems.sort((a, b) => a.number - b.number);
@@ -95,6 +115,36 @@ const Modules = () => {
                 />
               );
             }
+
+            if (item.type === 'file') {
+              const openFile = () => {
+              if (item.url) {
+                handleViewInBrowser(item.url);
+              } else {
+                toast.error("File URL not available");
+              }
+            };
+
+
+              return (
+                <div
+                  key={`file-${item.id}`}
+                  onClick={openFile}
+                  className="bg-[#6B5EDD] rounded-xl p-3 sm:p-4 md:p-6 cursor-pointer hover:bg-[#5a4dcf] transition"
+                >
+                  <div className="flex items-center justify-between w-full text-left">
+                    <div className="flex items-center space-x-2">
+                      <input type="radio" className="mr-3" />
+                      <span className="font-bold">{item.title}</span>
+                    </div>
+                    <span className="text-xl block w-6 h-6">
+                      <img src={file} alt="file icon" />
+                    </span>
+                  </div>
+                </div>
+              );
+            }
+
 
             return null;
           }) : <h2 className='text-center mb-6'>No modules in this course!</h2>}
