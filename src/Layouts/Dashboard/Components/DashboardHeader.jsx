@@ -27,13 +27,15 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const navigate = useNavigate();
   const searchRef = useRef(null);
 
-  const { userInfo } = useSelector((state) => state.auth);
-  const decoded = userInfo?.access_token ? jwtDecode(userInfo.access_token) : null;
+  const { userInfo, accessToken } = useSelector((state) => state.auth);
+  const decoded = accessToken ? jwtDecode(accessToken) : null;
   const userId = decoded?.sub;
 
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(userId, {
     skip: !userId,
   });
+
+  const { data: user, isError } = useGetUserByIdQuery(userId, { skip: !userId });
 
   const imagePath = image?.path ? image.path : profileFallback;
 
@@ -72,6 +74,9 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   };
 
   if (loadingImage) return <div className="p-4 text-white">Loading...</div>;
+  if(isError) {
+    console.log(isError);
+  }
 
   return (
     <div>
@@ -102,7 +107,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
                 )}
               </div>
               <img
-                src={imagePath}
+                src={ user?.photo ? user?.photo : imagePath }
                 className="rounded-full h-10 w-10 object-cover"
                 alt="Profile"
                 onClick={() => navigate("/admin/profile")}

@@ -81,9 +81,8 @@ const App = () => {
         navigate('/user', { replace: true });
       } else if (role === 'ADMIN' || role === 'SUPERADMIN') {
         navigate('/admin', { replace: true });
-      } else {
-        navigate('/login', { replace: true });
       }
+
     };
 
     checkAuth();

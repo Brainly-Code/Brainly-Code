@@ -80,6 +80,11 @@ const Profile = () => {
 
     const res = await updateProfile({ id: currentUser?.id, formData: profileData }).unwrap();
 
+    
+    dispatch(setCredentials({
+      ...res,
+      access_token: access_token,
+    }));
   
     toast.success("Profile updated successfully");
   } catch (err) {

@@ -20,22 +20,49 @@ const Login = () => {
 
   const [login, { isLoading, error: loginError }] = useLoginMutation();
   const { user, accessToken } = useSelector((state) => state.auth);
-  console.log('Login info', { user, accessToken, loginError }); // Debug
-
-  const handleGoogleLogin = () => {
-    window.location.href = 'https://backend-hx6c.onrender.com/autho/google';
-  };
-
-  const handleGithubLogin = () => {
-    window.location.href = 'https://backend-hx6c.onrender.com/autho/github';
-  };
+  console.log('Login.jsx: Redux state:', { user, accessToken, loginError }); // Debug
 
   const redirectFromQuery = new URLSearchParams(location.search).get('redirect');
+  const searchParams = new URLSearchParams(location.search);
+  const accessTokenFromQuery = searchParams.get('access_token');
+  const userFromQuery = searchParams.get('user');
 
   const getDefaultRedirect = (role) => {
     if (role === 'ADMIN' || role === 'SUPERADMIN') return '/admin';
     return '/user';
   };
+
+  // Handle OAuth callback
+  useEffect(() => {
+    if (accessTokenFromQuery && userFromQuery) {
+      try {
+        const decoded = jwtDecode(accessTokenFromQuery);
+        const userData = JSON.parse(userFromQuery);
+        console.log('Login.jsx: OAuth callback:', { accessToken: accessTokenFromQuery, user: userData, decoded }); // Debug
+        dispatch(setCredentials({
+          user: {
+            id: decoded.sub,
+            email: decoded.email,
+            role: decoded.role,
+            isPremium: decoded.isPremium,
+          },
+          access_token: accessTokenFromQuery,
+        }));
+        setTimeout(() => {
+          console.log('Login.jsx: After OAuth setCredentials, state:', {
+            user: useSelector((state) => state.auth.user),
+            accessToken: useSelector((state) => state.auth.accessToken),
+          }); // Debug
+          const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
+          navigate(redirectPath, { replace: true });
+          toast.success('OAuth login successful!');
+        }, 100);
+      } catch (error) {
+        console.error('Login.jsx: OAuth callback error:', error); // Debug
+        toast.error('OAuth login failed. Please try again.');
+      }
+    }
+  }, [accessTokenFromQuery, userFromQuery, dispatch, navigate, redirectFromQuery]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -47,6 +74,16 @@ const Login = () => {
       }
     }
   }, [accessToken, user, navigate, location.pathname, redirectFromQuery]);
+
+  const handleGoogleLogin = () => {
+    const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
+    window.location.href = `https://backend-hx6c.onrender.com/autho/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  };
+
+  const handleGithubLogin = () => {
+    const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
+    window.location.href = `https://backend-hx6c.onrender.com/autho/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -68,12 +105,11 @@ const Login = () => {
         },
         access_token: res.access_token,
       }));
-      // Wait for Redux state to update
       setTimeout(() => {
         console.log('Login.jsx: After setCredentials, state:', {
           user: useSelector((state) => state.auth.user),
           accessToken: useSelector((state) => state.auth.accessToken),
-        }); // Debug with fresh state
+        }); // Debug
         const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
         navigate(redirectPath, { replace: true });
         toast.success('Login successful!');
@@ -99,8 +135,8 @@ const Login = () => {
         <Link to="/">Back to Home</Link>
       </button>
 
-      <header className="flex flex-col sm:absolute sm:top-10 sm:mt-[rem] lg:mt-[0] lg:top-20 items-center lg:pt-6 w-full">
-        <div className="w-full max-w-md px-4 -mt- lg:mt-0 md:px-6 lg:px-8">
+      <header className="flex flex-col lg:top-[5rem] items-center absolute top-[15rem] w-full">
+        <div className="w-full max-w-md px-4 lg:mt-0 md:px-6 lg:px-8">
           <div className="bg-[#070045] rounded-lg border-[#3A3A5A] border p-8 shadow-lg">
             <h1 className="text-center text-3xl font-bold mb-2">Welcome Back</h1>
             <p className="text-center text-gray-400 mb-8">
