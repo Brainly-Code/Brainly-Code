@@ -20,7 +20,6 @@ const Login = () => {
 
   const [login, { isLoading, error: loginError }] = useLoginMutation();
   const { user, accessToken } = useSelector((state) => state.auth);
-  console.log('Login.jsx: Redux state:', { user, accessToken, loginError }); // Debug
 
   const redirectFromQuery = new URLSearchParams(location.search).get('redirect');
   const searchParams = new URLSearchParams(location.search);
@@ -67,7 +66,6 @@ const Login = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (accessToken && user) {
-      console.log('Login.jsx: Already logged in, redirecting:', { user, accessToken }); // Debug
       const redirectPath = redirectFromQuery || getDefaultRedirect(user?.role);
       if (location.pathname === '/login' || location.pathname === '/register') {
         navigate(redirectPath, { replace: true });
@@ -88,14 +86,11 @@ const Login = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      console.log('Login.jsx: Sending login request:', { email, password }); // Debug
       const res = await login({ email, password }).unwrap();
-      console.log('Login.jsx: Login response:', res); // Debug
       if (!res.access_token) {
         throw new Error('No access token in response');
       }
       const decoded = jwtDecode(res.access_token);
-      console.log('Login.jsx: Decoded token:', decoded); // Debug
       dispatch(setCredentials({
         user: {
           id: decoded.sub,
@@ -106,10 +101,6 @@ const Login = () => {
         access_token: res.access_token,
       }));
       setTimeout(() => {
-        console.log('Login.jsx: After setCredentials, state:', {
-          user: useSelector((state) => state.auth.user),
-          accessToken: useSelector((state) => state.auth.accessToken),
-        }); // Debug
         const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
         navigate(redirectPath, { replace: true });
         toast.success('Login successful!');
@@ -135,8 +126,8 @@ const Login = () => {
         <Link to="/">Back to Home</Link>
       </button>
 
-      <header className="flex flex-col lg:top-[5rem] items-center absolute top-[15rem] w-full">
-        <div className="w-full max-w-md px-4 lg:mt-0 md:px-6 lg:px-8">
+      <header className="flex flex-col sm:absolute sm:top-10 sm:mt-[0] lg:top-20 items-center lg:pt-6 w-full">
+        <div className="w-full max-w-md px-4 -mt- lg:mt-0 md:px-6 lg:px-8">
           <div className="bg-[#070045] rounded-lg border-[#3A3A5A] border p-8 shadow-lg">
             <h1 className="text-center text-3xl font-bold mb-2">Welcome Back</h1>
             <p className="text-center text-gray-400 mb-8">

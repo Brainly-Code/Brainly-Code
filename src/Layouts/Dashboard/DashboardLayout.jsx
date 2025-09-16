@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import DashboardHeader from "./Components/DashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
@@ -20,6 +20,7 @@ const DashboardLayout = () => {
   // if (loading) {
   //   return <BgLoader />;
   // }
+
 
   if (!user) {
     console.log("No user info or access token found");

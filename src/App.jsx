@@ -17,12 +17,10 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       dispatch(setLoading(true));
-      console.log('App.jsx: Initial state:', { accessToken, user }); // Debug
       // Check if token is valid and not expired
       if (accessToken && user) {
         try {
           const decoded = jwtDecode(accessToken);
-          console.log('App.jsx: Decoded token:', decoded); // Debug
           if (decoded.exp * 1000 > Date.now()) {
             // Ensure user.id is set from sub
             if (!user.id) {
@@ -46,9 +44,7 @@ const App = () => {
 
         // Attempt refresh only if accessToken exists
         try {
-          console.log('App.jsx: Attempting token refresh'); // Debug
           const res = await refresh().unwrap();
-          console.log('App.jsx: Refresh response:', res); // Debug
           if (!res.access_token) {
             throw new Error('No access token in refresh response');
           }
@@ -64,19 +60,16 @@ const App = () => {
           }));
           navigateToRole(user?.role);
         } catch (error) {
-          console.error('App.jsx: Refresh failed:', error, { refreshError }); // Debug
           dispatch(Logout());
           navigate('/login', { replace: true });
         }
       } else {
-        console.log('App.jsx: No accessToken or user, redirecting to /login'); // Debug
         navigate('/login', { replace: true });
       }
       dispatch(setLoading(false));
     };
 
     const navigateToRole = (role) => {
-      console.log('App.jsx: Navigating to role:', role); // Debug
       if (role === 'USER') {
         navigate('/user', { replace: true });
       } else if (role === 'ADMIN' || role === 'SUPERADMIN') {

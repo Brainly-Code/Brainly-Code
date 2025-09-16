@@ -1,7 +1,7 @@
 import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://backend-hx6c.onrender.com", // or your deployed URL
+  baseUrl: "http://localhost:3000", // or your deployed URL
   credentials: "include",
 
   prepareHeaders: (headers, { getState }) => {
@@ -19,7 +19,6 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => {
-        console.log('apiSlice: Sending login request:', credentials); // Debug
         return {
           url: '/auth/login',
           method: 'POST',
@@ -27,7 +26,6 @@ export const apiSlice = createApi({
         };
       },
       transformResponse: (response) => {
-        console.log('apiSlice: Login response:', response); // Debug
         return response;
       },
       transformErrorResponse: (error) => {
@@ -44,14 +42,12 @@ export const apiSlice = createApi({
     }),
     refreshToken: builder.mutation({
       query: () => {
-        console.log('apiSlice: Sending refresh request'); // Debug
         return {
           url: '/auth/refresh',
           method: 'POST',
         };
       },
       transformResponse: (response) => {
-        console.log('apiSlice: Refresh response:', response); // Debug
         return response;
       },
       transformErrorResponse: (error) => {
