@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { jwtDecode } from "jwt-decode";
 import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateProfileImageMutation, useUpdateUserMutation } from "../redux/api/userSlice";
 import { setCredentials } from "../redux/Features/authSlice";
 import Loader from "./ui/Loader";
@@ -10,12 +9,11 @@ import profileFallback from "../assets/profile.png";
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.auth);
-  const token = jwtDecode(userInfo.access_token);
+  const { access_token, user: currentUser } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  const { data: user } = useGetCurrentUserQuery(token.sub);
-  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
+  const { data: user } = useGetCurrentUserQuery(currentUser?.id);
+  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(currentUser?.id);
   const [updateProfile, { isLoading: loadingUpdateProfile }] = useUpdateUserMutation();
   const [uploadProfileImage, { isLoading: uploading }] = useUpdateProfileImageMutation();
 
@@ -62,7 +60,7 @@ const Profile = () => {
   
     if (imageFile) {
       console.log(imageFile)
-      const cloudRes = await uploadProfileImage({ id: token.sub, imageFile }).unwrap();
+      const cloudRes = await uploadProfileImage({ id: currentUser?.id, imageFile }).unwrap();
       
       console.log(cloudRes)
       cloudinaryUrl = cloudRes?.url || cloudRes?.secure_url;
@@ -80,12 +78,12 @@ const Profile = () => {
     }
 
 
-    const res = await updateProfile({ id: token.sub, formData: profileData }).unwrap();
+    const res = await updateProfile({ id: currentUser?.id, formData: profileData }).unwrap();
 
     
     dispatch(setCredentials({
       ...res,
-      access_token: userInfo.access_token,
+      access_token: access_token,
     }));
   
     toast.success("Profile updated successfully");

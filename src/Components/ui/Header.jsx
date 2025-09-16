@@ -15,16 +15,9 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
- const { userInfo } = useSelector((state) => state.auth);
+ const { user } = useSelector((state) => state.auth);
 
-const userId = React.useMemo(() => {
-  if (!userInfo?.access_token) return null;
-  try {
-    return jwtDecode(userInfo.access_token).sub;
-  } catch {
-    return null;
-  }
-}, [userInfo]);
+const userId = user?.id;
   // // Update local isProMember state whenever userInfo changes
   // useEffect(() => {
   //   const decoded = jwtDecode(userInfo.access_token);

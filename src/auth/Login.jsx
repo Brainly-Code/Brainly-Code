@@ -2,10 +2,11 @@
 import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCredentials, Logout } from '../redux/Features/authSlice';
+import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useLoginMutation, useRefreshTokenMutation } from '../redux/api/userSlice';
+import { useLoginMutation } from '../redux/api/userSlice';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -17,48 +18,69 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [login, { isLoading }] = useLoginMutation();
-  const [refresh] = useRefreshTokenMutation();
-
-  const { user, access_token } = useSelector((state) => state.auth);
-
+  const [login, { isLoading, error: loginError }] = useLoginMutation();
+  const { user, accessToken } = useSelector((state) => state.auth);
+  console.log('Login info', { user, accessToken, loginError }); // Debug
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://backend-hx6c.onrender.com/autho/google";
+    window.location.href = 'https://backend-hx6c.onrender.com/autho/google';
   };
 
   const handleGithubLogin = () => {
-    window.location.href = "https://backend-hx6c.onrender.com/autho/github";
+    window.location.href = 'https://backend-hx6c.onrender.com/autho/github';
   };
 
   const redirectFromQuery = new URLSearchParams(location.search).get('redirect');
 
   const getDefaultRedirect = (role) => {
-    if (role === 'ADMIN') return '/admin';
+    if (role === 'ADMIN' || role === 'SUPERADMIN') return '/admin';
     return '/user';
   };
 
-  // Auto-refresh session if user is already logged in
+  // Redirect if already logged in
   useEffect(() => {
-  if (access_token) {
-    const redirectPath = redirectFromQuery || getDefaultRedirect(acess_token?.role);
-    if (location.pathname === '/login' || location.pathname === '/register') {
-      navigate(redirectPath, { replace: true });
+    if (accessToken && user) {
+      console.log('Login.jsx: Already logged in, redirecting:', { user, accessToken }); // Debug
+      const redirectPath = redirectFromQuery || getDefaultRedirect(user?.role);
+      if (location.pathname === '/login' || location.pathname === '/register') {
+        navigate(redirectPath, { replace: true });
+      }
     }
-  }
-}, [access_token, navigate, location.pathname, redirectFromQuery]);
-
+  }, [accessToken, user, navigate, location.pathname, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
+      console.log('Login.jsx: Sending login request:', { email, password }); // Debug
       const res = await login({ email, password }).unwrap();
-      dispatch(setCredentials({ user: res.user, access_token: res.access_token }));
-      const redirectPath = redirectFromQuery || getDefaultRedirect(res.user.role);
-      navigate(redirectPath, { replace: true });
-      window.location.reload();
+      console.log('Login.jsx: Login response:', res); // Debug
+      if (!res.access_token) {
+        throw new Error('No access token in response');
+      }
+      const decoded = jwtDecode(res.access_token);
+      console.log('Login.jsx: Decoded token:', decoded); // Debug
+      dispatch(setCredentials({
+        user: {
+          id: decoded.sub,
+          email: decoded.email,
+          role: decoded.role,
+          isPremium: decoded.isPremium,
+        },
+        access_token: res.access_token,
+      }));
+      // Wait for Redux state to update
+      setTimeout(() => {
+        console.log('Login.jsx: After setCredentials, state:', {
+          user: useSelector((state) => state.auth.user),
+          accessToken: useSelector((state) => state.auth.accessToken),
+        }); // Debug with fresh state
+        const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
+        navigate(redirectPath, { replace: true });
+        toast.success('Login successful!');
+      }, 100);
     } catch (error) {
-      window.location.reload(); 
+      console.error('Login.jsx: Login error:', error, { loginError }); // Debug
+      toast.error(error?.data?.message || 'Login failed. Please check your credentials or network.');
     }
   };
 
@@ -73,12 +95,12 @@ const Login = () => {
 
   return (
     <div className="min-h-screen pt-[5rem] bg-[#070045] text-white flex flex-col items-center justify-between">
-      <button className="py-3 ml-5 px-4 mt-4 text-gray-200 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-400 font-semibold hover:opacity-90 transition text-sm lg:absolute lg:top-4 lg:left-4">
+      <button className="py-3 px-4 text-gray-200 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-400 font-semibold hover:opacity-90 transition text-sm lg:absolute lg:top-4 lg:left-4">
         <Link to="/">Back to Home</Link>
       </button>
 
       <header className="flex flex-col sm:absolute sm:top-10 sm:mt-[rem] lg:mt-[0] lg:top-20 items-center lg:pt-6 w-full">
-        <div className="w-full max-w-md px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md px-4 -mt- lg:mt-0 md:px-6 lg:px-8">
           <div className="bg-[#070045] rounded-lg border-[#3A3A5A] border p-8 shadow-lg">
             <h1 className="text-center text-3xl font-bold mb-2">Welcome Back</h1>
             <p className="text-center text-gray-400 mb-8">

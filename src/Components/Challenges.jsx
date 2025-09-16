@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useGetChallengesQuery, useToggleChallengeLikeMutation } from "../redux/api/challengeSlice";
 import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import TextGenerateEffect from "./ui/TextGenerate";
 import Footer from "./ui/Footer";
@@ -16,8 +15,8 @@ const Challenges = () => {
   const [toggleLike] = useToggleChallengeLikeMutation();
   const [challengesState, setChallengesState] = useState([]);
 
-  const { userInfo } = useSelector((state) => state.auth);
-  const token = jwtDecode(userInfo.access_token);
+  const { user } = useSelector((state) => state.auth);
+
 
   // Local state for search
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,12 +30,12 @@ const Challenges = () => {
   useEffect(() => {
     if (challenges) {
       const withLikes = challenges.map((ch) => {
-        const userHasLiked = ch.likesList?.some((like) => like.userId === token.sub) || false;
+        const userHasLiked = ch.likesList?.some((like) => like.userId === user?.id) || false;
         return { ...ch, userHasLiked };
       });
       setChallengesState(withLikes);
     }
-  }, [challenges, token.sub]);
+  }, [challenges, user?.id]);
 
   // Click outside → hide search hints
   useEffect(() => {
