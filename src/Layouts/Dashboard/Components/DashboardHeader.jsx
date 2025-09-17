@@ -10,7 +10,6 @@ import {
   useGetUserByIdQuery,
   useLogoutMutation,
 } from "../../../redux/api/userSlice";
-import { Logout } from "../../../redux/Features/authSlice";
 
 import { FiSearch } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
@@ -19,10 +18,11 @@ import { jwtDecode } from "jwt-decode";
 import { useGetUnreadCountsQuery } from "../../../redux/api/messageSlice";
 import Chat from "../../../Components/Chat";
 import BrainlyCodeIcon from "../../../Components/BrainlyCodeIcon";
+import { logout } from "../../../redux/Features/authSlice";
 
 const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const [openChat, setOpenChat] = useState(false);
-  const [searchActive, setSearchActive] = useState(false); 
+  const [searchActive, setSearchActive] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const searchRef = useRef(null);
@@ -39,7 +39,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
 
   const imagePath = image?.path ? image.path : profileFallback;
 
-    useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setSearchActive(false);
@@ -53,19 +53,20 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [searchActive]);
 
-  const [logoutApiCall] = useLogoutMutation();
+  const [logoutApiCall, { isLoading: isLoggingOut }] = useLogoutMutation();
 
-  const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
+  const { data: unreadNotifications } = useGetUnreadCountsQuery(userId);
 
-  const {data: selectedUser} = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
+  const { data: selectedUser } = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
 
   const logoutHandler = async () => {
     try {
-      await logoutApiCall().unwrap();
-      dispatch(Logout());
+      const res = await logoutApiCall().unwrap(); // backend should clear cookie
+      dispatch(logout());
       navigate("/login");
+      toast.success("Logout successful");
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      toast.error("Logout failed");
     }
   };
 
@@ -74,7 +75,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   };
 
   if (loadingImage) return <div className="p-4 text-white">Loading...</div>;
-  if(isError) {
+  if (isError) {
     console.log(isError);
   }
 
@@ -107,7 +108,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
                 )}
               </div>
               <img
-                src={ user?.photo ? user?.photo : imagePath }
+                src={user?.photo ? user?.photo : imagePath}
                 className="rounded-full h-10 w-10 object-cover"
                 alt="Profile"
                 onClick={() => navigate("/admin/profile")}

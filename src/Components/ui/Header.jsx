@@ -3,21 +3,21 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogoutMutation, useUpgradeToProMutation, useGetProfileImageQuery } from '../../redux/api/userSlice';
-import { Logout, setCredentials } from '../../redux/Features/authSlice';
+import { logout, setCredentials } from '../../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { FloatingNav } from './FloatingNav';
 import BrainlyCodeIcon from '../BrainlyCodeIcon';
 import profileFallback from "../../assets/profile.png";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Loader from './Loader';
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
- const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
-const userId = user?.id;
+  const userId = user?.id;
   // // Update local isProMember state whenever userInfo changes
   // useEffect(() => {
   //   const decoded = jwtDecode(userInfo.access_token);
@@ -38,7 +38,7 @@ const userId = user?.id;
       ? image.path
       : profileFallback;
 
-  const [logoutApiCall] = useLogoutMutation();
+  const [logoutApiCall, { isLoading: isLoggingOut }] = useLogoutMutation();
   // const [upgradeToPro, { isLoading: isUpgrading }] = useUpgradeToProMutation();
   // const [showUpgradeMessage, setShowUpgradeMessage] = useState(false);
 
@@ -51,12 +51,12 @@ const userId = user?.id;
 
   const logoutHandler = async () => {
     try {
-      await logoutApiCall().unwrap();
-      dispatch(Logout());
-      navigate('/login');
-      toast.success('Logged out successfully');
+      const res = await logoutApiCall().unwrap(); // backend should clear cookie
+      dispatch(logout());
+      navigate("/login");      
+      toast.success("Logout successful");
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      toast.error("Logout failed");
     }
   };
 
@@ -77,7 +77,7 @@ const userId = user?.id;
   //   }
   // };
 
-  if(loadingImage) {
+  if (loadingImage) {
     return <Loader />
   }
 
@@ -119,7 +119,7 @@ const userId = user?.id;
               </li>
             )}
               */}
-            
+
 
             <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
               <button onClick={logoutHandler}>

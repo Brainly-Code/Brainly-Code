@@ -4,23 +4,23 @@ import { Navigate, Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const Home = () => {
-  const { userInfo } = useSelector((state) => state.auth);
+  // const { userInfo } = useSelector((state) => state.auth);
 
-  const accessToken = userInfo?.accessToken;
+  // const accessToken = userInfo?.accessToken;
   
 
-  let role = null;
-  try {
-    const decoded = jwtDecode(accessToken);
-    role = decoded.role; 
-  } catch (error) {
-    console.error("Invalid token:", error);
-    // return <Navigate to="/login" replace />;
-  }
+  // let role = null;
+  // try {
+  //   const decoded = jwtDecode(accessToken);
+  //   role = decoded.role; 
+  // } catch (error) {
+  //   console.error("Invalid token:", error);
+  //   // return <Navigate to="/login" replace />;
+  // }
 
-  if (role === "ADMIN" || role === "SUPERADMIN") {
-    return <Navigate to="/admin" replace />;
-  }
+  // if (role === "ADMIN" || role === "SUPERADMIN") {
+  //   return <Navigate to="/admin" replace />;
+  // }
 
   return <Outlet />;
 };

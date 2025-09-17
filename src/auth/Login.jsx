@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FaGoogle, FaGithub, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCredentials } from '../redux/Features/authSlice';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useLoginMutation } from '../redux/api/userSlice';
-import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
+import { setCredentials } from '../redux/Features/authSlice';
 
 const Login = () => {
   const [password, setPassword] = useState('');
@@ -18,96 +17,64 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [login, { isLoading, error: loginError }] = useLoginMutation();
-  const { user, accessToken } = useSelector((state) => state.auth);
+  const [login, { isLoading }] = useLoginMutation();
+  const { user, access_token } = useSelector(state => state.auth);
+  if(user) {
+    if(user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') {
+      navigate('/admin', { replace: true });
+    }
+  }
+
+  const handleGoogleLogin = () => {
+    window.location.href = "https://backend-hx6c.onrender.com/autho/google";
+  };
+
+  const handleGithubLogin = () => {
+    window.location.href = "https://backend-hx6c.onrender.com/autho/github";
+  };
 
   const redirectFromQuery = new URLSearchParams(location.search).get('redirect');
-  const searchParams = new URLSearchParams(location.search);
-  const accessTokenFromQuery = searchParams.get('access_token');
-  const userFromQuery = searchParams.get('user');
 
   const getDefaultRedirect = (role) => {
     if (role === 'ADMIN' || role === 'SUPERADMIN') return '/admin';
     return '/user';
   };
+  // useEffect(() => {
+  //   if (user) {
+  //     if (user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') {
+  //       navigate('/admin', { replace: true });
+  //     }
+  //   } else {
+  //     navigate('/user', { replace: true });
+  //   }
+  // });
 
-  // Handle OAuth callback
   useEffect(() => {
-    if (accessTokenFromQuery && userFromQuery) {
-      try {
-        const decoded = jwtDecode(accessTokenFromQuery);
-        const userData = JSON.parse(userFromQuery);
-        console.log('Login.jsx: OAuth callback:', { accessToken: accessTokenFromQuery, user: userData, decoded }); // Debug
-        dispatch(setCredentials({
-          user: {
-            id: decoded.sub,
-            email: decoded.email,
-            role: decoded.role,
-            isPremium: decoded.isPremium,
-          },
-          access_token: accessTokenFromQuery,
-        }));
-        setTimeout(() => {
-          console.log('Login.jsx: After OAuth setCredentials, state:', {
-            user: useSelector((state) => state.auth.user),
-            accessToken: useSelector((state) => state.auth.accessToken),
-          }); // Debug
-          const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
-          navigate(redirectPath, { replace: true });
-          toast.success('OAuth login successful!');
-        }, 100);
-      } catch (error) {
-        console.error('Login.jsx: OAuth callback error:', error); // Debug
-        toast.error('OAuth login failed. Please try again.');
-      }
-    }
-  }, [accessTokenFromQuery, userFromQuery, dispatch, navigate, redirectFromQuery]);
-
-  // Redirect if already logged in
-  useEffect(() => {
-    if (accessToken && user) {
+    if (user && access_token) {
       const redirectPath = redirectFromQuery || getDefaultRedirect(user?.role);
       if (location.pathname === '/login' || location.pathname === '/register') {
         navigate(redirectPath, { replace: true });
       }
     }
-  }, [accessToken, user, navigate, location.pathname, redirectFromQuery]);
-
-  const handleGoogleLogin = () => {
-    const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/autho/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
-  };
-
-  const handleGithubLogin = () => {
-    const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/autho/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
-  };
+  }, [user, access_token, navigate, location.pathname, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
-      if (!res.access_token) {
-        throw new Error('No access token in response');
+      console.log(res);
+      dispatch(setCredentials({ user: res.user, access_token: res.access_token }));
+      toast.success('Login successful!');
+      if (res?.user?.role === 'ADMIN' || res?.user?.role === 'SUPERADMIN') {
+        navigate('/admin', { replace: true });
+      }else {
+        navigate('/user', { replace: true });
       }
-      const decoded = jwtDecode(res.access_token);
-      dispatch(setCredentials({
-        user: {
-          id: decoded.sub,
-          email: decoded.email,
-          role: decoded.role,
-          isPremium: decoded.isPremium,
-        },
-        access_token: res.access_token,
-      }));
-      setTimeout(() => {
-        const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
-        navigate(redirectPath, { replace: true });
-        toast.success('Login successful!');
-      }, 100);
+      window.location.reload();
+      // Redirect will happen in useEffect above
     } catch (error) {
-      console.error('Login.jsx: Login error:', error, { loginError }); // Debug
-      toast.error(error?.data?.message || 'Login failed. Please check your credentials or network.');
+      toast.error(error?.data?.message || 'Login failed. Please try again.');
+      console.error('Login error:', error);
     }
   };
 
@@ -135,7 +102,7 @@ const Login = () => {
             </p>
 
             <form onSubmit={submitHandler} className="flex flex-col items-center">
-              {!open ? (
+              {!open && (
                 <>
                   <div className="w-full mb-4">
                     <input
@@ -164,7 +131,8 @@ const Login = () => {
                     <hr className="w-full h-1 border-gray-600" />
                   </div>
                 </>
-              ) : (
+              )}
+              {open && (
                 <>
                   <div className="w-full mb-4 relative">
                     <input

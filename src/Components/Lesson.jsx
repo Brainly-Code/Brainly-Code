@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { toast } from 'react-toastify';
-import { Logout } from '../redux/Features/authSlice';
 import Loader from './ui/Loader';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';

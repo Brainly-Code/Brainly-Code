@@ -11,16 +11,12 @@ import { FiHome } from "react-icons/fi";
 import { FaRegUser, FaStar } from "react-icons/fa";
 import { MdContacts, MdOutlineReviews } from "react-icons/md";
 import { BsGraphUp } from "react-icons/bs";
+import BgLoader from "../../Components/ui/BgLoader.jsx";
 
 const DashboardLayout = () => {
-  const { user, accessToken } = useSelector((state) => state.auth);
+  const { user, isLoadingUser } = useSelector((state) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-
-  // if (loading) {
-  //   return <BgLoader />;
-  // }
-
 
   if (!user) {
     console.log("No user info or access token found");
@@ -29,13 +25,16 @@ const DashboardLayout = () => {
 
   let role;
   try {
-    const decoded = jwtDecode(accessToken);
-    role = decoded.role;
+    role = user?.role;
   } catch (error) {
     console.error("Invalid token:", error);
     return <Navigate to="/login" replace />;
   }
 
+  if(isLoadingUser) {
+    return <BgLoader />
+  }
+  
   if (role === "USER") {
     return <Navigate to="/user" replace />;
   }

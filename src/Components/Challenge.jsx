@@ -19,7 +19,7 @@ const Challenge = () => {
   const { data: challenge } = useGetChallengeByIdQuery(id.id);
   const { data: instructions = [], isLoading: isInstructionsLoading, error } = useGetChallengeInstructionsQuery(id.id);
 
-  const [completeChallenge, { isLoading: isCompleting }] = useCompleteChallengeMutation();
+  const [ completeChallenge, { isLoading: isCompleting }] = useCompleteChallengeMutation();
 
   const toggleStepCompletion = (instructionId) => {
     setCompletedSteps((prev) =>

@@ -2,12 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
 import { ErrorBoundary } from './ErrorBoundary';
 import './index.css';
 import Login from './auth/Login';
 import Register from './auth/Register';
-import store, { persistor } from './redux/store';
+import store from './redux/store';
 import App from './App';
 import { Hero } from './Components/Hero';
 import UpdateUser from './Components/UpdateUser';
@@ -39,42 +38,44 @@ import ChallengeCompleters from './Admin/ChallengeCompleters.jsx';
 import Chat from './Components/Chat.jsx';
 import Reviews from './Admin/Reviews.jsx';
 import UserCourses from './Components/Courses.jsx';
-import BgLoader from './Components/ui/BgLoader.jsx';
 import { useSelector } from 'react-redux';
+import { useGetCurrentUserQuery } from './redux/api/apiSlice.jsx';
 
-// ProtectedRoute component to guard routes requiring authentication
-// const ProtectedRoute = ({ children }) => {
-//   const { accessToken, user } = useSelector((state) => state.auth);
-//   const isAuthenticated = !!accessToken && !!user;
+const ProtectedRoute = ({ children, requireAdmin = false }) => {
+  const { user, access_token } = useSelector(state => state.auth);
+  const isAuthenticated = !!access_token && !!user;
 
-//   console.log(accessToken)
-//   if (!isAuthenticated) {
-//     console.log('ProtectedRoute: Not authenticated, redirecting to /login'); // Debug
-//     return <Navigate to="/login" replace />;
-//   }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-//   return children;
-// };
+  if (requireAdmin && user.role !== 'ADMIN' && user.role !== 'SUPERADMIN') {
+    return <Navigate to="/user" replace />;
+  }
+
+  return children;
+};
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      {/* Public Routes */}
       <Route path="/" element={<NewUser />}>
         <Route index element={<Hero />} />
+        <Route path="auth/callback" element={<Login />} />
         <Route path="not-done" element={<NotDoneError />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
       </Route>
       <Route path="/error" element={<RouteError />} />
-
-      {/* Protected Routes */}
       <Route
         path="/"
         element={
           <App />
+          // <ProtectedRoute>
+          //   <App />
+          // </ProtectedRoute>
         }
       >
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
         <Route path="user" element={<Home />}>
           <Route index element={<HomePage />} />
           <Route path="courses" element={<UserCourses />} />
@@ -89,7 +90,15 @@ const router = createBrowserRouter(
           <Route path="community" element={<Community />} />
           <Route path="chat" element={<Chat />} />
         </Route>
-        <Route path="admin" element={<DashboardLayout />}>
+        <Route
+          path="admin"
+          element={
+            <DashboardLayout />
+            // <ProtectedRoute requireAdmin={true}>
+            //   <DashboardLayout />
+            // </ProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="challenges" element={<AdminChallenges />} />
           <Route path="completers/:id" element={<ChallengeCompleters />} />
@@ -109,17 +118,14 @@ const router = createBrowserRouter(
   )
 );
 
-// Ensure single createRoot call
 const rootElement = document.getElementById('root');
 if (!rootElement._reactRootContainer) {
   const root = ReactDOM.createRoot(rootElement);
-  rootElement._reactRootContainer = root; // Store root to prevent re-creation
+  rootElement._reactRootContainer = root;
   root.render(
     <ErrorBoundary>
       <Provider store={store}>
-        <PersistGate loading={<BgLoader />} persistor={persistor}>
-          <RouterProvider router={router} />
-        </PersistGate>
+        <RouterProvider router={router} />
       </Provider>
     </ErrorBoundary>
   );
