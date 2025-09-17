@@ -14,8 +14,7 @@ const Challenge = () => {
   const [completedSteps, setCompletedSteps] = useState([]);
   const id = useParams();
   const navigate = useNavigate();
-  const { userInfo } = useSelector(state => state.auth);
-
+  const { access_token, user } = useSelector((state) => state.auth);
 
   const { data: challenge } = useGetChallengeByIdQuery(id.id);
   const { data: instructions = [], isLoading: isInstructionsLoading, error } = useGetChallengeInstructionsQuery(id.id);
@@ -33,7 +32,7 @@ const Challenge = () => {
 
   const handleContinueSubmit = async (e) => {
     e.preventDefault();
-    const userId = userInfo?.sub; 
+    const userId = user?.id; 
     const challengeId = Number(id.id);
 
     if (!Number.isInteger(userId) || !Number.isInteger(challengeId)) {

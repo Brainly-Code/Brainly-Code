@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Header from './ui/Header'
-import user from '../assets/whiteUser.png'
+import profile from '../assets/whiteUser.png'
 import messenger from '../assets/messenger.png'
 import Footer from './ui/Footer'
 import conversation from '../assets/conversation.png'
@@ -27,8 +27,10 @@ export const Community = () => {
   const [showSearchHints, setShowSearchHints] = useState(true);
   const searchRef = useRef(null);
 
-  const { userInfo } = useSelector(state => state.auth);
-  const currentUserId = userInfo?.sub;
+  const { user } = useSelector((state) => state.auth);
+  
+  const currentUserId = user?.id;
+  console.log("Current User ID:", currentUserId);
 
   const { data: unreadCounts } = useGetUnreadCountsQuery(currentUserId);
   // unreadCounts: [{ senderId: 2, _count: { id: 3 } }, ...]
@@ -126,7 +128,7 @@ export const Community = () => {
   };
 
   return (
-    <div className="bg-[#0D0056] w-[60rem] md:w-[180%] lg:w-full h-[135rem] md:min-h-[200%] lg:min-h-screen flex flex-col">
+    <div className="bg-[#0D0056] w-[60rem] lg:h-[100%] md:w-[180%] lg:w-full h-[135rem] md:min-h-[200%] lg:min-h-screen flex flex-col">
       {!openChat && <Header />}
 
       <div className='flex gap-10 pl-[40rem]'>
@@ -200,7 +202,7 @@ export const Community = () => {
                     {/* Profile Image */}
                     <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
                       <img
-                        src={!communityUser?.photo ? user : communityUser?.photo}
+                        src={!communityUser?.photo ? profile : communityUser?.photo}
                         alt="profile"
                         className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
                       />
@@ -265,7 +267,7 @@ export const Community = () => {
       </div>
 
       {/* Floating Chat Button */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed lg:bottom-6 bottom-[27rem] right-20  lg:right-6 lg:z-40">
         <div className="relative">
           <img
             src={conversation}

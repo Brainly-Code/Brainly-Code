@@ -1,53 +1,87 @@
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useRefreshTokenMutation } from "./redux/api/userSlice";
-import { useEffect } from "react";
-import BgLoader from "./Components/ui/BgLoader";
-import { Logout, setCredentials, setLoading } from "./redux/Features/authSlice";
-import { jwtDecode } from "jwt-decode";
+import { useDispatch, useSelector } from 'react-redux';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useRefreshTokenMutation } from './redux/api/userSlice';
+import { useEffect } from 'react';
+import BgLoader from './Components/ui/BgLoader';
+import { Logout, setCredentials, setLoading } from './redux/Features/authSlice';
+import { jwtDecode } from 'jwt-decode';
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [refresh] = useRefreshTokenMutation();
-  const { loading } = useSelector((state) => state.auth);
-  let userToken;
+  const [refresh, { isLoading: isRefreshing, error: refreshError }] = useRefreshTokenMutation();
+  const { loading, accessToken, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const checkAuth = async () => {
       dispatch(setLoading(true));
-      try {
-        const res = await refresh().unwrap();
-        
-        const user = jwtDecode(res.access_token);
-        console.log("Refresh response:", res);
-        dispatch(setCredentials({user: jwtDecode(res?.access_token), access_token: res.access_token }));
-
-        if(user?.role === "USER") {
-          console.log("USER role is user");
-          return navigate("/user", { replace: true });
-        }else if(user?.role === "ADMIN") {
-          console.log("USER role is admin");
-          return navigate("/admin", { replace: true });
-        }else if(user?.role === "SUPERADMIN") {
-          console.log("USER role is super admin");
-          return navigate("/admin", { replace: true });
+      // Check if token is valid and not expired
+      if (accessToken && user) {
+        try {
+          const decoded = jwtDecode(accessToken);
+          if (decoded.exp * 1000 > Date.now()) {
+            // Ensure user.id is set from sub
+            if (!user.id) {
+              dispatch(setCredentials({
+                user: { 
+                  id: user?.id,
+                  email: user?.email,
+                  role: user?.role,
+                  isPremium: user?.isPremium,
+                },
+                access_token: accessToken,
+              }));
+            }
+            navigateToRole(user?.role);
+            dispatch(setLoading(false));
+            return;
+          }
+        } catch (error) {
+          console.error('App.jsx: Invalid stored token:', error);
         }
-        
-      } catch (error) {
-        console.error("Refresh failed:", error);
-        dispatch(Logout());
-      } finally {
-        dispatch(setLoading(false));
+
+        // Attempt refresh only if accessToken exists
+        try {
+          const res = await refresh().unwrap();
+          if (!res.access_token) {
+            throw new Error('No access token in refresh response');
+          }
+          const decoded = jwtDecode(res.access_token);
+          dispatch(setCredentials({
+            user: {
+              id: decoded.sub,
+              email: decoded.email,
+              role: decoded.role,
+              isPremium: decoded.isPremium,
+            },
+            access_token: res.access_token,
+          }));
+          navigateToRole(user?.role);
+        } catch (error) {
+          dispatch(Logout());
+          navigate('/login', { replace: true });
+        }
+      } else {
+        navigate('/login', { replace: true });
       }
+      dispatch(setLoading(false));
+    };
+
+    const navigateToRole = (role) => {
+      if (role === 'USER') {
+        navigate('/user', { replace: true });
+      } else if (role === 'ADMIN' || role === 'SUPERADMIN') {
+        navigate('/admin', { replace: true });
+      }
+
     };
 
     checkAuth();
-  }, [dispatch, refresh]);
+  }, [dispatch, navigate, refresh]);
 
-  if (loading) {
+  if (loading || isRefreshing) {
     return <BgLoader />;
   }
 
@@ -55,7 +89,7 @@ const App = () => {
     <div>
       <ToastContainer />
       <main>
-        <Outlet />
+        <Outlet /> {/* Render protected routes */}
       </main>
     </div>
   );

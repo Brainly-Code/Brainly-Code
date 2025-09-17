@@ -25,8 +25,8 @@ export const Chat = ({ chatWith }) => {
   const [hasMore, setHasMore] = useState(true); // Track if more messages are available
   const messagesPerPage = 20; // Adjust based on your backend
   const { data: users = [], isLoading: usersLoading } = useGetUsersQuery();
-  const { userInfo } = useSelector((state) => state.auth);
-  const userId = userInfo?.sub;
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?.id;
 
   const { data: unreadCounts = [], refetch: refetchUnread } = useGetUnreadCountsQuery(userId, { skip: !userId });
   const [readMessages] = useReadMessagesMutation();

@@ -1,10 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
-import { Logout } from '../redux/Features/authSlice';
-import { FloatingNav } from './ui/FloatingNav';
-import BrainlyCodeIcon from './BrainlyCodeIcon';
 import TextGenerateEffect from './ui/TextGenerate';
-import CodeEditor from './CodeEditor';
 import Header from './ui/Header';
 import { useGetChallengesQuery } from '../redux/api/challengeSlice';
 import PlaygroundCodeEditor from './PlaygroundCodeEditor';

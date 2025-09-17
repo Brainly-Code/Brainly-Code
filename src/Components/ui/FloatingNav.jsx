@@ -9,11 +9,7 @@ import {
 } from "framer-motion";
 
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { useLogoutMutation } from "../../redux/api/userSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
+import { useSelector } from "react-redux";
 import { useGetUnreadCountsQuery } from "../../redux/api/messageSlice";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -23,8 +19,8 @@ export const FloatingNav = ({ navItems, className }) => {
   const [visible, setVisible] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const {userInfo} = useSelector((state) => state.auth);
-  const userId = userInfo?.sub;
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?.id;
   useMotionValueEvent(scrollYProgress, "change", (current) => {
     // Show nav whenever scroll is beyond 5%
     setVisible(current > 0.05);

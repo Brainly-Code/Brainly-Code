@@ -63,7 +63,7 @@ const GraphSection = () => {
     <ResponsiveContainer width="100%" height={300}>
       <ComposedChart data={data}>
         <XAxis dataKey="month" />
-        <YAxis />
+        <YAxis dataKey="Users" />
         <Tooltip />
         <Legend />
         <Bar dataKey="Users" fill="#19179B" />

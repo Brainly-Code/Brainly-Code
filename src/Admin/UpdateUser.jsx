@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateProfileImageMutation, useUpdateUserMutation } from "../redux/api/userSlice";
-import { setCredentials, setLoading } from "../redux/Features/authSlice";
+import { setCredentials } from "../redux/Features/authSlice";
 import Loader from "./ui/Loader";
 import profileFallback from "../assets/profile.png";
 
@@ -55,9 +55,8 @@ const Profile = () => {
   }
 
   try {
-
     let cloudinaryUrl;
-    dispatch(setLoading(true));
+
   
     if (imageFile) {
       console.log(imageFile)
@@ -81,13 +80,15 @@ const Profile = () => {
 
     const res = await updateProfile({ id: currentUser?.id, formData: profileData }).unwrap();
 
+    
+    dispatch(setCredentials({
+      ...res,
+      access_token: access_token,
+    }));
   
-
     toast.success("Profile updated successfully");
   } catch (err) {
     toast.error(err?.data?.message || err.message);
-  } finally {
-    dispatch(setLoading(false))
   }
 };
     const imagePath =

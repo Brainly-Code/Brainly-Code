@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useGetChallengesQuery, useToggleChallengeLikeMutation } from "../redux/api/challengeSlice";
 import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 import TextGenerateEffect from "./ui/TextGenerate";
 import Footer from "./ui/Footer";
@@ -16,7 +15,7 @@ const Challenges = () => {
   const [toggleLike] = useToggleChallengeLikeMutation();
   const [challengesState, setChallengesState] = useState([]);
 
-  const { userInfo } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
 
   // Local state for search
@@ -31,12 +30,12 @@ const Challenges = () => {
   useEffect(() => {
     if (challenges) {
       const withLikes = challenges.map((ch) => {
-        const userHasLiked = ch.likesList?.some((like) => like.userId === userInfo?.sub) || false;
+        const userHasLiked = ch.likesList?.some((like) => like.userId === user?.id) || false;
         return { ...ch, userHasLiked };
       });
       setChallengesState(withLikes);
     }
-  }, [challenges, userInfo?.sub]);
+  }, [challenges, user?.id]);
 
   // Click outside → hide search hints
   useEffect(() => {
@@ -51,9 +50,13 @@ const Challenges = () => {
 
   if (error) toast.error(error);
 
+  useEffect(()=>{
+    console.log("user:",user);
+  },[user])
+
   const handleLikeClick = async (challengeId) => {
     try {
-      const res = await toggleLike({ id: challengeId, userId: userInfo?.sub }).unwrap();
+      const res = await toggleLike({ id: challengeId, userId: user?.id }).unwrap();
       toast.success(res.message);
 
       setChallengesState((prev) =>
@@ -69,8 +72,9 @@ const Challenges = () => {
       );
 
       refetch();
-    } catch {
+    } catch (error) {
       toast.error("Failed to like challenge");
+      console.log("error: ",error.message)
     }
   };
 

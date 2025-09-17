@@ -121,7 +121,6 @@ export const Hero = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {courses?.map((course, index) => (
             <div key={index} className="flex flex-col items-center">
-              {console.log(course)}
               <div className="rounded-md bg-gradient-to-r from-green-800 to-purple-950 w-64 h-44 flex justify-center items-center">
                 <div className="rounded-full bg-blue-900 w-16 h-16 flex items-center justify-center">
                   <p className="font-bold text-lg">{"</>"}</p>

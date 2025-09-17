@@ -16,8 +16,8 @@ const Progress = () => {
   const [startProgress, { isLoading }] = useCreateLessonProgressMutation();
   const [trackProgress] = useTrackLessonProgressMutation();
   const { data: lessonProgress } = useGetLessonProgressQuery(lessonId);
-  const { userInfo } = useSelector(state => state.auth);
-  const userId = userInfo?.sub;
+  const { user } = useSelector(state => state.auth);
+  const userId = user?.id;
 
   useEffect(() => {
     if (lessonProgress?.currentStep === 0) {

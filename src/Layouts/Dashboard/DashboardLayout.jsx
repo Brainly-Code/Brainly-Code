@@ -11,16 +11,11 @@ import { FiHome } from "react-icons/fi";
 import { FaRegUser, FaStar } from "react-icons/fa";
 import { MdContacts, MdOutlineReviews } from "react-icons/md";
 import { BsGraphUp } from "react-icons/bs";
-import BgLoader from "../../Components/ui/BgLoader.jsx";
 
 const DashboardLayout = () => {
-  const { userInfo, loading } = useSelector((state) => state.auth);
+  const { user: userInfo, loading } = useSelector((state) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log(loading);
-  },[loading])
 
   if (loading) {
     return <BgLoader />;

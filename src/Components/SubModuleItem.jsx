@@ -4,7 +4,6 @@ import downArrow from '../assets/downArrow.png';
 import { Link } from 'react-router-dom';
 import { useGetLessonsForSubModuleQuery } from '../redux/api/LessonSlice';
 import { useGetLessonVideosByMiniModuleQuery } from '../redux/api/lessonVideoApi';
-import Loader from './ui/Loader';
 
 const SubModuleItem = ({ title, moduleId, id }) => {
   const [open, setOpen] = useState(false);
