@@ -17,8 +17,7 @@ const Progress = () => {
   const [trackProgress] = useTrackLessonProgressMutation();
   const { data: lessonProgress } = useGetLessonProgressQuery(lessonId);
   const { userInfo } = useSelector(state => state.auth);
-  const token = jwtDecode(userInfo?.access_token);
-  const userId = token.sub;
+  const userId = userInfo?.sub;
 
   useEffect(() => {
     if (lessonProgress?.currentStep === 0) {

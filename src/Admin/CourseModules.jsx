@@ -87,6 +87,7 @@ const Modules = () => {
       formData.append('courseId', id);
       formData.append('file', fileUpload);
       formData.append('type', uploadType);
+      console.log(fileUpload);
       await createCourseResource({courseId:id,formData}).unwrap();// RTK mutation for course resources
       setFileTitle('');
       setFileUpload(null);

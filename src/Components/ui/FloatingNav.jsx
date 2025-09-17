@@ -24,8 +24,7 @@ export const FloatingNav = ({ navItems, className }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const {userInfo} = useSelector((state) => state.auth);
-  const decoded = userInfo?.access_token ? jwtDecode(userInfo.access_token) : null;
-  const userId = decoded?.sub;
+  const userId = userInfo?.sub;
   useMotionValueEvent(scrollYProgress, "change", (current) => {
     // Show nav whenever scroll is beyond 5%
     setVisible(current > 0.05);

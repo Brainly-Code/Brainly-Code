@@ -28,8 +28,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const searchRef = useRef(null);
 
   const { userInfo } = useSelector((state) => state.auth);
-  const decoded = userInfo?.access_token ? jwtDecode(userInfo.access_token) : null;
-  const userId = decoded?.sub;
+  const userId = userInfo?.sub;
 
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(userId, {
     skip: !userId,

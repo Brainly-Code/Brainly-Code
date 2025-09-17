@@ -16,7 +16,6 @@ const Challenge = () => {
   const navigate = useNavigate();
   const { userInfo } = useSelector(state => state.auth);
 
-  const token = jwtDecode(userInfo?.access_token);
 
   const { data: challenge } = useGetChallengeByIdQuery(id.id);
   const { data: instructions = [], isLoading: isInstructionsLoading, error } = useGetChallengeInstructionsQuery(id.id);
@@ -34,7 +33,7 @@ const Challenge = () => {
 
   const handleContinueSubmit = async (e) => {
     e.preventDefault();
-    const userId = token?.sub; 
+    const userId = userInfo?.sub; 
     const challengeId = Number(id.id);
 
     if (!Number.isInteger(userId) || !Number.isInteger(challengeId)) {

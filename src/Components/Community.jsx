@@ -28,8 +28,7 @@ export const Community = () => {
   const searchRef = useRef(null);
 
   const { userInfo } = useSelector(state => state.auth);
-  const token = jwtDecode(userInfo.access_token);
-  const currentUserId = token.sub;
+  const currentUserId = userInfo?.sub;
 
   const { data: unreadCounts } = useGetUnreadCountsQuery(currentUserId);
   // unreadCounts: [{ senderId: 2, _count: { id: 3 } }, ...]

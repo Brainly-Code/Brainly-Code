@@ -26,8 +26,7 @@ export const Chat = ({ chatWith }) => {
   const messagesPerPage = 20; // Adjust based on your backend
   const { data: users = [], isLoading: usersLoading } = useGetUsersQuery();
   const { userInfo } = useSelector((state) => state.auth);
-  const token = userInfo?.access_token ? jwtDecode(userInfo.access_token) : null;
-  const userId = token?.sub;
+  const userId = userInfo?.sub;
 
   const { data: unreadCounts = [], refetch: refetchUnread } = useGetUnreadCountsQuery(userId, { skip: !userId });
   const [readMessages] = useReadMessagesMutation();

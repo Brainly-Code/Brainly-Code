@@ -17,7 +17,7 @@ const Challenges = () => {
   const [challengesState, setChallengesState] = useState([]);
 
   const { userInfo } = useSelector((state) => state.auth);
-  const token = jwtDecode(userInfo.access_token);
+
 
   // Local state for search
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,12 +31,12 @@ const Challenges = () => {
   useEffect(() => {
     if (challenges) {
       const withLikes = challenges.map((ch) => {
-        const userHasLiked = ch.likesList?.some((like) => like.userId === token.sub) || false;
+        const userHasLiked = ch.likesList?.some((like) => like.userId === userInfo?.sub) || false;
         return { ...ch, userHasLiked };
       });
       setChallengesState(withLikes);
     }
-  }, [challenges, token.sub]);
+  }, [challenges, userInfo?.sub]);
 
   // Click outside → hide search hints
   useEffect(() => {
@@ -53,7 +53,7 @@ const Challenges = () => {
 
   const handleLikeClick = async (challengeId) => {
     try {
-      const res = await toggleLike({ id: challengeId, userId: token.sub }).unwrap();
+      const res = await toggleLike({ id: challengeId, userId: userInfo?.sub }).unwrap();
       toast.success(res.message);
 
       setChallengesState((prev) =>
@@ -73,6 +73,29 @@ const Challenges = () => {
       toast.error("Failed to like challenge");
     }
   };
+
+    const openFile = (url) => {
+      if (url) {
+        handleViewInBrowser(url);
+      } else {
+        toast.error("File URL not available");
+      }
+    };
+
+    const handleViewInBrowser = (url) => {
+    const extension = url.split('.').pop().toLowerCase();
+    if (['docx', 'doc', 'pptx', 'ppt', 'xlsx'].includes(extension)) {
+      const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
+      window.open(officeUrl, '_blank');
+    }
+    else if(extension === 'pdf') {
+          window.open(url, '_blank');
+    } 
+    else {
+      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+      window.open(googleViewerUrl, '_blank');
+    }
+};
 
   // Apply filters
   let filteredChallenges =
@@ -182,11 +205,20 @@ const Challenges = () => {
               <p className="text-gray-400 text-sm">{challenge.description}</p>
 
               <div className="flex justify-around mt-6">
+                {challenge.documentUrl === null && 
                 <Link to={`/user/challenge/${challenge.id}`}>
                   <button className="rounded-lg bg-[#06325B] hover:bg-[#06325b96] py-2 px-6 text-white font-bold text-sm">
                     Start
                   </button>
                 </Link>
+                }
+                {challenge.documentUrl != null && 
+                <Link onClick={() => openFile(challenge.documentUrl)}>
+                  <button className="rounded-lg bg-[#06325B] hover:bg-[#06325b96] py-2 px-6 text-white font-bold text-sm">
+                    Start
+                  </button>
+                </Link>
+                }
                 <img
                   src={challenge.userHasLiked ? liked : like}
                   alt="like"

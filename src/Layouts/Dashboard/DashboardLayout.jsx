@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import DashboardHeader from "./Components/DashboardHeader.jsx";
 import SideBar from "./Components/SideBar.jsx";
@@ -14,23 +14,26 @@ import { BsGraphUp } from "react-icons/bs";
 import BgLoader from "../../Components/ui/BgLoader.jsx";
 
 const DashboardLayout = () => {
-  const { userInfo, accessToken, loading } = useSelector((state) => state.auth);
+  const { userInfo, loading } = useSelector((state) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(loading);
+  },[loading])
 
   if (loading) {
     return <BgLoader />;
   }
 
-  if (!userInfo || !accessToken) {
-    console.log("No user info or access token found");
+  if (!userInfo && !loading) {
+    console.log("No user info");
     return <Navigate to="/login" replace />;
   }
 
   let role;
   try {
-    const decoded = jwtDecode(accessToken);
-    role = decoded.role;
+    role = userInfo?.role;
   } catch (error) {
     console.error("Invalid token:", error);
     return <Navigate to="/login" replace />;

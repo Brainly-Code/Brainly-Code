@@ -4,18 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import { useGetCurrentUserQuery, useGetProfileImageQuery, useUpdateProfileImageMutation, useUpdateUserMutation } from "../redux/api/userSlice";
-import { setCredentials } from "../redux/Features/authSlice";
+import { setCredentials, setLoading } from "../redux/Features/authSlice";
 import Loader from "./ui/Loader";
 import profileFallback from "../assets/profile.png";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
-  const token = jwtDecode(userInfo.access_token);
   const navigate = useNavigate();
 
-  const { data: user } = useGetCurrentUserQuery(token.sub);
-  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(token.sub);
+  const { data: user } = useGetCurrentUserQuery(userInfo?.sub);
+  const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(userInfo?.sub);
   const [updateProfile, { isLoading: loadingUpdateProfile }] = useUpdateUserMutation();
   const [uploadProfileImage, { isLoading: uploading }] = useUpdateProfileImageMutation();
 
@@ -57,12 +56,13 @@ const Profile = () => {
   }
 
   try {
-    let cloudinaryUrl;
 
+    let cloudinaryUrl;
+    dispatch(setLoading(true));
   
     if (imageFile) {
       console.log(imageFile)
-      const cloudRes = await uploadProfileImage({ id: token.sub, imageFile }).unwrap();
+      const cloudRes = await uploadProfileImage({ id: userInfo?.sub, imageFile }).unwrap();
       
       console.log(cloudRes)
       cloudinaryUrl = cloudRes?.url || cloudRes?.secure_url;
@@ -80,17 +80,19 @@ const Profile = () => {
     }
 
 
-    const res = await updateProfile({ id: token.sub, formData: profileData }).unwrap();
+    const res = await updateProfile({ id: userInfo?.sub, formData: profileData }).unwrap();
 
     
     dispatch(setCredentials({
       ...res,
-      access_token: userInfo.access_token,
     }));
   
+
     toast.success("Profile updated successfully");
   } catch (err) {
     toast.error(err?.data?.message || err.message);
+  } finally {
+    dispatch(setLoading(false))
   }
 };
     const imagePath =

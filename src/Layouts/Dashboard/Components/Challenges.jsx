@@ -20,6 +20,7 @@ const Challenges = () => {
   const [showAddChallengeModal, setShowAddChallengeModal] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedDifficultyFilter, setSelectedDifficultyFilter] = useState("ALL");
+  const [creatingChallenge,setCreatingChallenge] = useState(false);
   const navigate = useNavigate();
 
   const [newChallengeData, setNewChallengeData] = useState({
@@ -28,6 +29,7 @@ const Challenges = () => {
     difficulty: "Easy",
     context: "General",
     estimatedTime: "1 hour",
+    document: null,
   });
 
   // Sync challenges and history with API data
@@ -128,31 +130,53 @@ const Challenges = () => {
     }));
   };
 
-  const handleCreateNewChallenge = async (e) => {
-    e.preventDefault();
+const handleFileChange = (e) => {
+  setNewChallengeData((prev) => ({
+    ...prev,
+    document: e.target.files[0], // store file object
+  }));
+};
 
-    if (!newChallengeData.title || !newChallengeData.description) {
-      toast.error("Please fill in title and description.");
-      return;
-    }
+const handleCreateNewChallenge = async (e) => {
+  e.preventDefault();
 
-    const challengeToAdd = {
-      title: newChallengeData.title,
-      description: newChallengeData.description,
-      difficulty: newChallengeData.difficulty,
-      duration: newChallengeData.estimatedTime,
-      relation: newChallengeData.context,
-    };
+  if (!newChallengeData.title || !newChallengeData.description) {
+    toast.error("Please fill in title and description.");
+    return;
+  }
 
-    try {
-      await createChallenge(challengeToAdd).unwrap();
-      toast.success(`Challenge "${newChallengeData.title}" created successfully!`);
-      handleCloseAddChallengeModal();
-    } catch (error) {
-      toast.error("Failed to create challenge. Please try again.");
-      console.error("Create challenge error:", error);
-    }
-  };
+  // Create FormData to send text fields + file
+  const formData = new FormData();
+  formData.append('title', newChallengeData.title);
+  formData.append('description', newChallengeData.description);
+  formData.append('difficulty', newChallengeData.difficulty || '');
+  formData.append('duration', newChallengeData.estimatedTime || '');
+  formData.append('relation', newChallengeData.context || '');
+  
+  // If user selected a document, append it
+  if (newChallengeData.document) {
+    console.log(newChallengeData.document);
+    formData.append('file', newChallengeData.document);
+  }
+  setCreatingChallenge(true);
+  try {
+    // Use fetch or your RTK Query/mutation to send FormData
+    const res = await fetch('http://localhost:3000/challenges', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    setCreatingChallenge(false);
+    toast.success(`Challenge "${newChallengeData.title}" created successfully!`);
+    handleCloseAddChallengeModal();
+  } catch (error) {
+    toast.error("Failed to create challenge. Please try again.");
+    console.error("Create challenge error:", error);
+  }
+};
+
+
 
   if (isLoading) {
     return (
@@ -418,6 +442,32 @@ const Challenges = () => {
                   className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
                 />
               </div>
+                <div>
+                  <label
+                    htmlFor="challenge-document"
+                    className="block mb-1 font-medium text-gray-300 text-sm " 
+                  >
+                    Upload Supporting Document (optional)
+                  </label>
+                  <input
+                    id="challenge-document"
+                    type="file"
+                    name="document"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx" // restrict to common formats
+                    onChange={(e) =>
+                      setNewChallengeData((prev) => ({
+                        ...prev,
+                        document: e.target.files?.[0] || null,
+                      }))
+                    }
+                    className="w-full text-gray-300 text-sm"
+                  />
+                  {newChallengeData.document && (
+                    <p className="text-xs text-green-400 mt-1">
+                      Selected: {newChallengeData.document.name}
+                    </p>
+                  )}
+                </div>
 
               <div className="mt-6 pt-4 border-t border-[#3A3A5A] text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-500/10 rounded-full border border-purple-500/20 mb-3">
@@ -491,7 +541,7 @@ const Challenges = () => {
                   type="submit"
                   className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300 shadow-lg text-sm"
                 >
-                  Create Challenge
+                  {creatingChallenge ? "Creating..." : "Create challenge"}
                 </button>
               </div>
             </form>
