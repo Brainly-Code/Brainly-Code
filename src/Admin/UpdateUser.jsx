@@ -30,7 +30,6 @@ const Profile = () => {
     setEmail(user?.email || '');
   }, [user]);
 
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -40,9 +39,9 @@ const Profile = () => {
 
   const handleBack = () => {
   if (user?.role === "ADMIN" || user?.role === "SUPERADMIN") {
-    navigate("/admin"); // admin dashboard route
+    navigate("/admin");
   } else {
-    navigate("/user"); // user dashboard route
+    navigate("/user");
   }
   };
 

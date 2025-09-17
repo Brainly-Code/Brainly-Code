@@ -20,6 +20,7 @@ import {
 import Footer from './ui/Footer';
 import Header from './ui/Header';
 import BgLoader from './ui/BgLoader';
+import { useGetUsersQuery } from '../redux/api/AdminSlice';
 
 export default function HomePage() {
   const getIconForCourse = (title) => {
@@ -38,6 +39,13 @@ export default function HomePage() {
   const { data: likedCourseIds, refetch } = useGetUserLikedCoursesQuery();
   const { data: courses, error, isLoading } = useGetCoursesQuery();
   const [likeCourse] = useLikeCourseMutation();
+  const { data: users } = useGetUsersQuery();
+  const { data: challenges } = useGetCoursesQuery();
+  
+  const mentors = users?.filter(user => user.role === 'ADMIN' || user.role === 'SUPERADMIN');
+  const activeLearners = users?.filter(user => user.role === 'USER');
+  const totalChallenges = challenges?.length || 0;
+  const allActiveLearners = activeLearners?.length || 0;
 
   const [localLikes, setLocalLikes] = React.useState({});
 
@@ -257,21 +265,21 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto mb-12">
           <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-md">
-            <h3 className="text-3xl font-bold text-[#00ffee]">10k+</h3>
+            <h3 className="text-3xl font-bold text-[#00ffee]">{ allActiveLearners < 10000 ? allActiveLearners : "10k+" }</h3>
             <p className="text-gray-300">Active Learners</p>
           </div>
           <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-md">
-            <h3 className="text-3xl font-bold text-purple-400">500+</h3>
+            <h3 className="text-3xl font-bold text-[#00d9ffbe]">{totalChallenges < 300 ? totalChallenges : "300+"}</h3>
             <p className="text-gray-300">Coding Challenges</p>
           </div>
           <div className="p-6 bg-white/5 backdrop-blur-lg rounded-2xl shadow-md">
-            <h3 className="text-3xl font-bold text-green-400">200+</h3>
+            <h3 className="text-3xl font-bold text-purple-400">{mentors?.length < 250 ? mentors?.length : "250+"}</h3>
             <p className="text-gray-300">Expert Mentors</p>
           </div>
         </div>
 
         <Link to="/user/community">
-          <button className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-[#00ffee] text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform">
+          <button className="px-8 py-3 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold text-lg shadow-lg hover:scale-105 transition-transform mx-auto">
             Join Our Community
           </button>
         </Link>

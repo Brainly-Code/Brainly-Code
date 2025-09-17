@@ -13,7 +13,7 @@
 
   /* For Chrome, Safari, Edge */
 input:-webkit-autofill {
-  box-shadow: 0 0 0px 1000px #070045 inset !important; /* your background */
+  box-shadow: 0 0 0px 1000px #00d9ffbe inset !important; /* your background */
   -webkit-text-fill-color: #fff !important; /* text color */
   transition: background-color 5000s ease-in-out 0s; /* hack to prevent flash */
 }
