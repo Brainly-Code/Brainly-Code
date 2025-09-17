@@ -30,10 +30,8 @@ export const Community = () => {
   const { user } = useSelector((state) => state.auth);
   
   const currentUserId = user?.id;
-  console.log("Current User ID:", currentUserId);
 
   const { data: unreadCounts } = useGetUnreadCountsQuery(currentUserId);
-  // unreadCounts: [{ senderId: 2, _count: { id: 3 } }, ...]
 
   const totalUnread = unreadCounts?.reduce((sum, u) => sum + u._count.id, 0);
 
@@ -69,27 +67,23 @@ export const Community = () => {
   // Filter out current user
   let filteredUsers = communityUsers?.filter(user => user.id !== currentUserId);
 
-  // Apply search filter
   if (searchTerm.trim()) {
     filteredUsers = filteredUsers?.filter(user =>
       user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }
 
-  // Pagination logic
+  // Pagination
   const totalPages = Math.ceil((filteredUsers?.length || 0) / usersPerPage);
   const paginatedUsers = filteredUsers?.slice(
     (currentPage - 1) * usersPerPage,
     currentPage * usersPerPage
   );
 
-  // Comment handler
 
-
-  // Mutation for adding a comment
   const [addComment, { isLoading: isAdding }] = useAddCommentMutation();
 
-  // Comment handler
+  // Comment handling
   const handleSendComment = async () => {
     if (!comment.trim()) {
       toast.error("Comment cannot be empty");
@@ -106,7 +100,7 @@ export const Community = () => {
   };
 
 
-  // Hide search hints when clicking outside
+  // Hiding search hints when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -120,7 +114,7 @@ export const Community = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Hide search hints on Enter
+  // Hiding search hints on Enter click
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter") {
       setShowSearchHints(false);
@@ -136,6 +130,7 @@ export const Community = () => {
         <h1 className="text-center  text-white mt-10 font-bold text-2xl md:text-3xl">
           Community
         </h1> 
+
         {/* Search Bar */}
         <div ref={searchRef} className="flex w-full flex-col items-center mt-10 mb-2">
           <input
@@ -150,7 +145,8 @@ export const Community = () => {
             }}
             onKeyDown={handleSearchKeyDown}
             />
-          {/* Hints below search bar */}
+
+          {/*To show hints below search bar */}
           {showSearchHints && (
             <div className='w-full md:w-1/2 mt-0.3 p-2 z-10'>
             {searchTerm.trim() && filteredUsers?.length > 0 && (
