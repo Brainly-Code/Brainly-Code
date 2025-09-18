@@ -50,9 +50,13 @@ const Challenges = () => {
 
   if (error) toast.error(error);
 
+  useEffect(()=>{
+    console.log("user:",user);
+  },[user])
+
   const handleLikeClick = async (challengeId) => {
     try {
-      const res = await toggleLike({ id: challengeId, userId: token.sub }).unwrap();
+      const res = await toggleLike({ id: challengeId, userId: user?.id }).unwrap();
       toast.success(res.message);
 
       setChallengesState((prev) =>
@@ -68,12 +72,35 @@ const Challenges = () => {
       );
 
       refetch();
-    } catch {
+    } catch (error) {
       toast.error("Failed to like challenge");
+      console.log("error: ",error.message)
     }
   };
 
-  // Applying filters
+    const openFile = (url) => {
+      if (url) {
+        handleViewInBrowser(url);
+      } else {
+        toast.error("File URL not available");
+      }
+    };
+
+    const handleViewInBrowser = (url) => {
+    const extension = url.split('.').pop().toLowerCase();
+    if (['docx', 'doc', 'pptx', 'ppt', 'xlsx'].includes(extension)) {
+      const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
+      window.open(officeUrl, '_blank');
+    }
+    else if(extension === 'pdf') {
+          window.open(url, '_blank');
+    } 
+    else {
+      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+      window.open(googleViewerUrl, '_blank');
+    }
+};
+
   let filteredChallenges =
     filterLevel === "ALL"
       ? challengesState
@@ -181,11 +208,20 @@ const Challenges = () => {
               <p className="text-gray-400 text-sm">{challenge.description}</p>
 
               <div className="flex justify-around mt-6">
+                {challenge.documentUrl === null && 
                 <Link to={`/user/challenge/${challenge.id}`}>
                   <button className="rounded-lg bg-[#06325B] hover:bg-[#06325b96] py-2 px-6 text-white font-bold text-sm">
                     Start
                   </button>
                 </Link>
+                }
+                {challenge.documentUrl != null && 
+                <Link onClick={() => openFile(challenge.documentUrl)}>
+                  <button className="rounded-lg bg-[#06325B] hover:bg-[#06325b96] py-2 px-6 text-white font-bold text-sm">
+                    Start
+                  </button>
+                </Link>
+                }
                 <img
                   src={challenge.userHasLiked ? liked : like}
                   alt="like"

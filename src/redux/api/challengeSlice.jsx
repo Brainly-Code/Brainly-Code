@@ -43,6 +43,13 @@ const challengeApiSlice = apiSlice.injectEndpoints({
       })
     }),
 
+    deleteChallenge: builders.mutation({
+      query: (id) => ({
+        url: `${CHALLENGE_URL}/${id}`,
+        method: "DELETE",
+      }),
+    }),
+
     getChallengeInstructions: builders.query({
       query: (challengeId) => ({
         url: `${CHALLENGE_INSTRUCTIONS_URL}/${challengeId}`,
@@ -100,5 +107,6 @@ export const {
   useUpdateChallengeInstructionMutation,
   useDeleteChallengeInstructionMutation,
   useChallengeInstructionCompletionMutation,
+  useDeleteChallengeMutation,
   useCompleteChallengeMutation
 } = challengeApiSlice;

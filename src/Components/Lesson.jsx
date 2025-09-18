@@ -29,8 +29,7 @@ const Lesson = (
   const { id } = useParams();
   const lessonId = id.id;
   const { userInfo } = useSelector(state => state.auth);
-  const token = jwtDecode(userInfo?.access_token);
-  const userId = token.sub;
+  const userId = userInfo?.sub;
 
   const [startMiniModuleProgress] = useCreateMiniModuleMutation();
   const [startModuleProgress] = useCreateModuleProgressMutation();

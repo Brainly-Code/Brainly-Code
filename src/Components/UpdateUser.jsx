@@ -55,8 +55,9 @@ const Profile = () => {
   }
 
   try {
-    let cloudinaryUrl;
 
+    let cloudinaryUrl;
+    dispatch(setLoading(true));
   
     if (imageFile) {
       console.log(imageFile)
@@ -81,9 +82,12 @@ const Profile = () => {
     const res = await updateProfile({ id: currentUser?.id, formData: profileData }).unwrap();
 
   
+
     toast.success("Profile updated successfully");
   } catch (err) {
     toast.error(err?.data?.message || err.message);
+  } finally {
+    dispatch(setLoading(false))
   }
 };
     const imagePath =

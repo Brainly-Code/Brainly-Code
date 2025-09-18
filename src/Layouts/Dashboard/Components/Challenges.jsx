@@ -6,13 +6,14 @@ import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { toast } from 'react-toastify';
 import { X } from 'lucide-react';
 import { SearchContext } from '../../../Contexts/SearchContext';
-import { useCreateChallengeMutation, useGetChallengesQuery } from '../../../redux/api/challengeSlice';
+import { useCreateChallengeMutation, useDeleteChallengeMutation, useGetChallengesQuery } from '../../../redux/api/challengeSlice';
 import BgLoader from '../../../Components/ui/BgLoader';
 
 const Challenges = () => {
   const { searchQuery } = useContext(SearchContext);
-  const { data: challengesData, isLoading, isError } = useGetChallengesQuery();
+  const { data: challengesData, isLoading, isError,refetch } = useGetChallengesQuery();
   const [createChallenge] = useCreateChallengeMutation();
+  const [deleteChallenge, { isLoading :isDeleting }] = useDeleteChallengeMutation();
 
   const [challenges, setChallenges] = useState(challengesData || []);
   const [challengeHistory, setChallengeHistory] = useState([challengesData || []]);
@@ -20,6 +21,8 @@ const Challenges = () => {
   const [showAddChallengeModal, setShowAddChallengeModal] = useState(false);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedDifficultyFilter, setSelectedDifficultyFilter] = useState("ALL");
+  const [creatingChallenge,setCreatingChallenge] = useState(false);
+  const [openDropdownChallengeId, setOpenDropdownChallengeId] = useState(null);
   const navigate = useNavigate();
 
   const [newChallengeData, setNewChallengeData] = useState({
@@ -28,6 +31,7 @@ const Challenges = () => {
     difficulty: "Easy",
     context: "General",
     estimatedTime: "1 hour",
+    document: null,
   });
 
   // Sync challenges and history with API data
@@ -103,6 +107,24 @@ const Challenges = () => {
     return currentFilteredChallenges;
   };
 
+  const handleDelete = async (id) => {
+  try {
+    await deleteChallenge(id).unwrap();
+    await refetch(); 
+  } catch (err) {
+    console.error("Delete failed:", err);
+
+  }
+};
+
+  const toggleDropdown = (challengeId) => {
+  if (openDropdownChallengeId === challengeId) {
+      setOpenDropdownChallengeId(null); // close if same one is clicked again
+    } else {
+      setOpenDropdownChallengeId(challengeId);
+    }
+  };
+
   const filteredChallenges = getFilteredAndSearchedChallenges();
 
   const handleAddChallengeClick = () => {
@@ -128,31 +150,76 @@ const Challenges = () => {
     }));
   };
 
-  const handleCreateNewChallenge = async (e) => {
-    e.preventDefault();
+const handleFileChange = (e) => {
+  setNewChallengeData((prev) => ({
+    ...prev,
+    document: e.target.files[0], // store file object
+  }));
+};
 
-    if (!newChallengeData.title || !newChallengeData.description) {
-      toast.error("Please fill in title and description.");
-      return;
-    }
+const handleCreateNewChallenge = async (e) => {
+  e.preventDefault();
 
-    const challengeToAdd = {
-      title: newChallengeData.title,
-      description: newChallengeData.description,
-      difficulty: newChallengeData.difficulty,
-      duration: newChallengeData.estimatedTime,
-      relation: newChallengeData.context,
+  if (!newChallengeData.title || !newChallengeData.description) {
+    toast.error("Please fill in title and description.");
+    return;
+  }
+
+  // Create FormData to send text fields + file
+  const formData = new FormData();
+  formData.append('title', newChallengeData.title);
+  formData.append('description', newChallengeData.description);
+  formData.append('difficulty', newChallengeData.difficulty || '');
+  formData.append('duration', newChallengeData.estimatedTime || '');
+  formData.append('relation', newChallengeData.context || '');
+  
+  // If user selected a document, append it
+  if (newChallengeData.document) {
+    console.log(newChallengeData.document);
+    formData.append('file', newChallengeData.document);
+  }
+  setCreatingChallenge(true);
+  try {
+    // Use fetch or your RTK Query/mutation to send FormData
+    const res = await fetch('http://localhost:3000/challenges', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    setCreatingChallenge(false);
+    refetch();
+    toast.success(`Challenge "${newChallengeData.title}" created successfully!`);
+    handleCloseAddChallengeModal();
+  } catch (error) {
+    toast.error("Failed to create challenge. Please try again.");
+    console.error("Create challenge error:", error);
+  }
+};
+
+    const openFile = (url) => {
+      if (url) {
+        handleViewInBrowser(url);
+      } else {
+        toast.error("File URL not available");
+      }
     };
 
-    try {
-      await createChallenge(challengeToAdd).unwrap();
-      toast.success(`Challenge "${newChallengeData.title}" created successfully!`);
-      handleCloseAddChallengeModal();
-    } catch (error) {
-      toast.error("Failed to create challenge. Please try again.");
-      console.error("Create challenge error:", error);
+    const handleViewInBrowser = (url) => {
+    const extension = url.split('.').pop().toLowerCase();
+    if (['docx', 'doc', 'pptx', 'ppt', 'xlsx'].includes(extension)) {
+      const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
+      window.open(officeUrl, '_blank');
     }
-  };
+    else if(extension === 'pdf') {
+          window.open(url, '_blank');
+    } 
+    else {
+      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+      window.open(googleViewerUrl, '_blank');
+    }
+};
+
 
   if (isLoading) {
     return (
@@ -258,7 +325,7 @@ const Challenges = () => {
             <div key={challenge.id} className="flex justify-center">
               <div className="sm:min-w-[20rem] max-w-[20rem] w-full bg-[#070045] min-h-[19rem] rounded-2xl border border-[#3A3A5A] p-6 flex flex-col justify-between">
                 <div>
-                  <div className="flex justify-between items-center mb-4">
+                  <div className="flex justify-between items-center mb-4 relative">
                     <span
                       className={`text-md font-bold px-2 py-1 rounded-md ${
                         challenge.difficulty === "Easy"
@@ -273,6 +340,23 @@ const Challenges = () => {
                       {challenge.difficulty}
                     </span>
                     <span className="text-white">{challenge.relation}</span>
+                    <button
+                      className="text-white hover:text-gray-400"
+                      onClick={() => toggleDropdown(challenge.id)}
+                    >
+                      ⋮
+                    </button>
+                      <div className={openDropdownChallengeId === challenge.id 
+                      ? "block absolute right-2 mt-2 w-28 bg-[#070045] border border-[#3A3A5A] rounded shadow-lg z-50"
+                      : "hidden"}>
+                      <button
+                        className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-[#3A3A5A]"
+                        onClick={() => handleDelete(challenge.id)}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? "Deleting..." : "Remove"}
+                      </button>
+                    </div>
                   </div>
 
                   <div className="mb-4">
@@ -292,14 +376,23 @@ const Challenges = () => {
                   </div>
                   <div className="flex items-center justify-between mt-6">
                     <div className="flex gap-4">
-                      <span className="text-white text-sm">{challenge.likes} likes</span>
-                      <span className="text-white text-sm">{challenge.completions} completions</span>
+                      <span className="text-white text-sm">{challenge.likes || 0} likes</span>
+                      <span className="text-white text-sm">{challenge.completions || 0} completions</span>
                     </div>
+                    {challenge.documentUrl == null && 
                     <Link to={`/admin/editChallenge/${challenge.id}`}>
                       <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-6 py-2 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300" onClick={() => navigate(`/editChallenge/${challenge._id}`)}>
                         View
                       </button>
                     </Link>
+                    }
+                    {challenge.documentUrl != null && 
+                    <Link onClick={() => openFile(challenge.documentUrl)}>
+                      <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-6 py-2 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300" onClick={() => navigate(`/editChallenge/${challenge._id}`)}>
+                        View
+                      </button>
+                    </Link>
+                    }
                   </div>
                 </div>
               </div>
@@ -418,6 +511,32 @@ const Challenges = () => {
                   className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
                 />
               </div>
+                <div>
+                  <label
+                    htmlFor="challenge-document"
+                    className="block mb-1 font-medium text-gray-300 text-sm " 
+                  >
+                    Upload Supporting Document (optional)
+                  </label>
+                  <input
+                    id="challenge-document"
+                    type="file"
+                    name="document"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx" // restrict to common formats
+                    onChange={(e) =>
+                      setNewChallengeData((prev) => ({
+                        ...prev,
+                        document: e.target.files?.[0] || null,
+                      }))
+                    }
+                    className="w-full text-gray-300 text-sm"
+                  />
+                  {newChallengeData.document && (
+                    <p className="text-xs text-green-400 mt-1">
+                      Selected: {newChallengeData.document.name}
+                    </p>
+                  )}
+                </div>
 
               <div className="mt-6 pt-4 border-t border-[#3A3A5A] text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-purple-500/10 rounded-full border border-purple-500/20 mb-3">
@@ -491,7 +610,7 @@ const Challenges = () => {
                   type="submit"
                   className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300 shadow-lg text-sm"
                 >
-                  Create Challenge
+                  {creatingChallenge ? "Creating..." : "Create challenge"}
                 </button>
               </div>
             </form>

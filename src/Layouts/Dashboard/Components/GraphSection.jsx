@@ -57,7 +57,7 @@ const GraphSection = () => {
   }, [graphStats]);
 
   if (isLoading) return <Loader />;
-  if (isError) return <p className="text-red-500">Failed to fetch graph data</p>;
+  if (isError) return <p className="text-red-500 text-center">Failed to fetch graph data</p>;
 
   return (
     <ResponsiveContainer width="100%" height={300}>

@@ -20,6 +20,7 @@ const DashboardLayout = () => {
 
   if (!user) {
     console.log("No user info or access token found");
+
     return <Navigate to="/login" replace />;
   }
 
@@ -34,7 +35,7 @@ const DashboardLayout = () => {
   if(isLoadingUser) {
     return <BgLoader />
   }
-  
+
   if (role === "USER") {
     return <Navigate to="/user" replace />;
   }
