@@ -339,7 +339,7 @@ const handleCreateNewChallenge = async (e) => {
                     >
                       {challenge.difficulty}
                     </span>
-                    <span className="text-white">{challenge.relation}</span>
+                    <span className="text-white ml-[2rem]">{challenge?.relation}</span>
                     <button
                       className="text-white hover:text-gray-400"
                       onClick={() => toggleDropdown(challenge.id)}

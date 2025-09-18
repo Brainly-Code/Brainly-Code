@@ -188,7 +188,7 @@ export default function HomePage() {
               className={`px-5 py-2 rounded-full transition-all duration-200 font-medium text-sm sm:text-base shadow-md ${
                 filterLevel === level
                   ? 'bg-gradient-to-r from-[#00ffee] to-purple-500 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  : 'hover:bg-[#00ffee] hover:bg-opacity-50 hover:text-white text-gray-700 hover:bg-gray-100'
               }`}
             >
               {level === 'ALL' ? 'All Courses' : level}
