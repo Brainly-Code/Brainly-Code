@@ -62,7 +62,6 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await login({ email, password }).unwrap();
-      console.log(res);
       dispatch(setCredentials({ user: res.user, access_token: res.access_token }));
       toast.success('Login successful!');
       if (res?.user?.role === 'ADMIN' || res?.user?.role === 'SUPERADMIN') {
@@ -93,7 +92,7 @@ const Login = () => {
         <Link to="/">Back to Home</Link>
       </button>
 
-      <header className="flex flex-col sm:absolute sm:top-10 sm:mt-[0] lg:top-20 items-center lg:pt-6 w-full">
+      <header className="flex flex-col absolute top-10 mt-[15rem] lg:top-20 items-center lg:mt-[0] lg:pt-6 w-full">
         <div className="w-full max-w-md px-4 -mt- lg:mt-0 md:px-6 lg:px-8">
           <div className="bg-[#070045] rounded-lg border-[#3A3A5A] border p-8 shadow-lg">
             <h1 className="text-center text-3xl font-bold mb-2">Welcome Back</h1>

@@ -23,7 +23,6 @@ const Register = () => {
     skip: !location.pathname.includes('/auth/callback'),
   });
   const { user, loading } = useSelector((state) => state.auth);
-  console.log('Register.jsx: Redux state:', { user, loading, registerError, userError }); // Debug
 
   const redirectFromQuery = new URLSearchParams(location.search).get('redirect');
 
@@ -34,12 +33,8 @@ const Register = () => {
 
   useEffect(() => {
     if (userData && location.pathname.includes('/auth/callback')) {
-      console.log('Register.jsx: OAuth callback, userData:', userData); // Debug
       dispatch(setCredentials({ user: userData.user }));
       setTimeout(() => {
-        console.log('Register.jsx: After OAuth setCredentials, state:', {
-          user: useSelector((state) => state.auth.user),
-        }); // Debug
         const redirectPath = redirectFromQuery || getDefaultRedirect(userData.user.role);
         navigate(redirectPath, { replace: true });
         toast.success('OAuth registration successful!');
@@ -49,7 +44,6 @@ const Register = () => {
 
   useEffect(() => {
     if (user) {
-      console.log('Register.jsx: Already logged in, redirecting:', { user }); // Debug
       const redirectPath = redirectFromQuery || getDefaultRedirect(user?.role);
       if (location.pathname === '/register' || location.pathname === '/login') {
         navigate(redirectPath, { replace: true });
@@ -60,15 +54,9 @@ const Register = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      // dispatch(setLoading(true));
-      console.log('Register.jsx: Sending register request:', { username, email, password }); // Debug
       const res = await register({ username, email, password }).unwrap();
-      console.log('Register.jsx: Register response:', res); // Debug
       dispatch(setCredentials({ user: res.user }));
       setTimeout(() => {
-        console.log('Register.jsx: After setCredentials, state:', {
-          user: useSelector((state) => state.auth.user),
-        }); // Debug
         const redirectPath = redirectFromQuery || getDefaultRedirect(res.user.role);
         navigate(redirectPath, { replace: true });
         toast.success('Registration successful!');
@@ -77,7 +65,7 @@ const Register = () => {
       console.error('Register.jsx: Register error:', error, { registerError }); // Debug
       toast.error(error?.data?.message || 'Registration failed. Please check your details or network.');
     } finally {
-      console.log("  Register.jsx: Finished registration attempt"); // Debug
+      console.log("Finished registration"); // Debug
       // dispatch(setLoading(false));
     }
   };

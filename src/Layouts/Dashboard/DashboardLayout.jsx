@@ -19,8 +19,6 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
 
   if (!user) {
-    console.log("No user info or access token found");
-
     return <Navigate to="/login" replace />;
   }
 
