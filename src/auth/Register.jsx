@@ -80,13 +80,10 @@ const Register = () => {
   };
 
   const handleGoogleLogin = () => {
-    const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = "http://localhost:3000/autho/google";
   };
-
   const handleGithubLogin = () => {
-    const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/auth/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = "http://localhost:3000/autho/github";
   };
 
   return (

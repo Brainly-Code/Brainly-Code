@@ -26,11 +26,10 @@ const Login = () => {
   }
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://backend-hx6c.onrender.com/autho/google";
+    window.location.href = "http://localhost:3000/autho/google";
   };
-
   const handleGithubLogin = () => {
-    window.location.href = "https://backend-hx6c.onrender.com/autho/github";
+    window.location.href = "http://localhost:3000/autho/github";
   };
 
   const redirectFromQuery = new URLSearchParams(location.search).get('redirect');

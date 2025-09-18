@@ -40,6 +40,7 @@ import Reviews from './Admin/Reviews.jsx';
 import UserCourses from './Components/Courses.jsx';
 import { useSelector } from 'react-redux';
 import { useGetCurrentUserQuery } from './redux/api/apiSlice.jsx';
+import OAuthSuccess from './auth/OAuthSuccess';
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const { user, access_token } = useSelector(state => state.auth);
@@ -113,6 +114,7 @@ const router = createBrowserRouter(
           <Route path="editChallenge/:id" element={<EditChallenge />} />
           <Route path="reviews" element={<Reviews />} />
         </Route>
+        <Route path="/oauth-success" element={<OAuthSuccess />} />
       </Route>
     </>
   )
