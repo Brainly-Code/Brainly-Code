@@ -61,10 +61,10 @@ const App = () => {
           navigateToRole(user?.role);
         } catch (error) {
           dispatch(Logout());
-          navigate('/login', { replace: true });
+          // navigate('/login', { replace: true });
         }
       } else {
-        navigate('/login', { replace: true });
+        // navigate('/login', { replace: true });
       }
       dispatch(setLoading(false));
     };

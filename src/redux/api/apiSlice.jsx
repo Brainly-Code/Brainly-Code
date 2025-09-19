@@ -1,7 +1,7 @@
 import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3000", // or your deployed URL
+  baseUrl: "https://backend-hx6c.onrender.com", // or your deployed URL
   credentials: "include",
 
   prepareHeaders: (headers, { getState }) => {

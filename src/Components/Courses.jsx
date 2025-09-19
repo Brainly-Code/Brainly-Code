@@ -12,6 +12,8 @@ import {
   FaPython,
   FaHtml5,
   FaAccessibleIcon,
+  FaRegCheckCircle,
+  FaCheck,
 } from 'react-icons/fa';
 import Footer from './ui/Footer';
 import Header from './ui/Header';
@@ -218,12 +220,19 @@ export default function UserCourses() {
                       Enroll Now
                     </button>
                   </Link>
-                  <img
-                    src={isLiked(course.id) ? liked : like}
-                    alt="like"
-                    className="h-6 w-6 cursor-pointer hover:scale-110 transition-transform"
-                    onClick={() => handleLike(course.id)}
-                  />
+                  {isLiked(course.id) ? (
+                    <FaCheck
+                      size={24}
+                      className="cursor-pointer hover:scale-110 transition-transform text-green-400"
+                      onClick={() => handleLike(course.id)}
+                    />
+                  ) : (
+                    <FaRegCheckCircle
+                      size={24}
+                      className="cursor-pointer hover:scale-110 transition-transform text-gray-400"
+                      onClick={() => handleLike(course.id)}
+                    />
+                  )}
                 </div>
               </div>
             ))}

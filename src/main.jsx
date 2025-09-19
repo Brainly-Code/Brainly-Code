@@ -6,7 +6,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ErrorBoundary } from './ErrorBoundary';
 import './index.css';
 import Login from './auth/Login';
-import Register from './auth/Register';
 import store, { persistor } from './redux/store';
 import App from './App';
 import { Hero } from './Components/Hero';
@@ -41,6 +40,7 @@ import Reviews from './Admin/Reviews.jsx';
 import UserCourses from './Components/Courses.jsx';
 import BgLoader from './Components/ui/BgLoader.jsx';
 import { useSelector } from 'react-redux';
+import Register from './auth/Register.jsx';
 
 // ProtectedRoute component to guard routes requiring authentication
 // const ProtectedRoute = ({ children }) => {
@@ -63,6 +63,8 @@ const router = createBrowserRouter(
       <Route path="/" element={<NewUser />}>
         <Route index element={<Hero />} />
         <Route path="not-done" element={<NotDoneError />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
       </Route>
       <Route path="/error" element={<RouteError />} />
 
@@ -73,8 +75,6 @@ const router = createBrowserRouter(
           <App />
         }
       >
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
         <Route path="user" element={<Home />}>
           <Route index element={<HomePage />} />
           <Route path="courses" element={<UserCourses />} />

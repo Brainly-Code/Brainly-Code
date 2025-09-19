@@ -5,8 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useRegisterMutation } from '../redux/api/userSlice';
-import { jwtDecode } from 'jwt-decode';
+import { useRegisterMutation, useGetCurrentUserQuery } from '../redux/api/userSlice';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -20,94 +19,54 @@ const Register = () => {
   const location = useLocation();
 
   const [register, { isLoading, error: registerError }] = useRegisterMutation();
-  const { user, accessToken } = useSelector((state) => state.auth);
-  console.log('Register.jsx: Redux state:', { user, accessToken, registerError }); // Debug
+  const { data: userData, isLoading: isUserLoading, error: userError } = useGetCurrentUserQuery(undefined, {
+    skip: !location.pathname.includes('/auth/callback'),
+  });
+  const { user, loading } = useSelector((state) => state.auth);
 
   const redirectFromQuery = new URLSearchParams(location.search).get('redirect');
-  const searchParams = new URLSearchParams(location.search);
-  const accessTokenFromQuery = searchParams.get('access_token');
-  const userFromQuery = searchParams.get('user');
 
   const getDefaultRedirect = (role) => {
     if (role === 'ADMIN' || role === 'SUPERADMIN') return '/admin';
     return '/user';
   };
 
-  // Handle OAuth callback
   useEffect(() => {
-    if (accessTokenFromQuery && userFromQuery) {
-      try {
-        const decoded = jwtDecode(accessTokenFromQuery);
-        const userData = JSON.parse(userFromQuery);
-        console.log('Register.jsx: OAuth callback:', { accessToken: accessTokenFromQuery, user: userData, decoded }); // Debug
-        dispatch(setCredentials({
-          user: {
-            id: decoded.sub,
-            email: decoded.email,
-            role: decoded.role,
-            isPremium: decoded.isPremium,
-          },
-          access_token: accessTokenFromQuery,
-        }));
-        setTimeout(() => {
-          console.log('Register.jsx: After OAuth setCredentials, state:', {
-            user: useSelector((state) => state.auth.user),
-            accessToken: useSelector((state) => state.auth.accessToken),
-          }); // Debug
-          const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
-          navigate(redirectPath, { replace: true });
-          toast.success('OAuth registration successful!');
-        }, 100);
-      } catch (error) {
-        console.error('Register.jsx: OAuth callback error:', error); // Debug
-        toast.error('OAuth registration failed. Please try again.');
-      }
+    if (userData && location.pathname.includes('/auth/callback')) {
+      dispatch(setCredentials({ user: userData.user }));
+      setTimeout(() => {
+        const redirectPath = redirectFromQuery || getDefaultRedirect(userData.user?.role);
+        navigate(redirectPath, { replace: true });
+        toast.success('OAuth registration successful!');
+      }, 100);
     }
-  }, [accessTokenFromQuery, userFromQuery, dispatch, navigate, redirectFromQuery]);
+  }, [userData, navigate, redirectFromQuery]);
 
-  // Redirect if already logged in
   useEffect(() => {
-    if (accessToken && user) {
-      console.log('Register.jsx: Already logged in, redirecting:', { user, accessToken }); // Debug
+    if (user) {
       const redirectPath = redirectFromQuery || getDefaultRedirect(user?.role);
       if (location.pathname === '/register' || location.pathname === '/login') {
         navigate(redirectPath, { replace: true });
       }
     }
-  }, [accessToken, user, navigate, location.pathname, redirectFromQuery]);
+  }, [user, navigate, location.pathname, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      console.log('Register.jsx: Sending register request:', { username, email, password }); // Debug
       const res = await register({ username, email, password }).unwrap();
-      console.log('Register.jsx: Register response:', res); // Debug
-      if (!res.access_token) {
-        throw new Error('No access token in response');
-      }
-      const decoded = jwtDecode(res.access_token);
-      console.log('Register.jsx: Decoded token:', decoded); // Debug
-      dispatch(setCredentials({
-        user: {
-          id: decoded.sub,
-          email: decoded.email,
-          role: decoded.role,
-          isPremium: decoded.isPremium,
-        },
-        access_token: res.access_token,
-      }));
+      dispatch(setCredentials({ user: res.user }));
       setTimeout(() => {
-        console.log('Register.jsx: After setCredentials, state:', {
-          user: useSelector((state) => state.auth.user),
-          accessToken: useSelector((state) => state.auth.accessToken),
-        }); // Debug
-        const redirectPath = redirectFromQuery || getDefaultRedirect(decoded.role);
+        const redirectPath = redirectFromQuery || getDefaultRedirect(res.user?.role);
         navigate(redirectPath, { replace: true });
         toast.success('Registration successful!');
       }, 100);
     } catch (error) {
       console.error('Register.jsx: Register error:', error, { registerError }); // Debug
       toast.error(error?.data?.message || 'Registration failed. Please check your details or network.');
+    } finally {
+      console.log("Finished registration"); // Debug
+      // dispatch(setLoading(false));
     }
   };
 
@@ -122,12 +81,12 @@ const Register = () => {
 
   const handleGoogleLogin = () => {
     const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/autho/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = `https://backend-hx6c.onrender.com/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   const handleGithubLogin = () => {
     const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/autho/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = `https://backend-hx6c.onrender.com/auth/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   return (
@@ -232,11 +191,12 @@ const Register = () => {
                       type="submit"
                       disabled={isLoading}
                       className="flex-1 bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white py-3 rounded-full font-semibold hover:opacity-90 transition duration-300 flex items-center justify-center"
+                      onClick={() => submitHandler()}
                     >
                       {isLoading ? (
                         <span className="w-5 h-5 border-2 border-white border-b-transparent rounded-full animate-spin"></span>
                       ) : (
-                        'Create Account'
+                        <span className='mx-2'> Create Account </span>
                       )}
                     </button>
                   </div>

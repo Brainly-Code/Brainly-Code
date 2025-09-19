@@ -9,6 +9,7 @@ import Header from "./ui/Header";
 import BgLoader from "./ui/BgLoader";
 import like from "../assets/like.png";
 import liked from "../assets/liked.png";
+import { FaCheck, FaRegCheckCircle } from "react-icons/fa";
 
 const Challenges = () => {
   const { data: challenges, error, isLoading, refetch } = useGetChallengesQuery();
@@ -223,12 +224,19 @@ const Challenges = () => {
                   </button>
                 </Link>
                 }
-                <img
-                  src={challenge.userHasLiked ? liked : like}
-                  alt="like"
-                  className="h-6 w-6 cursor-pointer"
-                  onClick={() => handleLikeClick(challenge.id)}
-                />
+                {challenge.userHasLiked ? (
+                    <FaCheck
+                      size={24}
+                      className="cursor-pointer hover:scale-110 transition-transform text-green-400"
+                      onClick={() => handleLikeClick(challenge.id)}
+                    />
+                  ) : (
+                    <FaRegCheckCircle
+                      size={24}
+                      className="cursor-pointer hover:scale-110 transition-transform text-gray-400"
+                      onClick={() => handleLikeClick(challenge.id)}
+                    />
+                )}
               </div>
             </div>
           ))}
