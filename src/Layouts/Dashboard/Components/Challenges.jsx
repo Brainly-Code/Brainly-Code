@@ -181,7 +181,7 @@ const handleCreateNewChallenge = async (e) => {
   setCreatingChallenge(true);
   try {
     // Use fetch or your RTK Query/mutation to send FormData
-    const res = await fetch('http://localhost:3000/challenges', {
+    const res = await fetch('https://backend-hx6c.onrender.com/challenges', {
       method: 'POST',
       body: formData,
     });
