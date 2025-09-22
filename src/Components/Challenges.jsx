@@ -87,18 +87,26 @@ const Challenges = () => {
       }
     };
 
-    const handleViewInBrowser = (url) => {
-    const extension = url.split('.').pop().toLowerCase();
+const handleViewInBrowser = (url) => {
+    // Ensure the URL points to your Cloudinary account
+    const updatedUrl = url.replace(
+        'https://res.cloudinary.com/dglbxzxsc/',
+        'https://res.cloudinary.com/dnppwzg0k/'
+    );
+
+    const extension = updatedUrl.split('.').pop().toLowerCase();
+
     if (['docx', 'doc', 'pptx', 'ppt', 'xlsx'].includes(extension)) {
-      const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
-      window.open(officeUrl, '_blank');
-    }
-    else if(extension === 'pdf') {
-          window.open(url, '_blank');
-    } 
-    else {
-      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
-      window.open(googleViewerUrl, '_blank');
+        // Open Office documents in Office Online Viewer
+        const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(updatedUrl)}`;
+        window.open(officeUrl, '_blank');
+    } else if (extension === 'pdf') {
+        // Open PDF directly in the browser
+        window.open(updatedUrl, '_blank');
+    } else {
+        // Fallback: open other file types in Google Docs Viewer
+        const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(updatedUrl)}&embedded=true`;
+        window.open(googleViewerUrl, '_blank');
     }
 };
 
