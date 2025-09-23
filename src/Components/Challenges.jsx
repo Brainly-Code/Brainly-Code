@@ -9,6 +9,7 @@ import Header from "./ui/Header";
 import BgLoader from "./ui/BgLoader";
 import like from "../assets/like.png";
 import liked from "../assets/liked.png";
+import { FaCheck, FaRegCheckCircle } from "react-icons/fa";
 
 const Challenges = () => {
   const { data: challenges, error, isLoading, refetch } = useGetChallengesQuery();
@@ -86,18 +87,26 @@ const Challenges = () => {
       }
     };
 
-    const handleViewInBrowser = (url) => {
-    const extension = url.split('.').pop().toLowerCase();
+const handleViewInBrowser = (url) => {
+    // Ensure the URL points to your Cloudinary account
+    const updatedUrl = url.replace(
+        'https://res.cloudinary.com/dglbxzxsc/',
+        'https://res.cloudinary.com/dnppwzg0k/'
+    );
+
+    const extension = updatedUrl.split('.').pop().toLowerCase();
+
     if (['docx', 'doc', 'pptx', 'ppt', 'xlsx'].includes(extension)) {
-      const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(url)}`;
-      window.open(officeUrl, '_blank');
-    }
-    else if(extension === 'pdf') {
-          window.open(url, '_blank');
-    } 
-    else {
-      const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
-      window.open(googleViewerUrl, '_blank');
+        // Open Office documents in Office Online Viewer
+        const officeUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(updatedUrl)}`;
+        window.open(officeUrl, '_blank');
+    } else if (extension === 'pdf') {
+        // Open PDF directly in the browser
+        window.open(updatedUrl, '_blank');
+    } else {
+        // Fallback: open other file types in Google Docs Viewer
+        const googleViewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(updatedUrl)}&embedded=true`;
+        window.open(googleViewerUrl, '_blank');
     }
 };
 
@@ -222,12 +231,19 @@ const Challenges = () => {
                   </button>
                 </Link>
                 }
-                <img
-                  src={challenge.userHasLiked ? liked : like}
-                  alt="like"
-                  className="h-6 w-6 cursor-pointer"
-                  onClick={() => handleLikeClick(challenge.id)}
-                />
+                {challenge.userHasLiked ? (
+                    <FaCheck
+                      size={24}
+                      className="cursor-pointer hover:scale-110 transition-transform text-green-400"
+                      onClick={() => handleLikeClick(challenge.id)}
+                    />
+                  ) : (
+                    <FaRegCheckCircle
+                      size={24}
+                      className="cursor-pointer hover:scale-110 transition-transform text-gray-400"
+                      onClick={() => handleLikeClick(challenge.id)}
+                    />
+                )}
               </div>
             </div>
           ))}

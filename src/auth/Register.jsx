@@ -35,7 +35,7 @@ const Register = () => {
     if (userData && location.pathname.includes('/auth/callback')) {
       dispatch(setCredentials({ user: userData.user }));
       setTimeout(() => {
-        const redirectPath = redirectFromQuery || getDefaultRedirect(userData.user.role);
+        const redirectPath = redirectFromQuery || getDefaultRedirect(userData.user?.role);
         navigate(redirectPath, { replace: true });
         toast.success('OAuth registration successful!');
       }, 100);
@@ -57,7 +57,7 @@ const Register = () => {
       const res = await register({ username, email, password }).unwrap();
       dispatch(setCredentials({ user: res.user }));
       setTimeout(() => {
-        const redirectPath = redirectFromQuery || getDefaultRedirect(res.user.role);
+        const redirectPath = redirectFromQuery || getDefaultRedirect(res.user?.role);
         navigate(redirectPath, { replace: true });
         toast.success('Registration successful!');
       }, 100);
@@ -191,11 +191,12 @@ const Register = () => {
                       type="submit"
                       disabled={isLoading}
                       className="flex-1 bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white py-3 rounded-full font-semibold hover:opacity-90 transition duration-300 flex items-center justify-center"
+                      onClick={() => submitHandler()}
                     >
                       {isLoading ? (
                         <span className="w-5 h-5 border-2 border-white border-b-transparent rounded-full animate-spin"></span>
                       ) : (
-                        'Create Account'
+                        <span className='mx-2'> Create Account </span>
                       )}
                     </button>
                   </div>

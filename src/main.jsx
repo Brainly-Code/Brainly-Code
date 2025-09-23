@@ -6,7 +6,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 import './index.css';
 import Login from './auth/Login';
 import Register from './auth/Register';
-import store from './redux/store';
+import store, { persistor } from './redux/store';
 import App from './App';
 import { Hero } from './Components/Hero';
 import UpdateUser from './Components/UpdateUser';

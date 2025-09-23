@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:3000",
-  credentials: 'include', // <--- CRUCIAL
+  baseUrl: "https://backend-hx6c.onrender.com", // or your deployed URL
+  credentials: "include",
+
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.access_token;
     if (token) {
