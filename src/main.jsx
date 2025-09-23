@@ -42,18 +42,11 @@ import { useSelector } from 'react-redux';
 import { useGetCurrentUserQuery } from './redux/api/apiSlice.jsx';
 import OAuthSuccess from './auth/OAuthSuccess';
 
-const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { user, access_token } = useSelector(state => state.auth);
-  const isAuthenticated = !!access_token && !!user;
-
-  if (!isAuthenticated) {
+const ProtectedRoute = ({ children }) => {
+  const { access_token, user } = useSelector(state => state.auth);
+  if (!access_token || !user) {
     return <Navigate to="/login" replace />;
   }
-
-  if (requireAdmin && user.role !== 'ADMIN' && user.role !== 'SUPERADMIN') {
-    return <Navigate to="/user" replace />;
-  }
-
   return children;
 };
 

@@ -21,6 +21,7 @@ import Footer from './ui/Footer';
 import Header from './ui/Header';
 import BgLoader from './ui/BgLoader';
 import { useGetUsersQuery } from '../redux/api/AdminSlice';
+import { useSelector } from 'react-redux';
 
 export default function HomePage() {
   const getIconForCourse = (title) => {
@@ -41,11 +42,16 @@ export default function HomePage() {
   const [likeCourse] = useLikeCourseMutation();
   const { data: users } = useGetUsersQuery();
   const { data: challenges } = useGetCoursesQuery();
-  
+  const {user} = useSelector(state => state.auth);
+  console.log(user)
   const mentors = users?.filter(user => user.role === 'ADMIN' || user.role === 'SUPERADMIN');
   const activeLearners = users?.filter(user => user.role === 'USER');
   const totalChallenges = challenges?.length || 0;
   const allActiveLearners = activeLearners?.length || 0;
+
+  if(user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') {
+    window.location.href = '/admin';
+  }
 
   const [localLikes, setLocalLikes] = React.useState({});
 
@@ -126,17 +132,17 @@ export default function HomePage() {
             {
               title: 'Palindrome challenge',
               level: 'Beginner',
-              color: 'from-blue-400 to-indigo-500',
+              color: 'from-[#00ffee] to-[#00c6ff]',
             },
             {
               title: 'Full React Application',
               level: 'Intermediate',
-              color: 'from-purple-400 to-pink-500',
+              color: 'from-[#00c6ff] to-purple-500',
             },
             {
               title: 'Fullstack',
               level: 'Advanced',
-              color: 'from-green-400 to-emerald-500',
+              color: 'from-purple-600 to-[#00ffee]',
             },
           ].map((challenge, idx) => (
             <div
@@ -188,7 +194,7 @@ export default function HomePage() {
               className={`px-5 py-2 rounded-full transition-all duration-200 font-medium text-sm sm:text-base shadow-md ${
                 filterLevel === level
                   ? 'bg-gradient-to-r from-[#00ffee] to-purple-500 text-white'
-                  : 'hover:bg-[#00ffee] hover:bg-opacity-50 hover:text-white text-gray-700 hover:bg-gray-100'
+                  : 'hover:bg-[#00ffee] hover:bg-opacity-60 hover:text-white text-gray-700'
               }`}
             >
               {level === 'ALL' ? 'All Courses' : level}

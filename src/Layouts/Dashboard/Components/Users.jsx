@@ -230,7 +230,7 @@ const findImagePath = (imageId) => {
     setShowActionsDropdownForUser(null);
   };
 
-  const [deleteUser] = useDeleteUserMutation();
+  const [deleteUser, {isLoading: isDeletingUser}] = useDeleteUserMutation();
 
   const handleDeleteUserClick = async (user) => {
     // eslint-disable-next-line no-unused-vars
@@ -492,7 +492,7 @@ const findImagePath = (imageId) => {
                               }}
                               className="block w-full text-left px-4 py-2 text-red-500 hover:bg-red-900 transition-colors text-sm"
                             >
-                              Delete
+                              {isDeletingUser ? "Deleting" : "Delete"}
                             </button>
                           </>
                         )}

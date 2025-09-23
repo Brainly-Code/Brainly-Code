@@ -14,11 +14,16 @@ const OAuthSuccess = () => {
   const params = new URLSearchParams(location.search);
   const access_token = params.get("token");
 
+  // Set token in Redux before fetching user info
+  useEffect(() => {
+    if (access_token) {
+      dispatch(setCredentials({ user: null, access_token }));
+    }
+  }, [access_token, dispatch]);
+
   // Fetch user info with the token
-  const { data: user, isSuccess } = useGetCurrentUserQuery(undefined, {
+  const { data: user } = useGetCurrentUserQuery(undefined, {
     skip: !access_token,
-    refetchOnMountOrArgChange: true,
-    // Pass the token in the header (see apiSlice prepareHeaders)
   });
 
   useEffect(() => {

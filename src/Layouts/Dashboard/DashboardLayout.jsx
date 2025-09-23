@@ -11,10 +11,9 @@ import { FiHome } from "react-icons/fi";
 import { FaRegUser, FaStar } from "react-icons/fa";
 import { MdContacts, MdOutlineReviews } from "react-icons/md";
 import { BsGraphUp } from "react-icons/bs";
-import BgLoader from "../../Components/ui/BgLoader.jsx";
 
 const DashboardLayout = () => {
-  const { user, isLoadingUser } = useSelector((state) => state.auth);
+  const { access_token, user } = useSelector((state) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -30,9 +29,9 @@ const DashboardLayout = () => {
     return <Navigate to="/login" replace />;
   }
 
-  if(isLoadingUser) {
-    return <BgLoader />
-  }
+  // if(isLoadingUser) {
+  //   return <BgLoader />
+  // }
 
   if (role === "USER") {
     return <Navigate to="/user" replace />;

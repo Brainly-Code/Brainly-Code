@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:3000",
-  credentials: 'include', // send cookies!
+  credentials: 'include', // <--- CRUCIAL
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.access_token;
     if (token) {
@@ -14,20 +14,12 @@ const baseQuery = fetchBaseQuery({
 
 export const apiSlice = createApi({
   baseQuery,
-  tagTypes: ['User', 'Videos', 'Comment'],
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials) => ({
         url: '/auth/login',
         method: 'POST',
         body: credentials,
-      }),
-    }),
-    register: builder.mutation({
-      query: (data) => ({
-        url: '/auth/signup',
-        method: 'POST',
-        body: data,
       }),
     }),
     refreshToken: builder.mutation({
@@ -47,7 +39,6 @@ export const apiSlice = createApi({
 
 export const {
   useLoginMutation,
-  useRegisterMutation,
   useRefreshTokenMutation,
   useGetCurrentUserQuery,
 } = apiSlice;
