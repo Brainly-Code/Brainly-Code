@@ -19,7 +19,6 @@ const menu = [
     icon: <BsGraphUp size={22} />,
   },
   { name: "Reviews", to:"/admin/reviews", icon: <MdOutlineReviews size={22}/>}
-  // { name: "Premium", to: "/admin/users/premium", icon: <FaStar size={22} /> },
 ];
 const SideBar = () => {
   return (

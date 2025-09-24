@@ -96,7 +96,6 @@ const CodeEditor = (
       toast.error("Your code should render 'This is My first HTML code!!!'")
     }
 
-    console.log(hasPassed);
   }
 
   if(error) {

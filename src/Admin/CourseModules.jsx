@@ -62,8 +62,7 @@ const Modules = () => {
 
         toast.success('Module created successfully!');
       } catch (err) {
-        console.error(err);
-        toast.error(err?.data?.message || 'Error creating module');
+        toast.error('Error in creating module');
       }
     } else if (uploadType === 'video') {
       try {
@@ -77,8 +76,7 @@ const Modules = () => {
         setVideoFile(null);
         toast.success('Video uploaded successfully!');
       } catch (err) {
-        console.error(err);
-        toast.error(err?.data?.message || 'Error uploading video');
+        toast.error('Error uploading video');
       }
     } else if (uploadType === 'file') {
     try {
@@ -87,14 +85,12 @@ const Modules = () => {
       formData.append('courseId', id);
       formData.append('file', fileUpload);
       formData.append('type', uploadType);
-      console.log(fileUpload);
       await createCourseResource({courseId:id,formData}).unwrap();// RTK mutation for course resources
       setFileTitle('');
       setFileUpload(null);
       toast.success('File uploaded successfully!');
     } catch (err) {
-      console.error(err);
-      toast.error(err?.data?.message || 'Error uploading file');
+      toast.error('Error uploading file');
     }
   }
       setShowAddModuleForm(false);
@@ -115,8 +111,7 @@ const Modules = () => {
       toast.success('Resource deleted successfully!');
       refetchResources();
     } catch (err) {
-      console.error(err);
-      toast.error(err?.data?.message || 'Failed to delete resource');
+      toast.error('Failed to delete resource');
     } finally {
       setDeletingId(null);
     }

@@ -59,9 +59,8 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
         assignment: '',
       });
     } catch (error) {
-      console.error('Failed to create lesson:', error);
       toast.error(
-        error?.data?.message || 'Failed to create lesson. Please try again.'
+        'Failed to create lesson. Please try again.'
       );
     }
   } else if (uploadType === 'video') {
@@ -82,14 +81,11 @@ const SubModuleItem = ({ title, moduleId, id: miniModuleId }) => {
   setVideoTitle('');
   setVideoFile(null);
 } catch (error) {
-  console.error('Failed to upload lesson video:', error);
-  // Try this:
   if (error.data) {
-    console.error('Validation errors:', error.data);
     toast.error(Object.values(error.data).flat().join(', '));
   } else {
     toast.error(
-      error?.data?.message || 'Failed to upload video. Please try again.'
+      'Failed to upload video. Please try again.'
     );
   }
 }

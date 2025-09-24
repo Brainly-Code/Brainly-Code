@@ -58,10 +58,8 @@ const Profile = () => {
 
   
     if (imageFile) {
-      console.log(imageFile)
       const cloudRes = await uploadProfileImage({ id: currentUser?.id, imageFile }).unwrap();
       
-      console.log(cloudRes)
       cloudinaryUrl = cloudRes?.url || cloudRes?.secure_url;
     }
 
@@ -182,7 +180,7 @@ const Profile = () => {
               type="submit"
               disabled={loadingUpdateProfile}
               className={`py-2 px-4 rounded-md text-white ${
-                loadingUpdateProfile ? "bg-gray-400 cursor-not-allowed" : "bg-[#1ADBE2] hover:bg-pink-600"
+                loadingUpdateProfile ? "bg-green-300 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"
               }`}
             >
               {uploading ? "Updating..." : "Update Profile"}

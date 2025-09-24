@@ -19,12 +19,6 @@ const Login = () => {
 
   const [login, { isLoading }] = useLoginMutation();
   const { user, access_token } = useSelector(state => state.auth);
-  if(user) {
-    if(user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') {
-      navigate('/admin', { replace: true });
-    }
-  }
-
   const handleGoogleLogin = () => {
     window.location.href = "https://backend-hx6c.onrender.com/autho/google";
   };
@@ -39,24 +33,14 @@ const Login = () => {
     if (role === 'ADMIN' || role === 'SUPERADMIN') return '/admin';
     return '/user';
   };
-  // useEffect(() => {
-  //   if (user) {
-  //     if (user?.role === 'ADMIN' || user?.role === 'SUPERADMIN') {
-  //       navigate('/admin', { replace: true });
-  //     }
-  //   } else {
-  //     navigate('/user', { replace: true });
-  //   }
-  // });
 
-  useEffect(() => {
-    if (user && access_token) {
-      const redirectPath = redirectFromQuery || getDefaultRedirect(user?.role);
-      if (location.pathname === '/login' || location.pathname === '/register') {
-        navigate(redirectPath, { replace: true });
-      }
-    }
-  }, [user, access_token, navigate, location.pathname, redirectFromQuery]);
+  // useEffect(() => {
+  //   if (user && access_token != null) {
+  //     const redirectPath = redirectFromQuery || getDefaultRedirect(user?.role);
+  //       navigate(redirectPath, { replace: true });
+  //       window.location.reload();
+  //     }
+  // }, [user, access_token, navigate, location.pathname, redirectFromQuery]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -70,10 +54,8 @@ const Login = () => {
         navigate('/user', { replace: true });
       }
       window.location.reload();
-      // Redirect will happen in useEffect above
     } catch (error) {
       toast.error(error?.data?.message || 'Login failed. Please try again.');
-      console.error('Login error:', error);
     }
   };
 

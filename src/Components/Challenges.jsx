@@ -51,10 +51,6 @@ const Challenges = () => {
 
   if (error) toast.error(error);
 
-  useEffect(()=>{
-    console.log("user:",user);
-  },[user])
-
   const handleLikeClick = async (challengeId) => {
     try {
       const res = await toggleLike({ id: challengeId, userId: user?.id }).unwrap();
@@ -75,7 +71,6 @@ const Challenges = () => {
       refetch();
     } catch (error) {
       toast.error("Failed to like challenge");
-      console.log("error: ",error.message)
     }
   };
 

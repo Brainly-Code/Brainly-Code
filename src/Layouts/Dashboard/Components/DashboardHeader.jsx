@@ -27,15 +27,13 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const navigate = useNavigate();
   const searchRef = useRef(null);
 
-  const { userInfo, accessToken } = useSelector((state) => state.auth);
+  const { user, access_token: accessToken } = useSelector((state) => state.auth);
   const decoded = accessToken ? jwtDecode(accessToken) : null;
   const userId = decoded?.sub;
 
   const { data: image, isLoading: loadingImage } = useGetProfileImageQuery(userId, {
     skip: !userId,
   });
-
-  const { data: user, isError } = useGetUserByIdQuery(userId, { skip: !userId });
 
   const imagePath = image?.path ? image.path : profileFallback;
 
@@ -61,8 +59,8 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
 
   const logoutHandler = async () => {
     try {
-      const res = await logoutApiCall().unwrap(); // backend should clear cookie
-      dispatch(logout());
+      const res = await logoutApiCall().unwrap();
+      dispatch(logout({user: null, access_token: null}));
       navigate("/login");
       toast.success("Logout successful");
     } catch (error) {
@@ -75,9 +73,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   };
 
   if (loadingImage) return <div className="p-4 text-white">Loading...</div>;
-  if (isError) {
-    console.log(isError);
-  }
+
 
   return (
     <div>

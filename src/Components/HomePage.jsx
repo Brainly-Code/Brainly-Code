@@ -45,7 +45,6 @@ export default function HomePage() {
   const { data: users } = useGetUsersQuery();
   const { data: challenges } = useGetCoursesQuery();
   const {user} = useSelector(state => state.auth);
-  console.log(user)
   const mentors = users?.filter(user => user.role === 'ADMIN' || user.role === 'SUPERADMIN');
   const activeLearners = users?.filter(user => user.role === 'USER');
   const totalChallenges = challenges?.length || 0;

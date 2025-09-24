@@ -51,7 +51,6 @@ const Lesson = (
           await startCourseProgress({userId, courseId }).unwrap();
           toast.success("Course started");
         } catch (error) {
-          console.log(error);
           toast.error(error?.data?.message);
         }
       })();
@@ -68,7 +67,6 @@ const Lesson = (
           await trackModuleProgress(moduleProgress?.data[0]?.id, {moduleId}).unwrap();
           await trackCourseProgress(courseProgress?.data[0]?.id, {courseId}).unwrap();
         } catch (error) {
-          console.log(error);
           toast.error(error?.data?.message);
         }
       })()

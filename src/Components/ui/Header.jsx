@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 import { FloatingNav } from './FloatingNav';
 import BrainlyCodeIcon from '../BrainlyCodeIcon';
 import profileFallback from "../../assets/profile.png";
-import { jwtDecode } from "jwt-decode";
 import Loader from './Loader';
 
 const Header = () => {
@@ -52,8 +51,9 @@ const Header = () => {
   const logoutHandler = async () => {
     try {
       const res = await logoutApiCall().unwrap(); // backend should clear cookie
-      dispatch(logout());
-      navigate("/login");      
+      dispatch(logout({user: null, access_token: null}));
+      window.reload
+      navigate("/login");
       toast.success("Logout successful");
     } catch (error) {
       toast.error("Logout failed");

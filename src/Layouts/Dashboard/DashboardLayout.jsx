@@ -25,13 +25,8 @@ const DashboardLayout = () => {
   try {
     role = user?.role;
   } catch (error) {
-    console.error("Invalid token:", error);
     return <Navigate to="/login" replace />;
   }
-
-  // if(isLoadingUser) {
-  //   return <BgLoader />
-  // }
 
   if (role === "USER") {
     return <Navigate to="/user" replace />;

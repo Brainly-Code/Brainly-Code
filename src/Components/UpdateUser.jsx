@@ -57,13 +57,10 @@ const Profile = () => {
   try {
 
     let cloudinaryUrl;
-    dispatch(setLoading(true));
   
     if (imageFile) {
-      console.log(imageFile)
       const cloudRes = await uploadProfileImage({ id: currentUser?.id, imageFile }).unwrap();
       
-      console.log(cloudRes)
       cloudinaryUrl = cloudRes?.url || cloudRes?.secure_url;
     }
 
@@ -81,13 +78,9 @@ const Profile = () => {
 
     const res = await updateProfile({ id: currentUser?.id, formData: profileData }).unwrap();
 
-  
-
     toast.success("Profile updated successfully");
   } catch (err) {
-    toast.error(err?.data?.message || err.message);
-  } finally {
-    dispatch(setLoading(false))
+    toast.error("Failed to update profile");
   }
 };
     const imagePath =
@@ -101,7 +94,7 @@ const Profile = () => {
     <div className="min-h-screen w-full bg-[#110167] p-4">
                 <button
             onClick={handleBack}
-            className="py-2 px-4 rounded-md bg-[rgba(217,217,217,0.2)] text-white hover:bg-gray-700 font-bold"
+            className="py-2 px-4 rounded-md bg-[rgba(217,217,217,0.2)] text-white hover:bg-[#00ffee] hover:bg-opacity-60 font-bold"
           >
             Back
           </button>
@@ -182,7 +175,7 @@ const Profile = () => {
               type="submit"
               disabled={loadingUpdateProfile}
               className={`py-2 px-4 rounded-md text-white ${
-                loadingUpdateProfile ? "bg-gray-400 cursor-not-allowed" : "bg-[#1ADBE2] hover:bg-pink-600"
+                loadingUpdateProfile ? "bg-green-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"
               }`}
             >
               {uploading ? "Updating..." : "Update Profile"}

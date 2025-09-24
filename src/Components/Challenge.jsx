@@ -48,14 +48,12 @@ const Challenge = () => {
       toast.success("Congratulations, you have completed the challenge 🥳");
       navigate(`/admin/completers/${challengeId}`);
     } catch (error) {
-      console.log(error);
       toast.error(error?.data?.message || "Failed to complete challenge");
     }
   };
   
 
   if (isInstructionsLoading) return <BgLoader />;
-  if (error) console.log(error);
 
   return (
     <div className='bg-[#070045] opacity-90 h-full'>

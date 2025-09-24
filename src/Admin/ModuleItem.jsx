@@ -27,7 +27,6 @@ const ModuleItem = ({ moduleId, title, submodules }) => {
       // Optionally: you might want to refetch submodules list here or have parent refresh data
     } catch (err) {
       toast.error('Failed to add sub-module. Please try again.');
-      console.error('Failed to create sub-module:', err);
     }
   };
 
