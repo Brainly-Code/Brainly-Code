@@ -83,7 +83,7 @@ export default function HomePage() {
     }
   };
 
-  if (error) toast.error(error);
+  if (error) toast.error(error?.message);
 
   const [filterLevel, setFilterLevel] = React.useState('ALL');
 

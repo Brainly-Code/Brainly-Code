@@ -25,9 +25,9 @@ export const Hero = () => {
     return <Loader />
   }
 
-  if(isError) {
-    toast.error("Sorry Cannot get the courses!")
-  }
+  // if(isError) {
+  //   toast.error("Sorry Cannot get the courses!")
+  // }
 
 
   return (
@@ -119,7 +119,7 @@ export const Hero = () => {
       <section className="max-w-7xl mx-auto px-6 py-12 text-center">
       <h1 className="text-xl sm:text-2xl font-bold mb-9">Learning Paths</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {courses?.map((course, index) => (
+          {courses ? ( courses?.map((course, index) => (
             <div key={index} className="flex flex-col items-center">
               <div className="rounded-md bg-gradient-to-r from-green-800 to-purple-950 w-64 h-44 flex justify-center items-center">
                 <div className="rounded-full bg-blue-900 w-16 h-16 flex items-center justify-center">
@@ -146,7 +146,12 @@ export const Hero = () => {
                 </div>
               </div>
             </div>
-          ))}
+          ))) : (
+            <div key={index} className="flex flex-col items-center">
+              <p>The Learning paths are not yet available.</p>
+            </div>
+          )
+          }
         </div>
 
       <Link to="/login">
