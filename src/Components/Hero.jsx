@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import { Button } from "./ui/Button";
 import { useGetCoursesQuery } from "../redux/api/coursesSlice";
 import Loader from "./ui/Loader";
-import { toast } from "react-toastify";
 
 export const Hero = () => {
   const navItems = [

@@ -48,7 +48,6 @@ const Register = () => {
       if (location.pathname === '/register' || location.pathname === '/login') {
         navigate(redirectPath, { replace: true });
       }
-      window.location.reload();
     }
   }, [user, navigate, location.pathname, redirectFromQuery]);
 
@@ -62,7 +61,6 @@ const Register = () => {
         navigate(redirectPath, { replace: true });
         toast.success('Registration successful!');
       }, 100);
-      window.location.reload();
     } catch (error) {
       toast.error(error?.data?.message || 'Registration failed. Please check your details or network.');
     } finally {

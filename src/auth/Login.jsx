@@ -50,10 +50,9 @@ const Login = () => {
       toast.success('Login successful!');
       if (res?.user?.role === 'ADMIN' || res?.user?.role === 'SUPERADMIN') {
         navigate('/admin', { replace: true });
-      }else {
+      } else {
         navigate('/user', { replace: true });
       }
-      window.location.reload();
     } catch (error) {
       toast.error(error?.data?.message || 'Login failed. Please try again.');
     }

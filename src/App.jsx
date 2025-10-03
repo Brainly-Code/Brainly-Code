@@ -24,6 +24,7 @@ const App = () => {
           setLoading(false);
         } catch (err) {
           dispatch(logout());
+          navigate('/login', { replace: true });
         }
       }
     };
