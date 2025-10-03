@@ -116,9 +116,9 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
             <li className="relative">
               <button
                 onClick={() => setSearchActive(true)}
-                className="p-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                className="p-2 rounded-md hover:rounded-lg bg-[#00ffee] bg-opacity-20 hover:bg-opacity-10"
               >
-                <FiSearch className="text-gray-200 text-xl" />
+                <FiSearch className="text-gray-200 text-xl"  />
               </button>
 
               {searchActive && (

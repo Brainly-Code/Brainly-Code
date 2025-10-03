@@ -31,18 +31,21 @@ const Users = () => {
     skip: !usersData, // Only fetch images if users are loaded
   });
 
+  const {data: images} = useGetProfileImagesQuery(usersData?.id);
+  const findImagePath = (imageId) => {
+    if (!images?.length) return profileFallback;
+  
+    const image = images.find(img => img.id === imageId);
+    if (!image?.path || !image.path.startsWith("http")) return profileFallback;
+  
+    return image.path;
+  };
+
   const [register] = useRegisterMutation();
   const [deleteUser] = useDeleteUserMutation();
 
   const dispatch = useDispatch();
 
-  // Convert imagesData to a map for efficient lookup
-  const imagesMap = imagesData?.entities || {};
-
-  const findImagePath = (userId) => {
-    const image = imagesMap[userId];
-    return image?.path && image.path.startsWith("http") ? image.path : profileFallback;
-  };
 
   const [users, setUsers] = useState(usersData || []);
   const [userHistory, setUserHistory] = useState([usersData || []]);
@@ -274,6 +277,7 @@ const Users = () => {
     }
   };
 
+
   if (isLoadingUsers || isLoadingImages) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -388,18 +392,14 @@ const Users = () => {
           <tbody>
             {paginatedUsers.length > 0 ? (
               paginatedUsers.map((user) => (
+              
                 <tr
                   key={user.id}
                   className="bg-[#19179B] text-sm hover:bg-[#2c28b8] transition cursor-pointer"
                   onClick={() => handleViewUser(user)}
                 >
                   <td className="p-3 align-middle first:rounded-l-lg">
-                    <img
-                      src={findImagePath(user.id)}
-                      alt={`${user.username}'s profile`}
-                      className="rounded-full h-10 w-10 object-cover mr-3"
-                      onError={(e) => (e.target.src = profileFallback)}
-                    />
+                    <img src={findImagePath(user?.id) || (user?.photo ? user?.photo : profileFallback)} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
                   </td>
                   <td className="p-3 align-middle font-medium">{user.username}</td>
                   <td className="p-3 align-middle sm:table-cell hidden">{user.email}</td>
