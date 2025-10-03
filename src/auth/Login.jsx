@@ -53,6 +53,7 @@ const Login = () => {
       } else {
         navigate('/user', { replace: true });
       }
+      window.location.reload();
     } catch (error) {
       toast.error(error?.data?.message || 'Login failed. Please try again.');
     }

@@ -48,6 +48,7 @@ const Register = () => {
       if (location.pathname === '/register' || location.pathname === '/login') {
         navigate(redirectPath, { replace: true });
       }
+      window.location.reload();
     }
   }, [user, navigate, location.pathname, redirectFromQuery]);
 
@@ -56,15 +57,11 @@ const Register = () => {
     try {
       const res = await register({ username, email, password }).unwrap();
       dispatch(setCredentials({ user: res.user }));
-      setTimeout(() => {
-        const redirectPath = redirectFromQuery || getDefaultRedirect(res.user?.role);
-        navigate(redirectPath, { replace: true });
-        toast.success('Registration successful!');
-      }, 100);
+      const redirectPath = redirectFromQuery || getDefaultRedirect(res.user?.role);
+      toast.success('Registration successful!');
+      navigate(redirectPath, { replace: true });
     } catch (error) {
       toast.error(error?.data?.message || 'Registration failed. Please check your details or network.');
-    } finally {
-      toast.error("Registration failed. Please try again.");
     }
   };
 
@@ -79,12 +76,12 @@ const Register = () => {
 
   const handleGoogleLogin = () => {
     const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = `https://backend-hx6c.onrender.com/autho/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   const handleGithubLogin = () => {
     const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/auth/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = `https://backend-hx6c.onrender.com/autho/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   return (
@@ -188,7 +185,7 @@ const Register = () => {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="flex-1 bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white py-3 rounded-full font-semibold hover:opacity-90 transition duration-300 flex items-center justify-center"
+                      className="flex-1 bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white py-3 px-1 rounded-full font-semibold hover:opacity-90 transition duration-300 flex items-center justify-center"
                       onClick={() => submitHandler()}
                     >
                       {isLoading ? (
