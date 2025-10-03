@@ -50,11 +50,11 @@ const Header = () => {
 
   const logoutHandler = async () => {
     try {
-      const res = await logoutApiCall().unwrap(); // backend should clear cookie
+      const res = await logoutApiCall().unwrap(); 
       dispatch(logout({user: null, access_token: null}));
-      window.reload
       navigate("/login");
       toast.success("Logout successful");
+      window.location.reload();
     } catch (error) {
       toast.error("Logout failed");
     }

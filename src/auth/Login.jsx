@@ -164,6 +164,7 @@ const Login = () => {
                 <button
                   onClick={handleGoogleLogin}
                   type="button"
+                  disabled
                   className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300"
                 >
                   <FaGoogle className="inline mr-3 text-lg" />
@@ -172,6 +173,7 @@ const Login = () => {
                 <button
                   onClick={handleGithubLogin}
                   type="button"
+                  disabled
                   className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-6 hover:bg-[#001374a9] transition duration-300"
                 >
                   <FaGithub className="inline mr-3 text-lg" />

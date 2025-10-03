@@ -28,6 +28,10 @@ const DashboardLayout = () => {
     return <Navigate to="/login" replace />;
   }
 
+  if(!access_token) {
+    return <Navigate to="/login" replace />;
+  }
+
   if (role === "USER") {
     return <Navigate to="/user" replace />;
   }

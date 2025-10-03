@@ -60,9 +60,10 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const logoutHandler = async () => {
     try {
       const res = await logoutApiCall().unwrap();
-      dispatch(logout({user: null, access_token: null}));
+      dispatch(logout());
       navigate("/login");
       toast.success("Logout successful");
+      window.location.reload();
     } catch (error) {
       toast.error("Logout failed");
     }
