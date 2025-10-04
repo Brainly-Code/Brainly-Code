@@ -10,7 +10,6 @@ import {
   useGetUserByIdQuery,
   useLogoutMutation,
 } from "../../../redux/api/userSlice";
-import { Logout } from "../../../redux/Features/authSlice";
 
 import { FiSearch } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
@@ -19,15 +18,16 @@ import { jwtDecode } from "jwt-decode";
 import { useGetUnreadCountsQuery } from "../../../redux/api/messageSlice";
 import Chat from "../../../Components/Chat";
 import BrainlyCodeIcon from "../../../Components/BrainlyCodeIcon";
+import { logout } from "../../../redux/Features/authSlice";
 
 const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   const [openChat, setOpenChat] = useState(false);
-  const [searchActive, setSearchActive] = useState(false); 
+  const [searchActive, setSearchActive] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const searchRef = useRef(null);
 
-  const { userInfo, accessToken } = useSelector((state) => state.auth);
+  const { user, access_token: accessToken } = useSelector((state) => state.auth);
   const decoded = accessToken ? jwtDecode(accessToken) : null;
   const userId = decoded?.sub;
 
@@ -35,11 +35,9 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
     skip: !userId,
   });
 
-  const { data: user, isError } = useGetUserByIdQuery(userId, { skip: !userId });
-
   const imagePath = image?.path ? image.path : profileFallback;
 
-    useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setSearchActive(false);
@@ -53,19 +51,21 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [searchActive]);
 
-  const [logoutApiCall] = useLogoutMutation();
+  const [logoutApiCall, { isLoading: isLoggingOut }] = useLogoutMutation();
 
-  const {data: unreadNotifications} = useGetUnreadCountsQuery(userId);
+  const { data: unreadNotifications } = useGetUnreadCountsQuery(userId);
 
-  const {data: selectedUser} = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
+  const { data: selectedUser } = useGetUserByIdQuery(unreadNotifications ? unreadNotifications?.[0]?.senderId : 1);
 
   const logoutHandler = async () => {
     try {
-      await logoutApiCall().unwrap();
-      dispatch(Logout());
+      const res = await logoutApiCall().unwrap();
+      dispatch(logout());
       navigate("/login");
+      toast.success("Logout successful");
+      window.location.reload();
     } catch (error) {
-      toast.error(error?.data?.message || error.message);
+      toast.error("Logout failed");
     }
   };
 
@@ -74,9 +74,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   };
 
   if (loadingImage) return <div className="p-4 text-white">Loading...</div>;
-  if(isError) {
-    console.log(isError);
-  }
+
 
   return (
     <div>
@@ -107,7 +105,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
                 )}
               </div>
               <img
-                src={ user?.photo ? user?.photo : imagePath }
+                src={user?.photo ? user?.photo : imagePath}
                 className="rounded-full h-10 w-10 object-cover"
                 alt="Profile"
                 onClick={() => navigate("/admin/profile")}
@@ -119,9 +117,9 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
             <li className="relative">
               <button
                 onClick={() => setSearchActive(true)}
-                className="p-2 rounded-md bg-gray-800 hover:bg-gray-700"
+                className="p-2 rounded-md hover:rounded-lg bg-[#00ffee] bg-opacity-20 hover:bg-opacity-10"
               >
-                <FiSearch className="text-gray-200 text-xl" />
+                <FiSearch className="text-gray-200 text-xl"  />
               </button>
 
               {searchActive && (

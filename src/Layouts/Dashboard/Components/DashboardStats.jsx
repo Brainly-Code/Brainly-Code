@@ -15,21 +15,6 @@ import { useGetDashboardStatsQuery, useGetGraphStatsQuery } from "../../../redux
 const DashboardStats = () => {
   const {data: stats} = useGetDashboardStatsQuery();
 
-  // // Fetch stats from backend
-  // useEffect(() => {
-  //   const fetchStats = async () => {
-  //     try {
-  //       const response = fetchedstats;
-  //       console.log(response?.data);
-  //       setStats(response.data);
-  //     } catch (error) {
-  //       console.error("Failed to fetch dashboard stats", error);
-  //     }
-  //   };
-  //   fetchStats();
-  // }, [fetchedstats]);
-
-  // KeenSlider setup
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     mode: "snap",

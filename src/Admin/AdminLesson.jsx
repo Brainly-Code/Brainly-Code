@@ -1,6 +1,5 @@
 import React from 'react'
 import { toast } from 'react-toastify';
-import { Logout } from '../redux/Features/authSlice';
 import { useLogoutMutation } from '../redux/api/userSlice';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';

@@ -5,7 +5,6 @@ import Loader from './ui/Loader';
 import Footer from './ui/Footer';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
-import { Logout } from '../redux/Features/authSlice';
 import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './ui/Header';

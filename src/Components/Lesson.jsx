@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { toast } from 'react-toastify';
-import { Logout } from '../redux/Features/authSlice';
 import Loader from './ui/Loader';
 import { FloatingNav } from './ui/FloatingNav';
 import BrainlyCodeIcon from './BrainlyCodeIcon';
@@ -52,7 +51,6 @@ const Lesson = (
           await startCourseProgress({userId, courseId }).unwrap();
           toast.success("Course started");
         } catch (error) {
-          console.log(error);
           toast.error(error?.data?.message);
         }
       })();
@@ -69,7 +67,6 @@ const Lesson = (
           await trackModuleProgress(moduleProgress?.data[0]?.id, {moduleId}).unwrap();
           await trackCourseProgress(courseProgress?.data[0]?.id, {courseId}).unwrap();
         } catch (error) {
-          console.log(error);
           toast.error(error?.data?.message);
         }
       })()

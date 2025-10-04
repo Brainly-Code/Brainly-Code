@@ -113,7 +113,7 @@ const Challenges = () => {
     await refetch(); 
   } catch (err) {
     console.error("Delete failed:", err);
-
+    toast.error("Failed to delete challenge. Please try again.");
   }
 };
 
@@ -175,7 +175,6 @@ const handleCreateNewChallenge = async (e) => {
   
   // If user selected a document, append it
   if (newChallengeData.document) {
-    console.log(newChallengeData.document);
     formData.append('file', newChallengeData.document);
   }
   setCreatingChallenge(true);
@@ -193,7 +192,6 @@ const handleCreateNewChallenge = async (e) => {
     handleCloseAddChallengeModal();
   } catch (error) {
     toast.error("Failed to create challenge. Please try again.");
-    console.error("Create challenge error:", error);
   }
 };
 
@@ -347,7 +345,7 @@ const handleViewInBrowser = (url) => {
                     >
                       {challenge.difficulty}
                     </span>
-                    <span className="text-white ml-[2rem]">{challenge?.relation}</span>
+                    <span className="ml-[3rem] text-white">{challenge?.relation}</span>
                     <button
                       className="text-white hover:text-gray-400"
                       onClick={() => toggleDropdown(challenge.id)}

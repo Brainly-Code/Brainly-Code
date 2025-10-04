@@ -13,6 +13,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ const Register = () => {
       if (location.pathname === '/register' || location.pathname === '/login') {
         navigate(redirectPath, { replace: true });
       }
+      window.location.reload();
     }
   }, [user, navigate, location.pathname, redirectFromQuery]);
 
@@ -56,17 +58,13 @@ const Register = () => {
     try {
       const res = await register({ username, email, password }).unwrap();
       dispatch(setCredentials({ user: res.user }));
-      setTimeout(() => {
-        const redirectPath = redirectFromQuery || getDefaultRedirect(res.user?.role);
-        navigate(redirectPath, { replace: true });
-        toast.success('Registration successful!');
-      }, 100);
+      const redirectPath = redirectFromQuery || getDefaultRedirect(res.user?.role);
+      toast.success('Registration successful!');
+      navigate(redirectPath, { replace: true });
+      window.location.reload();
     } catch (error) {
-      console.error('Register.jsx: Register error:', error, { registerError }); // Debug
-      toast.error(error?.data?.message || 'Registration failed. Please check your details or network.');
-    } finally {
-      console.log("Finished registration"); // Debug
-      // dispatch(setLoading(false));
+      toast.error('Registration failed. Please try again!');
+      setError(error?.data?.message);
     }
   };
 
@@ -81,12 +79,12 @@ const Register = () => {
 
   const handleGoogleLogin = () => {
     const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = `https://backend-hx6c.onrender.com/autho/google?redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   const handleGithubLogin = () => {
     const redirectUri = `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirectFromQuery || '/user')}`;
-    window.location.href = `https://backend-hx6c.onrender.com/auth/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = `https://backend-hx6c.onrender.com/autho/github?redirect_uri=${encodeURIComponent(redirectUri)}`;
   };
 
   return (
@@ -166,6 +164,11 @@ const Register = () => {
                     </button>
                   </div>
 
+                  <div className='p-5 text-center text-red-400'>
+                    <p>{error ? error : ""}</p>
+                  </div>
+
+
                   <div className="flex items-center w-full mb-4 text-sm">
                     <input
                       type="checkbox"
@@ -190,7 +193,7 @@ const Register = () => {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="flex-1 bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white py-3 rounded-full font-semibold hover:opacity-90 transition duration-300 flex items-center justify-center"
+                      className="flex-1 bg-gradient-to-r from-[#2DD4BF] to-[#8A2BE2] text-white py-3 px-1 rounded-full font-semibold hover:opacity-90 transition duration-300 flex items-center justify-center"
                       onClick={() => submitHandler()}
                     >
                       {isLoading ? (
@@ -209,6 +212,7 @@ const Register = () => {
                 <button
                   onClick={handleGoogleLogin}
                   type="button"
+                  disabled
                   className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-3 hover:bg-[#001374a9] transition duration-300"
                 >
                   <FaGoogle className="inline mr-3 text-lg" />
@@ -217,6 +221,7 @@ const Register = () => {
                 <button
                   onClick={handleGithubLogin}
                   type="button"
+                  disabled
                   className="w-full flex items-center justify-center bg-[#00137462] text-gray-300 py-3 rounded-full mb-6 hover:bg-[#001374a9] transition duration-300"
                 >
                   <FaGithub className="inline mr-3 text-lg" />

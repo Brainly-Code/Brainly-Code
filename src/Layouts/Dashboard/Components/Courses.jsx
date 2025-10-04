@@ -133,8 +133,7 @@ const Courses = () => {
     await refetch(); 
  
   } catch (err) {
-    console.error("Delete failed:", err);
-
+    toast.error("Failed to delete course.");
   }
 };
   // Use a local state for courses if you're mixing mock data and API data,
@@ -187,16 +186,6 @@ const Courses = () => {
     setPreviewIcon(getIconForCourse(newCourseData.title));
   }, [newCourseData.title]);
 
-
-
-
-  // const addStateToHistory = (newCoursesState) => {
-  //   const newHistory = courseHistory.slice(0, historyIndex + 1);
-  //   setCourseHistory([...newHistory, newCoursesState]);
-  //   setHistoryIndex(newHistory.length);
-  // };
-
-  // console.log(addStateToHistory) // This console.log will always show the function definition, not its effect.
 
   const handleUndo = () => {
     if (historyIndex > 0) {
@@ -297,7 +286,6 @@ const toggleDropdown = (courseId) => {
       handleCloseAddCourseModal();
       refetch(); // refetch updated list
     } catch (error) {
-      console.error(error);
       toast.error(error?.data?.message || "Failed to create course.");
     }
   };

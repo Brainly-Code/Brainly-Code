@@ -1,95 +1,45 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useRefreshTokenMutation } from './redux/api/userSlice';
-import { useEffect } from 'react';
+import { useGetCurrentUserQuery, useRefreshTokenMutation } from './redux/api/apiSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCredentials, logout } from './redux/Features/authSlice';
 import BgLoader from './Components/ui/BgLoader';
-import { Logout, setCredentials, setLoading } from './redux/Features/authSlice';
-import { jwtDecode } from 'jwt-decode';
+
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [refresh, { isLoading: isRefreshing, error: refreshError }] = useRefreshTokenMutation();
-  const { loading, accessToken, user } = useSelector((state) => state.auth);
+  const { access_token, user } = useSelector(state => state.auth);
+  const [refreshToken] = useRefreshTokenMutation();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      dispatch(setLoading(true));
-      // Check if token is valid and not expired
-      if (accessToken && user) {
+    const restoreSession = async () => {
+      if (!access_token) {
         try {
-          const decoded = jwtDecode(accessToken);
-          if (decoded.exp * 1000 > Date.now()) {
-            // Ensure user.id is set from sub
-            if (!user.id) {
-              dispatch(setCredentials({
-                user: { 
-                  id: user?.id,
-                  email: user?.email,
-                  role: user?.role,
-                  isPremium: user?.isPremium,
-                },
-                access_token: accessToken,
-              }));
-            }
-            navigateToRole(user?.role);
-            dispatch(setLoading(false));
-            return;
-          }
-        } catch (error) {
-          console.error('App.jsx: Invalid stored token:', error);
+          const res = await refreshToken().unwrap();
+          dispatch(setCredentials({ user: res.user, access_token: res.access_token }));
+          setLoading(false);
+        } catch (err) {
+          dispatch(logout());
+          navigate('/login', { replace: true });
         }
-
-        // Attempt refresh only if accessToken exists
-        try {
-          const res = await refresh().unwrap();
-          if (!res.access_token) {
-            throw new Error('No access token in refresh response');
-          }
-          const decoded = jwtDecode(res.access_token);
-          dispatch(setCredentials({
-            user: {
-              id: decoded.sub,
-              email: decoded.email,
-              role: decoded.role,
-              isPremium: decoded.isPremium,
-            },
-            access_token: res.access_token,
-          }));
-          navigateToRole(user?.role);
-        } catch (error) {
-          dispatch(Logout());
-          // navigate('/login', { replace: true });
-        }
-      } else {
-        // navigate('/login', { replace: true });
       }
-      dispatch(setLoading(false));
     };
+    restoreSession();
+  }, [access_token, dispatch, refreshToken]);
 
-    const navigateToRole = (role) => {
-      if (role === 'USER') {
-        navigate('/user', { replace: true });
-      } else if (role === 'ADMIN' || role === 'SUPERADMIN') {
-        navigate('/admin', { replace: true });
-      }
-
-    };
-
-    checkAuth();
-  }, [dispatch, navigate, refresh]);
-
-  if (loading || isRefreshing) {
-    return <BgLoader />;
+  if(loading) {
+    return <BgLoader />
   }
 
   return (
     <div>
       <ToastContainer />
       <main>
-        <Outlet /> {/* Render protected routes */}
+        <Outlet />
       </main>
     </div>
   );

@@ -4,10 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 const Home = () => {
-  const { userInfo } = useSelector((state) => state.auth);
-
-  const accessToken = userInfo?.accessToken;
-  
+  const { access_token: accessToken } = useSelector((state) => state.auth);  
 
   let role = null;
   try {

@@ -27,13 +27,10 @@ const CreateCourse = () => {
     e.preventDefault();
     
     try {
-      console.log("HERE")
       const res = await createCourse({ title, category, level, description }).unwrap(); 
-      console.log(res)
       navigate('/admin/myCourses')
       toast.success("Course created successfully")
     } catch (error) {
-      console.log(error)
       toast.error(error?.data?.message)
     }
   }

@@ -24,13 +24,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    // Get current logged-in user's profile
+    // Get current logged-in user (by refresh cookie)
     getCurrentUser: builder.query({
       query: () => ({
-        url: `${USER_URL}/profile`,
+        url: `/auth/get-me`,
         method: "GET",
       }),
-      // Automatically refetch when the cache is older than 5 minutes
       keepUnusedDataFor: 300,
     }),
 

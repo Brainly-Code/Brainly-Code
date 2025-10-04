@@ -19,7 +19,7 @@ const Challenges = () => {
   const { user } = useSelector((state) => state.auth);
 
 
-  // Local state for search
+  // Local states for search
   const [searchTerm, setSearchTerm] = useState("");
   const [showSearchHints, setShowSearchHints] = useState(false);
   const searchRef = useRef();
@@ -27,7 +27,7 @@ const Challenges = () => {
   // Difficulty filter
   const [filterLevel, setFilterLevel] = useState("ALL");
 
-  // Set initial challenge state with like info
+  // Seting initial challenge state with like info
   useEffect(() => {
     if (challenges) {
       const withLikes = challenges.map((ch) => {
@@ -38,7 +38,7 @@ const Challenges = () => {
     }
   }, [challenges, user?.id]);
 
-  // Click outside → hide search hints
+  // Doing a click outside to hide search hints
   useEffect(() => {
     function handleClickOutside(e) {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -50,10 +50,6 @@ const Challenges = () => {
   }, []);
 
   if (error) toast.error(error);
-
-  useEffect(()=>{
-    console.log("user:",user);
-  },[user])
 
   const handleLikeClick = async (challengeId) => {
     try {
@@ -75,7 +71,6 @@ const Challenges = () => {
       refetch();
     } catch (error) {
       toast.error("Failed to like challenge");
-      console.log("error: ",error.message)
     }
   };
 
@@ -110,7 +105,6 @@ const handleViewInBrowser = (url) => {
     }
 };
 
-  // Apply filters
   let filteredChallenges =
     filterLevel === "ALL"
       ? challengesState

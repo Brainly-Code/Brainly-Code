@@ -1,11 +1,11 @@
-import { fetchBaseQuery, createApi } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://backend-hx6c.onrender.com", // or your deployed URL
+  baseUrl:"https://backend-hx6c.onrender.com",
   credentials: "include",
 
   prepareHeaders: (headers, { getState }) => {
-    const token = getState().auth.accessToken;
+    const token = getState().auth.access_token;
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }
@@ -15,47 +15,31 @@ const baseQuery = fetchBaseQuery({
 
 export const apiSlice = createApi({
   baseQuery,
-  tagTypes: ['User', 'Videos', 'Comment'],
   endpoints: (builder) => ({
     login: builder.mutation({
-      query: (credentials) => {
-        return {
-          url: '/auth/login',
-          method: 'POST',
-          body: credentials,
-        };
-      },
-      transformResponse: (response) => {
-        return response;
-      },
-      transformErrorResponse: (error) => {
-        console.error('apiSlice: Login error:', error); // Debug
-        return error;
-      },
-    }),
-    register: builder.mutation({
-      query: (data) => ({
-        url: '/auth/signup',
+      query: (credentials) => ({
+        url: '/auth/login',
         method: 'POST',
-        body: data,
+        body: credentials,
       }),
     }),
     refreshToken: builder.mutation({
-      query: () => {
-        return {
-          url: '/auth/refresh',
-          method: 'POST',
-        };
-      },
-      transformResponse: (response) => {
-        return response;
-      },
-      transformErrorResponse: (error) => {
-        console.error('apiSlice: Refresh error:', error); // Debug
-        return error;
-      },
+      query: () => ({
+        url: '/auth/refresh',
+        method: 'POST',
+      }),
+    }),
+    getCurrentUser: builder.query({
+      query: () => ({
+        url: '/auth/get-me',
+        method: 'GET',
+      }),
     }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useRefreshTokenMutation } = apiSlice;
+export const {
+  useLoginMutation,
+  useRefreshTokenMutation,
+  useGetCurrentUserQuery,
+} = apiSlice;

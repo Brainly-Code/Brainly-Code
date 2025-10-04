@@ -13,24 +13,22 @@ import { MdContacts, MdOutlineReviews } from "react-icons/md";
 import { BsGraphUp } from "react-icons/bs";
 
 const DashboardLayout = () => {
-  const { user: userInfo, loading } = useSelector((state) => state.auth);
+  const { access_token, user } = useSelector((state) => state.auth);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
-  if (loading) {
-    return <BgLoader />;
-  }
-
-  if (!userInfo && !loading) {
-    console.log("No user info");
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
   let role;
   try {
-    role = userInfo?.role;
+    role = user?.role;
   } catch (error) {
-    console.error("Invalid token:", error);
+    return <Navigate to="/login" replace />;
+  }
+
+  if(!access_token) {
     return <Navigate to="/login" replace />;
   }
 
