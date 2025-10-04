@@ -33,7 +33,7 @@ const Header = () => {
   });
 
   const imagePath =
-    image?.path && image.path.startsWith("http")
+    image?.path && image?.path?.startsWith("http")
       ? image.path
       : profileFallback;
 

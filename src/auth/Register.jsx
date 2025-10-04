@@ -13,6 +13,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -62,7 +63,8 @@ const Register = () => {
       navigate(redirectPath, { replace: true });
       window.location.reload();
     } catch (error) {
-      toast.error(error?.data?.message || 'Registration failed. Please check your details or network.');
+      toast.error('Registration failed. Please try again!');
+      setError(error?.data?.message);
     }
   };
 
@@ -161,6 +163,11 @@ const Register = () => {
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
+
+                  <div className='p-5 text-center text-red-400'>
+                    <p>{error ? error : ""}</p>
+                  </div>
+
 
                   <div className="flex items-center w-full mb-4 text-sm">
                     <input
