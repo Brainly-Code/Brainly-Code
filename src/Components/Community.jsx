@@ -4,7 +4,7 @@ import profile from '../assets/whiteUser.png'
 import messenger from '../assets/messenger.png'
 import Footer from './ui/Footer'
 import conversation from '../assets/conversation.png'
-import Chat from './Chat'
+import { Chat } from './Chat'
 import { useGetUsersQuery } from '../redux/api/AdminSlice'
 import { useGetUnreadCountsQuery } from '../redux/api/messageSlice'
 import { toast } from 'react-toastify'
@@ -31,7 +31,7 @@ export const Community = () => {
   
   const currentUserId = user?.id;
 
-  const { data: unreadCounts } = useGetUnreadCountsQuery(currentUserId);
+  const { data: unreadCounts, error: unreadError } = useGetUnreadCountsQuery(currentUserId);
 
   const totalUnread = unreadCounts?.reduce((sum, u) => sum + u._count.id, 0);
 
@@ -45,6 +45,7 @@ export const Community = () => {
 
   const { data: communityUsers, isLoading, error } = useGetUsersQuery();
 
+
   const roleProvision = (role) => {
     if (role === "USER") {
       return "Student";
@@ -53,16 +54,7 @@ export const Community = () => {
     }
   }
 
-  if (error) {
-    toast.error("Sorry could not load the community users");
-    return (
-      <div className="bg-[#0D0056] min-h-screen flex flex-col items-center justify-center">
-        <Header />
-        <h1 className="text-white text-2xl font-bold">Failed to load community users.</h1>
-        <Footer />
-      </div>
-    );
-  }
+
 
   // Filter out current user
   let filteredUsers = communityUsers?.filter(user => user.id !== currentUserId);
@@ -120,9 +112,22 @@ export const Community = () => {
       setShowSearchHints(false);
     }
   };
-
+  const hasError = error || unreadError;
   return (
     <div className="bg-[#0D0056] w-[60rem] lg:h-[100%] md:w-[180%] lg:w-full h-[135rem] md:min-h-[200%] lg:min-h-screen flex flex-col">
+            {hasError ? (
+        <>
+          <Header />
+          <h1 className="text-white text-2xl font-bold">
+            Failed to load community users.
+          </h1>
+          <Footer />
+        </>
+      ) : (
+        <>
+          {/* Normal Community JSX */}
+        </>
+      )}
       {!openChat && <Header />}
 
       <div className='flex gap-10 pl-[40rem]'>

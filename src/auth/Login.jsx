@@ -69,7 +69,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen pt-[5rem] bg-[#070045] text-white flex flex-col items-center justify-between">
+    <div className="min-h-screen pt-[5rem] h-[50rem] bg-[#070045] text-white flex flex-col items-center justify-between">
       <button className="py-3 px-4 text-gray-200 rounded-full bg-gradient-to-r from-[#00ffee] to-purple-400 font-semibold hover:opacity-90 transition text-sm lg:absolute lg:top-4 lg:left-4">
         <Link to="/">Back to Home</Link>
       </button>
