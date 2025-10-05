@@ -204,7 +204,6 @@ const handleCreateNewChallenge = async (e) => {
     };
 
 const handleViewInBrowser = (url) => {
-    // Ensure the URL points to your Cloudinary account
     const updatedUrl = url.replace(
         'https://res.cloudinary.com/dglbxzxsc/',
         'https://res.cloudinary.com/dnppwzg0k/'
@@ -393,8 +392,8 @@ const handleViewInBrowser = (url) => {
                     </Link>
                     }
                     {challenge.documentUrl != null && 
-                    <Link onClick={() => openFile(challenge.documentUrl)}>
-                      <button className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-6 py-2 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300" onClick={() => navigate(`/editChallenge/${challenge._id}`)}>
+                    <Link>
+                      <button onClick={() => openFile(challenge.documentUrl)} className="rounded-full bg-gradient-to-r from-[#00ffee] to-purple-500 px-6 py-2 text-white font-bold text-sm shadow-lg hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300">
                         View
                       </button>
                     </Link>

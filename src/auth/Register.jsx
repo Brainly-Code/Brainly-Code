@@ -168,7 +168,6 @@ const Register = () => {
                     <p>{error ? error : ""}</p>
                   </div>
 
-
                   <div className="flex items-center w-full mb-4 text-sm">
                     <input
                       type="checkbox"

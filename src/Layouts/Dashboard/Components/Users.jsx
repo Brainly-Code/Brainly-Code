@@ -157,7 +157,7 @@ const Users = () => {
       }).unwrap();
       setAddingUser(false);
       refetchUsers();
-      addStateToHistory([...users, response]);
+      // addStateToHistory([...users, response]);
       toast.success(`User "${username}" added successfully!`);
       handleCloseAddUserModal();
     } catch (err) {
