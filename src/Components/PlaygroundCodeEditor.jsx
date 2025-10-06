@@ -70,7 +70,7 @@ const PlaygroundCodeEditor = () => {
       <div className="flex flex-col md:flex-row h-auto md:h-[35rem] gap-4">
         
         {/* Editors */}
-        <div className="bg-[#1C2526] w-full md:w-1/2 rounded-lg">
+        <div className="bg-black w-full md:w-1/2 rounded-lg">
           <div className="border-b border-gray-700">
             <h1 className="text-gray-300 py-2 text-center text-lg font-semibold">
               Editor
@@ -84,7 +84,7 @@ const PlaygroundCodeEditor = () => {
                 onChange={(e) => setHtml(e.target.value)}
                 placeholder="HTML"
                 aria-label="HTML code editor"
-                className="flex-1 text-gray-300 bg-[#1C2526] border border-gray-700 rounded p-2 text-sm resize-none"
+                className="flex-1 text-gray-300 bg-black border border-gray-700 rounded p-2 text-sm resize-none"
               />
             </div>
             <div className="flex-1 flex flex-col">
@@ -93,7 +93,7 @@ const PlaygroundCodeEditor = () => {
                 value={css}
                 onChange={(e) => setCss(e.target.value)}
                 placeholder="CSS"
-                className="flex-1 text-gray-300 bg-[#1C2526] border border-gray-700 rounded p-2 text-sm resize-none"
+                className="flex-1 text-gray-300 bg-black border border-gray-700 rounded p-2 text-sm resize-none"
               />
             </div>
             <div className="flex-1 flex flex-col">
@@ -102,7 +102,7 @@ const PlaygroundCodeEditor = () => {
                 value={js}
                 onChange={(e) => setJs(e.target.value)}
                 placeholder="JavaScript"
-                className="flex-1 text-gray-300 bg-[#1C2526] border border-gray-700 rounded p-2 text-sm resize-none"
+                className="flex-1 text-gray-300 bg-black border border-gray-700 rounded p-2 text-sm resize-none"
               />
             </div>
           </div>

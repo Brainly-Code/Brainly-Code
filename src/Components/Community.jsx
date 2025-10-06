@@ -12,6 +12,7 @@ import BgLoader from './ui/BgLoader'
 import { jwtDecode } from 'jwt-decode'
 import { useSelector } from 'react-redux'
 import { useAddCommentMutation } from "../redux/api/commentsSlice";
+import { useGetProfileImagesQuery } from '../redux/api/userSlice'
 
 
 export const Community = () => {
@@ -32,6 +33,13 @@ export const Community = () => {
   const currentUserId = user?.id;
 
   const { data: unreadCounts, error: unreadError } = useGetUnreadCountsQuery(currentUserId);
+
+  const { data: images, isError: errorFetchingImages, isLoading: isLoadingImages} = useGetProfileImagesQuery();
+  const getUserImage = (currentId) => {
+    if (isLoadingImages || errorFetchingImages) return profile;
+    const image = images?.find((image) => image?.userId === currentId);
+    return image?.path || profile;
+  }
 
   const totalUnread = unreadCounts?.reduce((sum, u) => sum + u._count.id, 0);
 
@@ -125,7 +133,7 @@ export const Community = () => {
         </>
       ) : (
         <>
-          {/* Normal Community JSX */}
+          {/* Normal Community is empty */}
         </>
       )}
       {!openChat && <Header />}
@@ -203,7 +211,7 @@ export const Community = () => {
                     {/* Profile Image */}
                     <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
                       <img
-                        src={!communityUser?.photo ? profile : communityUser?.photo}
+                        src={getUserImage(communityUser?.id)}
                         alt="profile"
                         className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
                       />

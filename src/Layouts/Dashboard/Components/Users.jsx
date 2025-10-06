@@ -24,21 +24,21 @@ const Users = () => {
     refetch: refetchUsers,
   } = useGetUsersQuery();
 
-  const {
-    data: imagesData = {},
-    isLoading: isLoadingImages,
-  } = useGetProfileImagesQuery(undefined, {
-    skip: !usersData, // Only fetch images if users are loaded
-  });
+  // const {
+  //   data: imagesData = {},
+  //   isLoading: isLoadingImages,
+  // } = useGetProfileImagesQuery(undefined, {
+  //   skip: !usersData, // Only fetch images if users are loaded
+  // });
 
-  const {data: images} = useGetProfileImagesQuery(usersData?.id);
+  const {data: images, isLoading: isLoadingImages, isError: errorFetchingImages} = useGetProfileImagesQuery(usersData?.id);
   const findImagePath = (imageId) => {
     if (!images?.length) return profileFallback;
   
-    const image = images.find(img => img.id === imageId);
-    if (!image?.path || !image.path.startsWith("http")) return profileFallback;
-  
-    return image.path;
+    if (isLoadingImages || errorFetchingImages) return profile;
+    const image = images?.find((image) => image?.userId === imageId);
+    return image?.path || profileFallback;
+
   };
 
   const [register] = useRegisterMutation();
