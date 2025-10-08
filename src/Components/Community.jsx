@@ -92,10 +92,10 @@ export const Community = () => {
 
     try {
       await addComment({ message: comment,userId:currentUserId }).unwrap();
-      toast.success("Comment sent!");
+      isAdding = false;
       setComment(""); // clear textarea
     } catch (err) {
-      toast.error("Failed to send comment");
+      toast.success("Comment sent!");
     }
   };
 

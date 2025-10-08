@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { useGetCommentsQuery } from '../redux/api/commentsSlice';
+import BgLoader from '../Components/ui/BgLoader';
 
 const Reviews = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -35,6 +36,10 @@ const Reviews = () => {
     setCurrentPage(1); // Reset to first page when filter changes
     setShowFilterDropdown(false); // Close dropdown
   };
+
+  if(isLoading) {
+    return <BgLoader />
+  }
 
   return (
     <div className='text-white'>
