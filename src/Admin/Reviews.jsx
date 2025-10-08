@@ -84,9 +84,10 @@ const Reviews = () => {
         currentComments?.map(comment => (
           <div
             key={comment.id}
-            className='w-[80%] rounded-lg bg-[#1074D2] bg-opacity-35 p-[1rem] my-[0.5rem] flex mx-[3rem]'
+            className='w-[90%] rounded-lg bg-[#1074D2] bg-opacity-35 p-[1rem] my-[0.5rem] flex mx-[3rem]'
           >
             <p>{comment.message}</p>
+            <p class="text-sm absolute mt-1 right-40">{comment.createdAt}</p>
           </div>
         ))
       )}

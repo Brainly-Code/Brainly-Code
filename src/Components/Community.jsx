@@ -122,7 +122,7 @@ export const Community = () => {
   };
   const hasError = error || unreadError;
   return (
-    <div className="bg-[#0D0056] w-[60rem] lg:h-[100%] md:w-[180%] lg:w-full h-[135rem] md:min-h-[200%] lg:min-h-screen flex flex-col">
+    <div className="bg-[#0D0056] w-[60rem] overflow-hidden lg:h-[100%] md:w-[180%] lg:w-full h-[135rem] md:min-h-[200%] lg:min-h-screen flex flex-col">
             {hasError ? (
         <>
           <Header />
