@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,8 +19,12 @@ import { useGetUnreadCountsQuery } from "../../../redux/api/messageSlice";
 import Chat from "../../../Components/Chat";
 import BrainlyCodeIcon from "../../../Components/BrainlyCodeIcon";
 import { logout } from "../../../redux/Features/authSlice";
+import { ThemeContext } from '../../../Contexts/ThemeContext.jsx';
+import { MdOutlineWbSunny } from 'react-icons/md';
+import { BsMoonStars } from 'react-icons/bs';
 
 const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const [openChat, setOpenChat] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const dispatch = useDispatch();
@@ -85,8 +89,19 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
             ADMIN DASHBOARD
           </h1>
 
-          {/* Profile + Logout + Notifications + Search */}
+          {/* Theme + Profile + Logout + Notifications + Search */}
           <ul className="flex justify-between items-center order-2 gap-3 relative">
+            {/* Theme Toggle */}
+            <li>
+              <button
+                aria-label="Toggle Theme"
+                onClick={toggleTheme}
+                className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/20 hover:bg-white/10"
+                title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
+              >
+                {theme === 'dark' ? <MdOutlineWbSunny size={20} /> : <BsMoonStars size={18} />}
+              </button>
+            </li>
             {/* Notifications + Profile */}
             <li className="flex items-center">
               <div className="relative h-full flex-shrink-0 mr-3">
@@ -119,7 +134,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
                 onClick={() => setSearchActive(true)}
                 className="p-2 rounded-md hover:rounded-lg bg-[#00ffee] bg-opacity-20 hover:bg-opacity-10"
               >
-                <FiSearch className="text-gray-200 text-xl"  />
+                <FiSearch className="text-gray-200 text-xl" />
               </button>
 
               {searchActive && (

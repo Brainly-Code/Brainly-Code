@@ -46,9 +46,12 @@ const Challenge = () => {
     try {
       await completeChallenge({ userId, challengeId }).unwrap();
       toast.success("Congratulations, you have completed the challenge 🥳");
-      navigate(`/admin/completers/${challengeId}`);
+      navigate(`/user/challenges`);
     } catch (error) {
-      toast.error(error?.data?.message || "Failed to complete challenge");
+      if(error.data.message.includes("Challenge already completed")) {
+         toast.error("You have already completed this challenge!")
+      }
+      toast.error("Failed to complete challenge");
     }
   };
   

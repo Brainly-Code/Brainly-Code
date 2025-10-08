@@ -8,6 +8,7 @@ import Login from './auth/Login';
 import Register from './auth/Register';
 import store from './redux/store';
 import App from './App';
+import { ThemeProvider } from './Contexts/ThemeContext.jsx';
 import { Hero } from './Components/Hero';
 import UpdateUser from './Components/UpdateUser';
 import Home from './Home';
@@ -120,7 +121,9 @@ if (!rootElement._reactRootContainer) {
   root.render(
     <ErrorBoundary>
       <Provider store={store}>
-        <RouterProvider router={router} />
+        <ThemeProvider>
+          <RouterProvider router={router} />
+        </ThemeProvider>
       </Provider>
     </ErrorBoundary>
   );

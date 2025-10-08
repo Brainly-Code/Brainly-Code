@@ -4,22 +4,36 @@
 
 /* In your global CSS file or a <style> block for specific components */
 .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    /* scrollbar-width: none; Firefox */
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  /* scrollbar-width: none; Firefox */
+}
 
-  /* For Chrome, Safari, Edge */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari, Opera */
+}
+
+/* For Chrome, Safari, Edge */
 input:-webkit-autofill {
-  box-shadow: 0 0 0px 1000px #070045 inset !important; /* your background */
-  -webkit-text-fill-color: #fff !important; /* text color */
-  transition: background-color 5000s ease-in-out 0s; /* hack to prevent flash */
+  box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #111827 !important;
+  /* gray-900 */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px #070045 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* Firefox */
 input:-moz-autofill {
+  box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  -moz-text-fill-color: #111827 !important;
+}
+
+.dark input:-moz-autofill {
   box-shadow: 0 0 0px 1000px #1a1a1a inset !important;
-  -moz-text-fill-color: #fff !important;
+  -moz-text-fill-color: #ffffff !important;
 }

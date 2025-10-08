@@ -28,7 +28,7 @@ const DashboardLayout = () => {
     return <Navigate to="/login" replace />;
   }
 
-  if(!access_token) {
+  if (!access_token) {
     return <Navigate to="/login" replace />;
   }
 
@@ -39,7 +39,7 @@ const DashboardLayout = () => {
   return (
     <userRoleContext.Provider value={role}>
       <SearchContext.Provider value={{ searchQuery, setSearchQuery }}>
-        <div className="w-full min-h-screen bg-[#0D0056] flex flex-col">
+        <div className="w-full min-h-screen bg-white text-gray-900 dark:bg-[#0D0056] dark:text-gray-100 flex flex-col">
           <div className="sticky z-50 top-0">
             <DashboardHeader
               searchQuery={searchQuery}
@@ -50,7 +50,7 @@ const DashboardLayout = () => {
             <aside className="hidden md:block sticky top-0 left-0 md:w-[25%] lg:w-[20%] h-screen z-40">
               <SideBar />
             </aside>
-            <aside className="md:hidden fixed bottom-0 left-0 w-full bg-[#120b46] text-white flex justify-around py-3 shadow-lg z-50">
+            <aside className="md:hidden fixed bottom-0 left-0 w-full bg-gray-100 text-gray-900 dark:bg-[#120b46] dark:text-white flex justify-around py-3 shadow-lg z-50">
               <button className="flex flex-col items-center" onClick={() => navigate("/admin")}>
                 <span><FiHome size={22} /></span>
                 <p className="text-xs">Dashboard</p>

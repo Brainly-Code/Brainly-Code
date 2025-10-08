@@ -9,7 +9,7 @@ import { Loader2, X } from "lucide-react";
 import { useDeleteUserMutation, useGetUsersQuery } from "../../../redux/api/AdminSlice";
 import profileFallback from "../../../assets/profile.png";
 import { SearchContext } from "../../../Contexts/SearchContext";
-import { useGetProfileImagesQuery, useRegisterMutation } from "../../../redux/api/userSlice";
+import { useGetProfileImagesQuery, useRegisterMutation, useUpdateUserMutation } from "../../../redux/api/userSlice";
 import BgLoader from "../../../Components/ui/BgLoader";
 import { useDispatch } from "react-redux";
 
@@ -31,6 +31,8 @@ const Users = () => {
   //   skip: !usersData, // Only fetch images if users are loaded
   // });
 
+  const [updateUser] = useUpdateUserMutation();
+
   const {data: images, isLoading: isLoadingImages, isError: errorFetchingImages} = useGetProfileImagesQuery(usersData?.id);
   const findImagePath = (imageId) => {
     if (!images?.length) return profileFallback;
@@ -40,6 +42,7 @@ const Users = () => {
     return image?.path || profileFallback;
 
   };
+
 
   const [register] = useRegisterMutation();
   const [deleteUser] = useDeleteUserMutation();
@@ -228,23 +231,33 @@ const Users = () => {
     setShowActionsDropdownForUser(null);
   };
 
-  const handleChangeUserRole = (userId, newRole) => {
+  const handleChangeUserRole = async (userId, newRole) => {
     const loggedInUser = users.find((u) => u.role === "SUPERADMIN");
     if (loggedInUser && loggedInUser.id === userId && newRole !== "SUPERADMIN") {
       toast.error("A SuperAdmin cannot demote themselves!");
       return;
     }
-
-    const updatedUsers = users.map((user) =>
-      user.id === userId ? { ...user, role: newRole } : user
-    );
-    setUsers(updatedUsers);
-    addStateToHistory(updatedUsers);
-    toast.success(
-      `User "${users.find((u) => u.id === userId)?.username}'s role updated to ${newRole}"`
-    );
+  
+    try {
+      await updateUser({ id: userId, role: newRole }).unwrap();
+  
+      const updatedUsers = users.map((user) =>
+        user.id === userId ? { ...user, role: newRole } : user
+      );
+      setUsers(updatedUsers);
+      addStateToHistory(updatedUsers);
+  
+      toast.success(
+        `User "${users.find((u) => u.id === userId)?.username}" role updated to ${newRole}`
+      );
+    } catch (error) {
+      toast.error("Failed to update role");
+      console.error(error);
+    }
+  
     setShowActionsDropdownForUser(null);
   };
+  
 
   const handleDeleteUserClick = (user) => {
     setUserToDelete(user);
@@ -264,6 +277,7 @@ const Users = () => {
     }
 
     try {
+      console.log()
       await deleteUser(userToDelete.id).unwrap();
       const updatedUsers = users.filter((user) => user.id !== userToDelete.id);
       setUsers(updatedUsers);
