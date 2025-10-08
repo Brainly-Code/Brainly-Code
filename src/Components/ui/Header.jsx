@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogoutMutation, useUpgradeToProMutation, useGetProfileImageQuery } from '../../redux/api/userSlice';
@@ -8,19 +8,16 @@ import { toast } from 'react-toastify';
 import { FloatingNav } from './FloatingNav';
 import BrainlyCodeIcon from '../BrainlyCodeIcon';
 import profileFallback from "../../assets/profile.png";
+import {jwtDecode} from "jwt-decode";
 import Loader from './Loader';
-import { ThemeContext } from '../../Contexts/ThemeContext.jsx';
-import { MdOutlineWbSunny } from 'react-icons/md';
-import { BsMoonStars } from 'react-icons/bs';
 
 const Header = () => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user } = useSelector((state) => state.auth);
+ const { user } = useSelector((state) => state.auth);
 
-  const userId = user?.id;
+const userId = user?.id;
   // // Update local isProMember state whenever userInfo changes
   // useEffect(() => {
   //   const decoded = jwtDecode(userInfo.access_token);
@@ -37,11 +34,11 @@ const Header = () => {
   });
 
   const imagePath =
-    image?.path && image?.path?.startsWith("http")
+    image?.path && image.path.startsWith("http")
       ? image.path
       : profileFallback;
 
-  const [logoutApiCall, { isLoading: isLoggingOut }] = useLogoutMutation();
+  const [logoutApiCall] = useLogoutMutation();
   // const [upgradeToPro, { isLoading: isUpgrading }] = useUpgradeToProMutation();
   // const [showUpgradeMessage, setShowUpgradeMessage] = useState(false);
 
@@ -54,13 +51,12 @@ const Header = () => {
 
   const logoutHandler = async () => {
     try {
-      const res = await logoutApiCall().unwrap();
-      dispatch(logout({ user: null, access_token: null }));
-      navigate("/login");
-      toast.success("Logout successful");
-      window.location.reload();
+      await logoutApiCall().unwrap();
+      dispatch(logout());
+      navigate('/login');
+      toast.success('Logged out successfully');
     } catch (error) {
-      toast.error("Logout failed");
+      toast.error(error?.data?.message || error.message);
     }
   };
 
@@ -81,7 +77,7 @@ const Header = () => {
   //   }
   // };
 
-  if (loadingImage) {
+  if(loadingImage) {
     return <Loader />
   }
 
@@ -93,16 +89,6 @@ const Header = () => {
           <BrainlyCodeIcon className="ml-7 sm:ml-1" />
 
           <ul className="flex items-center h-1/4 gap-4">
-            <li>
-              <button
-                aria-label="Toggle Theme"
-                onClick={toggleTheme}
-                className="w-10 h-10 flex items-center justify-center rounded-lg border border-white/20 hover:bg-white/10"
-                title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
-              >
-                {theme === 'dark' ? <MdOutlineWbSunny size={20} /> : <BsMoonStars size={18} />}
-              </button>
-            </li>
             <li>
               <Link to="/user/profile">
                 <img src={imagePath} className='rounded-full h-10 w-10 object-cover' alt="Profile" />
@@ -133,7 +119,7 @@ const Header = () => {
               </li>
             )}
               */}
-
+            
 
             <li className="font-semibold inline bg-gradient-to-r from-[#00ffff] rounded-3xl ml-5 to-purple-400 px-5 py-2 text-gray-300">
               <button onClick={logoutHandler}>

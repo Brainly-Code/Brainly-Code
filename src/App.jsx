@@ -26,12 +26,14 @@ const App = () => {
           dispatch(logout());
           navigate('/login', { replace: true });
         }
+      } else {
+        setLoading(false);
       }
     };
     restoreSession();
   }, [access_token, dispatch, refreshToken]);
 
-  if(loading) {
+  if (loading) {
     return <BgLoader />
   }
 

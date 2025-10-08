@@ -326,7 +326,8 @@ const handleViewInBrowser = (url) => {
           All Challenges {`(${filteredChallenges?.length || "0"})`}
         </h1>
         <div className="grid lg:grid-cols-3 justify-center text-start md:grid-cols-2 gap-6">
-          {filteredChallenges?.map((challenge) => (
+          {
+            filteredChallenges?.map((challenge) => (
             <div key={challenge.id} className="flex justify-center">
               <div className="sm:min-w-[20rem] max-w-[20rem] w-full bg-[#070045] min-h-[19rem] rounded-2xl border border-[#3A3A5A] p-6 flex flex-col justify-between">
                 <div>

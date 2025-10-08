@@ -49,7 +49,7 @@ const Challenge = () => {
       navigate(`/user/challenges`);
     } catch (error) {
       if(error.data.message.includes("Challenge already completed")) {
-         toast.error("You have already completed this challenge!")
+        return toast.error("You have already completed this challenge!")
       }
       toast.error("Failed to complete challenge");
     }
@@ -92,7 +92,7 @@ const Challenge = () => {
                   </span>
                   <input
                     type="checkbox"
-                    className="ml-3"
+                    className="ml-3 hover:cursor-pointer"
                     checked={completedSteps.includes(instruction?.id)}
                     onChange={() => toggleStepCompletion(instruction?.id)}
                   />
@@ -102,13 +102,13 @@ const Challenge = () => {
 
             <div className="mx-auto flex flex-col gap-2 w-full sm:w-[60%] md:w-[40%] bg-[#0A1C2B] py-6 px-6 sm:px-10 rounded-2xl mt-6">
               <span className="text-white text-center text-sm sm:text-base">
-                You are almost there!
+                If you have completed everything
               </span>
               <button
                 type="submit"
                 className="bg-[#6B5EDD] hover:bg-[#4d3eb0] text-sm sm:text-base py-2 px-6 sm:px-10 mt-5 rounded-xl text-white font-semibold"
               >
-                Continue
+                Submit
               </button>
             </div>
           </form>
