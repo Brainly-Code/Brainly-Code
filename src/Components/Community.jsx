@@ -81,7 +81,7 @@ export const Community = () => {
   );
 
 
-  const [addComment, { isLoading: isAdding }] = useAddCommentMutation();
+  let [addComment, { isLoading: isAdding }] = useAddCommentMutation();
 
   // Comment handling
   const handleSendComment = async () => {
