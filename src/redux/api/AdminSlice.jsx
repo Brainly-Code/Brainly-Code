@@ -49,6 +49,13 @@ const AdminSlice = apiSlice.injectEndpoints({
       })
     }),
 
+    correctCompleter: builder.mutation({
+      query: challengeId => ({
+        url: `${ADMIN_URL}/challenge-completers/${challengeId}`,
+        method: "PATCH"
+      })
+    }),
+
     getGraphStats: builder.query({
       query: () => ({
         url: `${ADMIN_URL}/graph-stats`,
@@ -63,8 +70,9 @@ export const {
   useGetDashboardStatsQuery,
   useGetUsersQuery,
   useDeleteUserMutation,
-  useCreateCourseMutation, // ✅ export this to use in components
+  useCreateCourseMutation,
   useCreateLessonSolutionMutation,
   useGetChallengeCompletersQuery,
+  useCorrectCompleterMutation,
   useGetGraphStatsQuery
 } = AdminSlice;

@@ -70,6 +70,20 @@ const Challenge = () => {
         return;
       }
 
+      if(challenge.takesUrl) {
+        try {
+          await completeChallenge({ userId, challengeId, url: userSolution }).unwrap();
+          toast.success("🎉 Congratulations, you have completed the challenge!");
+          navigate("/user/challenges");
+        } catch (error) {
+          if (error?.data?.message?.includes("Challenge already completed")) {
+            toast.error("You have already completed this challenge!");
+            return;
+          }
+          toast.error("Failed to complete challenge. Please try again.");
+        }
+      }
+
       const correctSolutions = Array.isArray(solutions)
         ? solutions.map((s) => normalize(s.solution))
         : [];
@@ -94,7 +108,7 @@ const Challenge = () => {
     }
 
     try {
-      await completeChallenge({ userId, challengeId }).unwrap();
+      await completeChallenge({ userId, challengeId, solution: userSolution }).unwrap();
       toast.success("🎉 Congratulations, you have completed the challenge!");
       navigate("/user/challenges");
     } catch (error) {

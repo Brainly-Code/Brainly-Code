@@ -9,6 +9,7 @@ import { Loader2, X } from "lucide-react";
 import { useDeleteUserMutation, useGetUsersQuery } from "../../../redux/api/AdminSlice";
 import profileFallback from "../../../assets/profile.png";
 import { SearchContext } from "../../../Contexts/SearchContext";
+import { ThemeContext } from '../../../Contexts/ThemeContext.jsx'; // Import ThemeContext
 import { useGetProfileImagesQuery, useRegisterMutation, useUpdateUserMutation } from "../../../redux/api/userSlice";
 import BgLoader from "../../../Components/ui/BgLoader";
 import { useDispatch } from "react-redux";
@@ -16,6 +17,7 @@ import { useDispatch } from "react-redux";
 const Users = () => {
   const role = useContext(userRoleContext);
   const { searchQuery } = useContext(SearchContext);
+  const { theme } = useContext(ThemeContext); // Access theme from ThemeContext
 
   const {
     data: usersData,
@@ -24,37 +26,23 @@ const Users = () => {
     refetch: refetchUsers,
   } = useGetUsersQuery();
 
-  // const {
-  //   data: imagesData = {},
-  //   isLoading: isLoadingImages,
-  // } = useGetProfileImagesQuery(undefined, {
-  //   skip: !usersData, // Only fetch images if users are loaded
-  // });
-
-  const [updateUser] = useUpdateUserMutation();
-
-  const {data: images, isLoading: isLoadingImages, isError: errorFetchingImages} = useGetProfileImagesQuery(usersData?.id);
+  const { data: images, isLoading: isLoadingImages, isError: errorFetchingImages } = useGetProfileImagesQuery(usersData?.id);
   const findImagePath = (imageId) => {
     if (!images?.length) return profileFallback;
-  
-    if (isLoadingImages || errorFetchingImages) return profile;
+    if (isLoadingImages || errorFetchingImages) return profileFallback;
     const image = images?.find((image) => image?.userId === imageId);
     return image?.path || profileFallback;
-
   };
 
-
+  const [updateUser] = useUpdateUserMutation();
   const [register] = useRegisterMutation();
   const [deleteUser] = useDeleteUserMutation();
-
   const dispatch = useDispatch();
-
 
   const [users, setUsers] = useState(usersData || []);
   const [userHistory, setUserHistory] = useState([usersData || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
-
-  const usersPerPage = 10;
+  const [usersPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedRoleFilter, setSelectedRoleFilter] = useState("ALL");
@@ -71,7 +59,6 @@ const Users = () => {
   const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
 
-  // Sync users state with API data
   useEffect(() => {
     if (usersData) {
       setUsers(usersData);
@@ -80,7 +67,6 @@ const Users = () => {
     }
   }, [usersData]);
 
-  // Handle outside clicks for dropdowns and modals
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showFilterDropdown && !event.target.closest(".filter-dropdown-container")) {
@@ -132,16 +118,11 @@ const Users = () => {
 
   const handleCloseAddUserModal = () => {
     setShowAddUserModal(false);
-    setNewUserData({ username: "", email: "", role: "USER", password: "" });
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setNewUserRole("");
   };
-
-  // const handleNewUserInputChange = (e) => {
-  //   const { name, value, type, checked } = e.target;
-  //   setNewUserData((prev) => ({
-  //     ...prev,
-  //     [name]: type === "checkbox" ? checked : value,
-  //   }));
-  // };
 
   const handleCreateNewUser = async (e) => {
     e.preventDefault();
@@ -149,22 +130,20 @@ const Users = () => {
       toast.error("Username, Email, and Password are required.");
       return;
     }
-
     try {
       setAddingUser(true);
       const response = await register({
         username,
         email,
         password,
-        role: newUserRole
+        role: newUserRole,
       }).unwrap();
       setAddingUser(false);
       refetchUsers();
-      // addStateToHistory([...users, response]);
       toast.success(`User "${username}" added successfully!`);
       handleCloseAddUserModal();
     } catch (err) {
-      // toast.error(`Failed to add user!`);
+      toast.error("Failed to add user!");
     }
   };
 
@@ -184,13 +163,11 @@ const Users = () => {
 
   const getFilteredAndSearchedUsers = () => {
     let currentFilteredUsers = [...users] || [];
-
     if (selectedRoleFilter !== "ALL") {
       currentFilteredUsers = currentFilteredUsers.filter(
         (user) => user?.role === selectedRoleFilter
       );
     }
-
     if (selectedProFilter !== "ALL") {
       currentFilteredUsers = currentFilteredUsers.filter(
         (user) =>
@@ -198,7 +175,6 @@ const Users = () => {
           (selectedProFilter === "NON_PRO" && !user.isPremium)
       );
     }
-
     if (searchQuery) {
       const lowerCaseSearchQuery = searchQuery.toLowerCase();
       currentFilteredUsers = currentFilteredUsers.filter(
@@ -237,27 +213,21 @@ const Users = () => {
       toast.error("A SuperAdmin cannot demote themselves!");
       return;
     }
-  
     try {
       await updateUser({ id: userId, role: newRole }).unwrap();
-  
       const updatedUsers = users.map((user) =>
         user.id === userId ? { ...user, role: newRole } : user
       );
       setUsers(updatedUsers);
       addStateToHistory(updatedUsers);
-  
       toast.success(
         `User "${users.find((u) => u.id === userId)?.username}" role updated to ${newRole}`
       );
     } catch (error) {
       toast.error("Failed to update role");
-      console.error(error);
     }
-  
     setShowActionsDropdownForUser(null);
   };
-  
 
   const handleDeleteUserClick = (user) => {
     setUserToDelete(user);
@@ -267,7 +237,6 @@ const Users = () => {
 
   const confirmDeleteUser = async () => {
     if (!userToDelete) return;
-
     const loggedInUser = users.find((u) => u.role === "SUPERADMIN");
     if (loggedInUser && loggedInUser.id === userToDelete.id) {
       toast.error("A SuperAdmin cannot delete themselves!");
@@ -275,9 +244,7 @@ const Users = () => {
       setUserToDelete(null);
       return;
     }
-
     try {
-      console.log()
       await deleteUser(userToDelete.id).unwrap();
       const updatedUsers = users.filter((user) => user.id !== userToDelete.id);
       setUsers(updatedUsers);
@@ -291,7 +258,6 @@ const Users = () => {
     }
   };
 
-
   if (isLoadingUsers || isLoadingImages) {
     return (
       <div className="w-full h-full flex justify-center items-center">
@@ -302,22 +268,32 @@ const Users = () => {
 
   if (isErrorUsers) {
     return (
-      <div className="w-full h-full text-center text-white font-bold text-3xl flex justify-center items-center">
+      <div className={`w-full h-full text-center font-bold text-3xl flex justify-center items-center ${
+        theme === "dark" ? "text-white" : "text-gray-800"
+      }`}>
         Error loading Users.
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="sticky top-28 backdrop-blur-xl flex justify-between p-3 rounded-b-lg shadow-lg mb-8">
-        <span className="md:text-2xl text-lg font-normal text-gray-100">Users</span>
+    <div className={`p-4 sm:p-6 lg:p-8 ${theme === "dark" ? "bg-[#0D0056]/90" : "bg-gray-100"} transition-all duration-500`}>
+      <div className={`sticky top-28 backdrop-blur-xl flex justify-between p-3 rounded-b-lg shadow-lg mb-8 ${
+        theme === "dark" ? "bg-[#07032B]/90 border-[#3A3A5A]" : "bg-white border-gray-200"
+      }`}>
+        <span className={`md:text-2xl text-lg font-normal ${
+          theme === "dark" ? "text-gray-100" : "text-gray-800"
+        }`}>
+          Users
+        </span>
         <div className="flex items-center gap-2 relative">
           <button
             onClick={handleUndo}
             disabled={historyIndex === 0}
-            className={`w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white transition-colors ${
-              historyIndex === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"
+            className={`w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border transition-colors ${
+              theme === "dark"
+                ? `border-gray-300 text-white ${historyIndex === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"}`
+                : `border-gray-200 text-gray-800 ${historyIndex === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"}`
             }`}
             title="Undo Last Action"
           >
@@ -326,8 +302,10 @@ const Users = () => {
           <button
             onClick={handleRedo}
             disabled={historyIndex === userHistory.length - 1}
-            className={`w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white transition-colors ${
-              historyIndex === userHistory.length - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"
+            className={`w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border transition-colors ${
+              theme === "dark"
+                ? `border-gray-300 text-white ${historyIndex === userHistory.length - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-700"}`
+                : `border-gray-200 text-gray-800 ${historyIndex === userHistory.length - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"}`
             }`}
             title="Redo Last Action"
           >
@@ -336,7 +314,11 @@ const Users = () => {
           <div className="relative filter-dropdown-container">
             <button
               onClick={toggleFilterDropdown}
-              className="w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border border-gray-300 text-white hover:bg-gray-700 transition-colors"
+              className={`w-8 h-8 flex items-center justify-center cursor-pointer rounded-full border transition-colors ${
+                theme === "dark"
+                  ? "border-gray-300 text-white hover:bg-gray-700"
+                  : "border-gray-200 text-gray-800 hover:bg-gray-200"
+              }`}
               aria-haspopup="true"
               aria-expanded={showFilterDropdown ? "true" : "false"}
               title="Filter Users"
@@ -344,28 +326,38 @@ const Users = () => {
               <HiOutlineAdjustmentsHorizontal />
             </button>
             {showFilterDropdown && (
-              <div className="absolute top-full right-0 mt-2 w-48 bg-[#07032B] border border-[#3A3A5A] rounded-lg shadow-lg overflow-hidden z-50">
-                <div className="px-4 py-2 text-gray-400 text-xs uppercase font-bold border-b border-[#3A3A5A]">
+              <div className={`absolute top-full right-0 mt-2 w-48 rounded-lg shadow-lg overflow-hidden z-50 ${
+                theme === "dark" ? "bg-[#07032B] border-[#3A3A5A]" : "bg-white border-gray-200"
+              }`}>
+                <div className={`px-4 py-2 text-xs uppercase font-bold border-b ${
+                  theme === "dark" ? "text-gray-400 border-[#3A3A5A]" : "text-gray-600 border-gray-200"
+                }`}>
                   Filter by Role
                 </div>
                 {["ALL", "USER", "ADMIN", "SUPERADMIN"].map((role) => (
                   <button
                     key={role}
                     onClick={() => applyRoleFilter(role)}
-                    className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#3A3A5A] transition-colors text-sm"
+                    className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
+                      theme === "dark" ? "text-gray-200 hover:bg-[#3A3A5A]" : "text-gray-800 hover:bg-gray-100"
+                    }`}
                   >
                     {role === "ALL" ? "All Roles" : role}
                   </button>
                 ))}
-                <div className="border-t border-[#3A3A5A]"></div>
-                <div className="px-4 py-2 text-gray-400 text-xs uppercase font-bold border-b border-[#3A3A5A]">
+                <div className={`border-t ${theme === "dark" ? "border-[#3A3A5A]" : "border-gray-200"}`}></div>
+                <div className={`px-4 py-2 text-xs uppercase font-bold border-b ${
+                  theme === "dark" ? "text-gray-400 border-[#3A3A5A]" : "text-gray-600 border-gray-200"
+                }`}>
                   Filter by Pro Status
                 </div>
                 {["ALL", "PRO", "NON_PRO"].map((pro) => (
                   <button
                     key={pro}
                     onClick={() => applyProFilter(pro)}
-                    className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#3A3A5A] transition-colors text-sm"
+                    className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
+                      theme === "dark" ? "text-gray-200 hover:bg-[#3A3A5A]" : "text-gray-800 hover:bg-gray-100"
+                    }`}
                   >
                     {pro === "ALL" ? "All (Pro & Non-Pro)" : pro === "PRO" ? "Pro Users" : "Non-Pro Users"}
                   </button>
@@ -376,7 +368,11 @@ const Users = () => {
           {role === "SUPERADMIN" && (
             <button
               onClick={handleAddUserClick}
-              className="px-4 py-2 bg-gradient-to-r from-[#00ffee] to-purple-500 text-white rounded-full flex items-center gap-1 font-semibold shadow-md hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300"
+              className={`px-4 py-2 rounded-full flex items-center gap-1 font-semibold shadow-md transition-all duration-300 ${
+                theme === "dark"
+                  ? "bg-gradient-to-r from-[#00ffee] to-purple-500 text-white hover:from-purple-500 hover:to-[#00ffee]"
+                  : "bg-gradient-to-r from-blue-400 to-purple-400 text-white hover:from-purple-400 hover:to-blue-400"
+              }`}
               title="Add New User"
             >
               <span>Add User</span>
@@ -387,10 +383,12 @@ const Users = () => {
       </div>
 
       <div className="mt-6 w-full overflow-x-auto custom-scrollbar">
-        <h2 className="text-gray-300 font-bold text-xl text-center mb-4">
+        <h2 className={`font-bold text-xl text-center mb-4 ${
+          theme === "dark" ? "text-gray-300" : "text-gray-800"
+        }`}>
           All Users ({filteredUsers.length})
         </h2>
-        <table className="w-full text-white border-separate border-spacing-y-3">
+        <table className={`w-full border-separate border-spacing-y-3 ${theme === "dark" ? "text-white" : "text-gray-800"}`}>
           <thead className="text-sm text-left">
             <tr>
               <th className="p-3 w-[6%]">Icon</th>
@@ -406,14 +404,21 @@ const Users = () => {
           <tbody>
             {paginatedUsers.length > 0 ? (
               paginatedUsers.map((user) => (
-              
                 <tr
                   key={user.id}
-                  className="bg-[#19179B] text-sm hover:bg-[#2c28b8] transition cursor-pointer"
+                  className={`text-sm transition cursor-pointer ${
+                    theme === "dark"
+                      ? "bg-[#19179B] hover:bg-[#2c28b8]"
+                      : "bg-white hover:bg-gray-100 shadow-md"
+                  }`}
                   onClick={() => handleViewUser(user)}
                 >
                   <td className="p-3 align-middle first:rounded-l-lg">
-                    <img src={findImagePath(user?.id) || (user?.photo ? user?.photo : profileFallback)} className='rounded-full h-10 w-10 object-cover mr-3' alt="Profile" />
+                    <img
+                      src={findImagePath(user?.id) || (user?.photo ? user?.photo : profileFallback)}
+                      className="rounded-full h-10 w-10 object-cover mr-3"
+                      alt="Profile"
+                    />
                   </td>
                   <td className="p-3 align-middle font-medium">{user.username}</td>
                   <td className="p-3 align-middle sm:table-cell hidden">{user.email}</td>
@@ -421,10 +426,16 @@ const Users = () => {
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
                         user.role === "SUPERADMIN"
-                          ? "bg-red-700 text-white"
+                          ? theme === "dark"
+                            ? "bg-red-700 text-white"
+                            : "bg-red-100 text-red-700"
                           : user.role === "ADMIN"
-                          ? "bg-blue-700 text-white"
-                          : "bg-gray-700 text-white"
+                          ? theme === "dark"
+                            ? "bg-blue-700 text-white"
+                            : "bg-blue-100 text-blue-700"
+                          : theme === "dark"
+                          ? "bg-gray-700 text-white"
+                          : "bg-gray-100 text-gray-700"
                       }`}
                     >
                       {user.role}
@@ -432,11 +443,17 @@ const Users = () => {
                   </td>
                   <td className="p-3 align-middle">
                     {user.isPremium ? (
-                      <span className="bg-gradient-to-r from-purple-500 to-blue-400 text-xs px-2 py-1 rounded-full">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        theme === "dark"
+                          ? "bg-gradient-to-r from-purple-500 to-blue-400"
+                          : "bg-gradient-to-r from-purple-400 to-blue-300"
+                      }`}>
                         PRO
                       </span>
                     ) : (
-                      <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded-full">
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-200 text-gray-800"
+                      }`}>
                         NO
                       </span>
                     )}
@@ -448,46 +465,58 @@ const Users = () => {
                           e.stopPropagation();
                           toggleActionsDropdown(user.id);
                         }}
-                        className="text-gray-300 hover:text-white"
+                        className={theme === "dark" ? "text-gray-300 hover:text-white" : "text-gray-600 hover:text-gray-800"}
                         title="More options"
                       >
                         <BsThreeDotsVertical size={20} />
                       </button>
                       {showActionsDropdownForUser === user.id && (
-                        <div className="absolute right-0 mt-2 w-40 bg-[#07032B] border border-[#3A3A5A] rounded-md shadow-lg z-50 overflow-hidden">
+                        <div className={`absolute right-0 mt-2 w-40 rounded-md shadow-lg z-50 overflow-hidden ${
+                          theme === "dark" ? "bg-[#07032B] border-[#3A3A5A]" : "bg-white border-gray-200"
+                        }`}>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleViewUser(user);
                             }}
-                            className="block w-full text-left px-4 py-2 text-gray-200 hover:bg-[#3A3A5A] transition-colors text-sm"
+                            className={`block w-full text-left px-4 py-2 text-sm ${
+                              theme === "dark" ? "text-gray-200 hover:bg-[#3A3A5A]" : "text-gray-800 hover:bg-gray-100"
+                            }`}
                           >
                             View
                           </button>
                           {role === "SUPERADMIN" && (
                             <>
-                              <div className="border-t border-[#3A3A5A]"></div>
-                              <div className="px-4 py-2 text-gray-200 text-sm">
+                              <div className={`border-t ${theme === "dark" ? "border-[#3A3A5A]" : "border-gray-200"}`}></div>
+                              <div className={`px-4 py-2 text-sm ${
+                                theme === "dark" ? "text-gray-200" : "text-gray-800"
+                              }`}>
                                 Change Role:
                                 <select
                                   value={user.role}
                                   onChange={(e) => handleChangeUserRole(user.id, e.target.value)}
                                   onClick={(e) => e.stopPropagation()}
-                                  className="w-full mt-1 rounded-md px-2 py-1 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-1 focus:ring-purple-500 text-sm"
+                                  className={`w-full mt-1 rounded-md px-2 py-1 border text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 ${
+                                    theme === "dark"
+                                      ? "bg-[#07032B] border-[#3A3A5A] text-gray-100"
+                                      : "bg-white border-gray-300 text-gray-800"
+                                  }`}
                                 >
                                   <option value="USER">User</option>
                                   <option value="ADMIN">Admin</option>
                                   <option value="SUPERADMIN">SuperAdmin</option>
                                 </select>
                               </div>
-                              <div className="border-t border-[#3A3A5A]"></div>
+                              <div className={`border-t ${theme === "dark" ? "border-[#3A3A5A]" : "border-gray-200"}`}></div>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleDeleteUserClick(user);
                                 }}
-                                className="block w-full text-left px-4 py-2 text-red-500 hover:bg-red-900 transition-colors text-sm"
-                                disabled={isLoadingUsers} // Prevent deletion during loading
+                                className={`block w-full text-left px-4 py-2 text-sm ${
+                                  theme === "dark" ? "text-red-500 hover:bg-red-900" : "text-red-600 hover:bg-red-100"
+                                }`}
+                                disabled={isLoadingUsers}
                               >
                                 Delete
                               </button>
@@ -501,7 +530,9 @@ const Users = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center text-gray-400 text-xl py-10">
+                <td colSpan="6" className={`text-center text-xl py-10 ${
+                  theme === "dark" ? "text-gray-400" : "text-gray-600"
+                }`}>
                   No users found matching your filters and search query.
                 </td>
               </tr>
@@ -517,8 +548,12 @@ const Users = () => {
             onClick={() => goToPage(i + 1)}
             className={`w-8 h-8 rounded-md text-sm font-semibold flex items-center justify-center transition-colors ${
               currentPage === i + 1
-                ? "bg-gradient-to-r from-purple-500 to-blue-400 text-white"
-                : "bg-[#19179B] text-white hover:bg-[#2c28b8]"
+                ? theme === "dark"
+                  ? "bg-gradient-to-r from-purple-500 to-blue-400 text-white"
+                  : "bg-gradient-to-r from-purple-400 to-blue-300 text-white"
+                : theme === "dark"
+                ? "bg-[#19179B] text-white hover:bg-[#2c28b8]"
+                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
             }`}
           >
             {i + 1}
@@ -527,20 +562,32 @@ const Users = () => {
       </div>
 
       {showAddUserModal && (
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
-          <div className="bg-[#070045] w-full max-w-md p-6 rounded-2xl shadow-2xl border border-[#3A3A5A] relative modal-content">
+        <div className={`fixed inset-0 flex justify-center items-center z-50 p-4 ${
+          theme === "dark" ? "bg-black/70" : "bg-black/30"
+        }`}>
+          <div className={`w-full max-w-md p-6 rounded-2xl shadow-2xl border relative modal-content ${
+            theme === "dark" ? "bg-[#070045] border-[#3A3A5A]" : "bg-white border-gray-200"
+          }`}>
             <button
               type="button"
               onClick={handleCloseAddUserModal}
-              className="absolute top-4 right-4 p-2 cursor-pointer text-gray-400 hover:bg-[#3A3A5A] rounded-full transition-colors"
+              className={`absolute top-4 right-4 p-2 cursor-pointer rounded-full transition-colors ${
+                theme === "dark" ? "text-gray-400 hover:bg-[#3A3A5A]" : "text-gray-600 hover:bg-gray-200"
+              }`}
               aria-label="Close"
             >
               <X className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-white mb-6 text-center">Add New User</h2>
+            <h2 className={`text-2xl font-bold mb-6 text-center ${
+              theme === "dark" ? "text-white" : "text-gray-800"
+            }`}>
+              Add New User
+            </h2>
             <form onSubmit={handleCreateNewUser} className="space-y-4">
               <div>
-                <label htmlFor="username" className="block mb-1 font-medium text-gray-300 text-sm">
+                <label htmlFor="username" className={`block mb-1 font-medium text-sm ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
                   Username *
                 </label>
                 <input
@@ -548,14 +595,20 @@ const Users = () => {
                   type="text"
                   name="username"
                   value={username}
-                  onChange={e => setUsername(e.target.value)}
+                  onChange={(e) => setUsername(e.target.value)}
                   placeholder="e.g., Jane Doe"
                   required
-                  className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
+                  className={`w-full rounded-md px-3 py-2 border text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 ${
+                    theme === "dark"
+                      ? "bg-[#07032B] border-[#3A3A5A] text-gray-100"
+                      : "bg-white border-gray-300 text-gray-800"
+                  }`}
                 />
               </div>
               <div>
-                <label htmlFor="email" className="block mb-1 font-medium text-gray-300 text-sm">
+                <label htmlFor="email" className={`block mb-1 font-medium text-sm ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
                   Email *
                 </label>
                 <input
@@ -563,14 +616,20 @@ const Users = () => {
                   type="email"
                   name="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g., jane.doe@example.com"
                   required
-                  className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
+                  className={`w-full rounded-md px-3 py-2 border text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 ${
+                    theme === "dark"
+                      ? "bg-[#07032B] border-[#3A3A5A] text-gray-100"
+                      : "bg-white border-gray-300 text-gray-800"
+                  }`}
                 />
               </div>
               <div>
-                <label htmlFor="password" className="block mb-1 font-medium text-gray-300 text-sm">
+                <label htmlFor="password" className={`block mb-1 font-medium text-sm ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
                   Password *
                 </label>
                 <input
@@ -578,23 +637,33 @@ const Users = () => {
                   type="password"
                   name="password"
                   value={password}
-                  onChange={e=>setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter password"
                   required
-                  className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
+                  className={`w-full rounded-md px-3 py-2 border text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 ${
+                    theme === "dark"
+                      ? "bg-[#07032B] border-[#3A3A5A] text-gray-100"
+                      : "bg-white border-gray-300 text-gray-800"
+                  }`}
                 />
               </div>
               <div>
-                <label htmlFor="role" className="block mb-1 font-medium text-gray-300 text-sm">
+                <label htmlFor="role" className={`block mb-1 font-medium text-sm ${
+                  theme === "dark" ? "text-gray-300" : "text-gray-700"
+                }`}>
                   Role *
                 </label>
                 <select
                   id="role"
                   name="role"
                   value={newUserRole}
-                  onChange={e => setNewUserRole(e.target.value)}
+                  onChange={(e) => setNewUserRole(e.target.value)}
                   required
-                  className="w-full rounded-md px-3 py-2 border border-[#3A3A5A] text-gray-100 bg-[#07032B] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-sm"
+                  className={`w-full rounded-md px-3 py-2 border text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 ${
+                    theme === "dark"
+                      ? "bg-[#07032B] border-[#3A3A5A] text-gray-100"
+                      : "bg-white border-gray-300 text-gray-800"
+                  }`}
                 >
                   <option value="USER">User</option>
                   <option value="ADMIN">Admin</option>
@@ -605,16 +674,24 @@ const Users = () => {
                 <button
                   type="button"
                   onClick={handleCloseAddUserModal}
-                  className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 border border-gray-600 shadow-md text-sm"
+                  className={`px-5 py-2.5 rounded-full cursor-pointer font-medium transition-all duration-300 border shadow-md text-sm ${
+                    theme === "dark"
+                      ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-800 hover:to-gray-900 border-gray-600"
+                      : "bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400 border-gray-300"
+                  }`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-[#00ffee] to-purple-500 text-white font-semibold hover:from-purple-500 hover:to-[#00ffee] transition-all duration-300 shadow-lg text-sm"
-                  disabled={isLoadingUsers}
+                  className={`px-5 py-2.5 rounded-full cursor-pointer font-semibold transition-all duration-300 shadow-lg text-sm ${
+                    theme === "dark"
+                      ? "bg-gradient-to-r from-[#00ffee] to-purple-500 text-white hover:from-purple-500 hover:to-[#00ffee]"
+                      : "bg-gradient-to-r from-blue-400 to-purple-400 text-white hover:from-purple-400 hover:to-blue-400"
+                  }`}
+                  disabled={isLoadingUsers || addingUser}
                 >
-                  { addingUser ? "Adding User" : "Add User" }
+                  {addingUser ? "Adding User" : "Add User"}
                 </button>
               </div>
             </form>
@@ -623,23 +700,31 @@ const Users = () => {
       )}
 
       {showViewUserModal && userToView && (
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
-          <div className="bg-[#070045] w-full max-w-lg p-6 rounded-2xl shadow-2xl border border-[#3A3A5A] relative max-h-[90vh] overflow-y-auto custom-scrollbar modal-content">
+        <div className={`fixed inset-0 flex justify-center items-center z-50 p-4 ${
+          theme === "dark" ? "bg-black/70" : "bg-black/30"
+        }`}>
+          <div className={`w-full max-w-lg p-6 rounded-2xl shadow-2xl border relative max-h-[90vh] overflow-y-auto custom-scrollbar modal-content ${
+            theme === "dark" ? "bg-[#070045] border-[#3A3A5A]" : "bg-white border-gray-200"
+          }`}>
             <button
               type="button"
               onClick={() => {
                 setUserToView(null);
                 setShowViewUserModal(false);
               }}
-              className="absolute top-4 right-4 p-2 cursor-pointer text-gray-400 hover:bg-[#3A3A5A] rounded-full transition-colors"
+              className={`absolute top-4 right-4 p-2 cursor-pointer rounded-full transition-colors ${
+                theme === "dark" ? "text-gray-400 hover:bg-[#3A3A5A]" : "text-gray-600 hover:bg-gray-200"
+              }`}
               aria-label="Close"
             >
               <X className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-white mb-6 text-center">
+            <h2 className={`text-2xl font-bold mb-6 text-center ${
+              theme === "dark" ? "text-white" : "text-gray-800"
+            }`}>
               User Details: {userToView.username}
             </h2>
-            <div className="space-y-4 text-gray-300">
+            <div className={`space-y-4 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}>
               <p><strong>Username:</strong> {userToView.username}</p>
               <p><strong>Email:</strong> {userToView.email}</p>
               <p>
@@ -647,10 +732,16 @@ const Users = () => {
                 <span
                   className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     userToView.role === "SUPERADMIN"
-                      ? "bg-red-700 text-white"
+                      ? theme === "dark"
+                        ? "bg-red-700 text-white"
+                        : "bg-red-100 text-red-700"
                       : userToView.role === "ADMIN"
-                      ? "bg-blue-700 text-white"
-                      : "bg-gray-700 text-white"
+                      ? theme === "dark"
+                        ? "bg-blue-700 text-white"
+                        : "bg-blue-100 text-blue-700"
+                      : theme === "dark"
+                      ? "bg-gray-700 text-white"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {userToView.role}
@@ -659,11 +750,17 @@ const Users = () => {
               <p>
                 <strong>Pro User:</strong>{" "}
                 {userToView.isPremium ? (
-                  <span className="bg-gradient-to-r from-purple-500 to-blue-400 text-xs px-2 py-1 rounded-full">
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    theme === "dark"
+                      ? "bg-gradient-to-r from-purple-500 to-blue-400"
+                      : "bg-gradient-to-r from-purple-400 to-blue-300"
+                  }`}>
                     YES (PRO)
                   </span>
                 ) : (
-                  <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded-full">
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    theme === "dark" ? "bg-gray-700 text-white" : "bg-gray-200 text-gray-800"
+                  }`}>
                     NO
                   </span>
                 )}
@@ -685,7 +782,11 @@ const Users = () => {
                   setUserToView(null);
                   setShowViewUserModal(false);
                 }}
-                className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 border border-gray-600 shadow-md text-sm"
+                className={`px-5 py-2.5 rounded-full cursor-pointer font-medium transition-all duration-300 border shadow-md text-sm ${
+                  theme === "dark"
+                    ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-800 hover:to-gray-900 border-gray-600"
+                    : "bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400 border-gray-300"
+                }`}
               >
                 Close
               </button>
@@ -695,23 +796,33 @@ const Users = () => {
       )}
 
       {showDeleteConfirmModal && userToDelete && (
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 p-4">
-          <div className="bg-[#070045] w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-[#3A3A5A] relative modal-content">
+        <div className={`fixed inset-0 flex justify-center items-center z-50 p-4 ${
+          theme === "dark" ? "bg-black/70" : "bg-black/30"
+        }`}>
+          <div className={`w-full max-w-sm p-6 rounded-2xl shadow-2xl border relative modal-content ${
+            theme === "dark" ? "bg-[#070045] border-[#3A3A5A]" : "bg-white border-gray-200"
+          }`}>
             <button
               type="button"
               onClick={() => {
                 setShowDeleteConfirmModal(false);
                 setUserToDelete(null);
               }}
-              className="absolute top-4 right-4 p-2 cursor-pointer text-gray-400 hover:bg-[#3A3A5A] rounded-full transition-colors"
+              className={`absolute top-4 right-4 p-2 cursor-pointer rounded-full transition-colors ${
+                theme === "dark" ? "text-gray-400 hover:bg-[#3A3A5A]" : "text-gray-600 hover:bg-gray-200"
+              }`}
               aria-label="Close"
             >
               <X className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-white mb-6 text-center">
+            <h2 className={`text-2xl font-bold mb-6 text-center ${
+              theme === "dark" ? "text-white" : "text-gray-800"
+            }`}>
               Confirm Deletion
             </h2>
-            <p className="text-gray-300 text-center mb-6">
+            <p className={`text-center mb-6 ${
+              theme === "dark" ? "text-gray-300" : "text-gray-700"
+            }`}>
               Are you sure you want to delete user "<strong>{userToDelete.username}</strong>"? This
               action cannot be undone.
             </p>
@@ -722,14 +833,20 @@ const Users = () => {
                   setShowDeleteConfirmModal(false);
                   setUserToDelete(null);
                 }}
-                className="px-5 py-2.5 rounded-full cursor-pointer bg-gradient-to-r from-gray-700 to-gray-800 text-white font-medium hover:from-gray-800 hover:to-gray-900 transition-all duration-300 border border-gray-600 shadow-md text-sm"
+                className={`px-5 py-2.5 rounded-full cursor-pointer font-medium transition-all duration-300 border shadow-md text-sm ${
+                  theme === "dark"
+                    ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-800 hover:to-gray-900 border-gray-600"
+                    : "bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 hover:from-gray-300 hover:to-gray-400 border-gray-300"
+                }`}
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmDeleteUser}
-                className="px-5 py-2.5 rounded-full cursor-pointer bg-red-600 text-white font-semibold hover:bg-red-700 transition-all duration-300 shadow-lg text-sm"
+                className={`px-5 py-2.5 rounded-full cursor-pointer font-semibold transition-all duration-300 shadow-lg text-sm ${
+                  theme === "dark" ? "bg-red-600 text-white hover:bg-red-700" : "bg-red-500 text-white hover:bg-red-600"
+                }`}
                 disabled={isLoadingUsers}
               >
                 Delete
