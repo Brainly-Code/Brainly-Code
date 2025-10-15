@@ -74,7 +74,11 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
   };
 
   const handleNotifications = async () => {
-    setOpenChat(true);
+    if(openChat) {
+      setOpenChat(false);
+    }else{
+      setOpenChat(true);
+    }
   };
 
   if (loadingImage) return <div className="p-4 text-white">Loading...</div>;
@@ -141,7 +145,6 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
               }`}
             />
           </button>
-          {console.log(unreadNotifications)}
           {unreadNotifications?.[0]?._count?.id > 0 && (
             <div className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
               {unreadNotifications?.[0]?._count?.id > 9
@@ -222,6 +225,24 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
     </ul>
   </header>
 </div>
+
+{openChat && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 overflow-hidden">
+          <div className="relative w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 h-[90vh] bg-opacity-100 rounded-xl shadow-2xl flex flex-col">
+            {/* Close Button */}
+            <button
+              className="absolute -top-8 text-3xl right-3 text-white text-xl font-bold hover:text-gray-300"
+
+              onClick={() => setOpenChat(false)}
+            >
+              ✕
+            </button>
+
+            {/* Chat Component */}
+            <Chat chatWith={selectedUser}/>
+          </div>
+        </div>
+      )}
 
     </div>
   );

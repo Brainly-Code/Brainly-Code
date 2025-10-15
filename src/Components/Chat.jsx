@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { socket } from "../socket";
 import userAvatar from "../assets/user.png";
 import send from "../assets/send.png";
@@ -12,8 +12,10 @@ import { useGetUsersQuery } from "../redux/api/AdminSlice";
 import { useGetCommunityUsersQuery, useGetUserByIdQuery } from "../redux/api/userSlice";
 import { useNotification } from "./ui/UseNotification";
 import { useSelector } from "react-redux";
+import { ThemeContext } from "../Contexts/ThemeContext";
 
 export const Chat = ({ chatWith }) => {
+  const { theme } = useContext(ThemeContext);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
   const [messages, setMessages] = useState([]);
@@ -201,9 +203,9 @@ export const Chat = ({ chatWith }) => {
         {/* Sidebar */}
         <div
           ref={sidebarRef}
-          className={`${sidebarOpen ? "block" : "hidden"} sm:block w-full sm:w-1/4 bg-[#1a2b3c] text-white p-4 space-y-3 border-r border-gray-700 h-[calc(100vh-2rem)] overflow-y-auto`}
+          className={`${sidebarOpen ? "block" : "hidden"} ${theme === "light" ? "bg-gray-100" : "bg-[#1a2b3c]"} sm:block w-full sm:w-1/4  text-white p-4 space-y-3 border-r border-gray-700 h-[calc(100vh-2rem)] overflow-y-auto`}
         >
-          <h3 className="font-bold pt-12 pl-[35%] text-lg">Chats</h3>
+          <h3 className={`font-bold pt-12 pl-[35%] ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}>Chats</h3>
           {filteredUsers.map((u) => (
             <div
               key={u.id}
@@ -211,14 +213,14 @@ export const Chat = ({ chatWith }) => {
                 setSelectedUser(u);
                 setSidebarOpen(false);
               }}
-              className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${selectedUser?.id === u.id ? "bg-[#6B5EDD]" : "hover:bg-[#2a3b4c]"}`}
+              className={`${theme === "light" ? "text-gray-900 hover:text-gray-100" : "text-gray-100"} flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${selectedUser?.id === u.id ? "bg-[#6B5EDD]" : "hover:bg-[#2a3b4c]"}`}
             >
               <img
                 src={u?.photo || userAvatar}
                 className="bg-white rounded-full h-[40px] w-[40px]"
                 alt={u.username}
               />
-              <span className="truncate">{u.username}</span>
+              <span className={` truncate`}>{u.username}</span>
               {getUnreadForUser(u.id) > 0 && selectedUser?.id !== u.id && (
                 <span className="ml-auto bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold">
                   {getUnreadForUser(u.id)}
@@ -230,15 +232,15 @@ export const Chat = ({ chatWith }) => {
         {/* Chat Window */}
         <div className="flex-1 flex flex-col relative">
           {selectedUser ? (
-            <>
-              <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-[#0A1C2B] sticky top-0 z-10">
+            <div className={`${theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100  h-[28.4rem] bg-[#101b2d]"}`}>
+              <div className={`${theme === "light" ? "bg-white" : "bg-[#0A1C2B]"} flex items-center justify-between p-4 border-b border-gray-700 sticky top-0 z-10`}>
                 <div className="flex items-center gap-3">
                   <img
                     src={selectedUser?.photo || userAvatar}
                     className="bg-white rounded-full h-12 w-12"
                     alt={selectedUser?.username}
                   />
-                  <h4 className="text-white text-lg font-semibold">{selectedUser?.username}</h4>
+                  <h4 className={`${theme === "light" ? "text-[#0A1C2B]" : "text-gray-100"} text-white text-lg font-semibold"`}>{selectedUser?.username}</h4>
                 </div>
                 <button
                   className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
@@ -249,7 +251,7 @@ export const Chat = ({ chatWith }) => {
               </div>
               <div
                 ref={chatContainerRef}
-                className="flex-1 bg-[#101b2d] mt-[1.5rem] p-4 overflow-y-auto space-y-4 max-h-[calc(100vh-140px)] scroll-smooth"
+                className={`${theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100 bg-[#101b2d]"} flex-1  mt-[1.5rem] p-4 overflow-y-auto space-y-4 max-h-[calc(100vh-140px)] scroll-smooth`}
               >
                 {isFetchingMessages && page > 1 && (
                   <div className="text-center text-gray-400 text-sm">Loading older messages...</div>
@@ -285,7 +287,7 @@ export const Chat = ({ chatWith }) => {
                     </div>
                   ))
                 ) : (
-                  <div className="flex flex-col items-center justify-center text-center h-full text-gray-400">
+                  <div className="flex flex-col items-center justify-center text-center h-[28.4rem] text-gray-400">
                     <img
                       src={selectedUser?.photo || userAvatar}
                       className="bg-white rounded-full h-20 w-20 mb-3"
@@ -318,7 +320,7 @@ export const Chat = ({ chatWith }) => {
                   </svg>
                 </button>
               )}
-              <div className="p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700 sticky bottom-0">
+              <div className={`${theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100 bg-[#101b2d]"} p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700 sticky bottom-0`}>
                 <textarea
                   className="flex-1 rounded-lg p-2 text-sm bg-white text-black resize-none focus:outline-none h-10"
                   placeholder="Type a message..."
@@ -334,7 +336,7 @@ export const Chat = ({ chatWith }) => {
                   <img src={send} className="w-5 h-5" alt="send" />
                 </button>
               </div>
-            </>
+            </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center text-gray-300">
               <h2 className="text-white text-2xl font-semibold mb-2">Welcome 👋</h2>
