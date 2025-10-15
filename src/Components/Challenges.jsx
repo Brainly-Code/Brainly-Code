@@ -119,7 +119,7 @@ const handleViewInBrowser = (url) => {
   if (isLoading) return <BgLoader />;
 
   return (
-    <div className="bg-[#0D0056] sm:h-[100rem] lg:h-[80rem] h-[140rem]">
+    <div className="bg-[#0D0056] sm:h-[100rem] lg:h-[65rem] md:h-[93rem] h-[110rem]">
       <Header />
 
       {/* Hero */}

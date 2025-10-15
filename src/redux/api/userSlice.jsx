@@ -96,6 +96,13 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
+    getCommunityUsers: builder.query({
+      query: () => ({
+        url: `${USER_URL}`,
+        method: "GET"
+      })
+    }),
+
     refreshToken: builder.mutation({
       query: () => ({
         url: `${AUTH_URL}/refresh`,
@@ -116,5 +123,6 @@ export const {
   useGetProfileImageQuery,
   useUpdateProfileImageMutation,
   useGetProfileImagesQuery,
+  useGetCommunityUsersQuery,
   useUpgradeToProMutation,
 } = userApiSlice;

@@ -22,8 +22,9 @@ import {
 import Footer from './ui/Footer';
 import Header from './ui/Header';
 import BgLoader from './ui/BgLoader';
-import { useGetUsersQuery } from '../redux/api/AdminSlice';
 import { useSelector } from 'react-redux';
+import { useGetCommunityUsersQuery } from '../redux/api/userSlice';
+import { useGetChallengesQuery } from '../redux/api/challengeSlice';
 
 export default function HomePage() {
   const getIconForCourse = (title) => {
@@ -42,8 +43,8 @@ export default function HomePage() {
   const { data: likedCourseIds, refetch } = useGetUserLikedCoursesQuery();
   const { data: courses, error, isLoading } = useGetCoursesQuery();
   const [likeCourse] = useLikeCourseMutation();
-  const { data: users } = useGetUsersQuery();
-  const { data: challenges } = useGetCoursesQuery();
+  const { data: users } = useGetCommunityUsersQuery();
+  const { data: challenges } = useGetChallengesQuery();
   const {user} = useSelector(state => state.auth);
   const mentors = users?.filter(user => user.role === 'ADMIN' || user.role === 'SUPERADMIN');
   const activeLearners = users?.filter(user => user.role === 'USER');

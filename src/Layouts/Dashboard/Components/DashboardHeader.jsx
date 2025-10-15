@@ -141,6 +141,7 @@ const DashboardHeader = ({ searchQuery, setSearchQuery }) => {
               }`}
             />
           </button>
+          {console.log(unreadNotifications)}
           {unreadNotifications?.[0]?._count?.id > 0 && (
             <div className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
               {unreadNotifications?.[0]?._count?.id > 9

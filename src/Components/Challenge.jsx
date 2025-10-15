@@ -35,19 +35,6 @@ const Challenge = () => {
     );
   };
 
-  const normalize = (text) =>
-    text
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '') // remove punctuation
-      .trim();
-
-  const tokenSimilarity = (a, b) => {
-    const wordsA = new Set(a.split(/\s+/));
-    const wordsB = new Set(b.split(/\s+/));
-    const intersection = new Set([...wordsA].filter((x) => wordsB.has(x)));
-    return intersection.size / Math.max(wordsA.size, wordsB.size);
-  };
-
   const handleContinueSubmit = async (e) => {
     e.preventDefault();
 
@@ -84,29 +71,6 @@ const Challenge = () => {
         }
       }
 
-      const correctSolutions = Array.isArray(solutions)
-        ? solutions.map((s) => normalize(s.solution))
-        : [];
-
-      const userAnswer = normalize(userSolution);
-
-      let isSimilar = false;
-      for (const correct of correctSolutions) {
-        const ratio1 = stringSimilarity.compareTwoStrings(userAnswer, correct);
-        const ratio2 = tokenSimilarity(userAnswer, correct);
-
-        if (ratio1 >= 0.7 || ratio2 >= 0.6) {
-          isSimilar = true;
-          break;
-        }
-      }
-
-      if (!isSimilar) {
-        toast.error("Wrong answer. Try again!");
-        return;
-      }
-    }
-
     try {
       await completeChallenge({ userId, challengeId, solution: userSolution }).unwrap();
       toast.success("🎉 Congratulations, you have completed the challenge!");
@@ -118,7 +82,8 @@ const Challenge = () => {
       }
       toast.error("Failed to complete challenge. Please try again.");
     }
-  };
+  }
+}
 
   if (isInstructionsLoading) return <BgLoader />;
 

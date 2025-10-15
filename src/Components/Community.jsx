@@ -4,7 +4,7 @@ import profile from '../assets/whiteUser.png'
 import messenger from '../assets/messenger.png'
 import Footer from './ui/Footer'
 import conversation from '../assets/conversation.png'
-import { Chat } from './Chat'
+import Chat from './Chat'
 import { useGetUsersQuery } from '../redux/api/AdminSlice'
 import { useGetUnreadCountsQuery } from '../redux/api/messageSlice'
 import { toast } from 'react-toastify'
@@ -12,12 +12,13 @@ import BgLoader from './ui/BgLoader'
 import { jwtDecode } from 'jwt-decode'
 import { useSelector } from 'react-redux'
 import { useAddCommentMutation } from "../redux/api/commentsSlice";
-import { useGetProfileImagesQuery } from '../redux/api/userSlice'
+import {useGetCommunityUsersQuery } from '../redux/api/userSlice'
 
 
 export const Community = () => {
   const [selectedUser, setSelectedUser] = useState();
   const [openChat, setOpenChat] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,14 +33,7 @@ export const Community = () => {
   
   const currentUserId = user?.id;
 
-  const { data: unreadCounts, error: unreadError } = useGetUnreadCountsQuery(currentUserId);
-
-  const { data: images, isError: errorFetchingImages, isLoading: isLoadingImages} = useGetProfileImagesQuery();
-  const getUserImage = (currentId) => {
-    if (isLoadingImages || errorFetchingImages) return profile;
-    const image = images?.find((image) => image?.userId === currentId);
-    return image?.path || profile;
-  }
+  const { data: unreadCounts } = useGetUnreadCountsQuery(currentUserId);
 
   const totalUnread = unreadCounts?.reduce((sum, u) => sum + u._count.id, 0);
 
@@ -51,8 +45,7 @@ export const Community = () => {
     setSelectedUser(communityUser);
   }
 
-  const { data: communityUsers, isLoading, error } = useGetUsersQuery();
-
+  const { data: communityUsers, isLoading, error } = useGetCommunityUsersQuery();
 
   const roleProvision = (role) => {
     if (role === "USER") {
@@ -62,7 +55,17 @@ export const Community = () => {
     }
   }
 
-
+  if (error) {
+    toast.error("Sorry could not load the community users");
+    setHasError(true);
+    return (
+      <div className="bg-[#0D0056] min-h-screen flex flex-col items-center justify-center">
+        <Header />
+        <h1 className="text-white text-2xl font-bold">Failed to load community users.</h1>
+        <Footer />
+      </div>
+    );
+  }
 
   // Filter out current user
   let filteredUsers = communityUsers?.filter(user => user.id !== currentUserId);
@@ -81,7 +84,7 @@ export const Community = () => {
   );
 
 
-  let [addComment, { isLoading: isAdding }] = useAddCommentMutation();
+  const [addComment, { isLoading: isAdding }] = useAddCommentMutation();
 
   // Comment handling
   const handleSendComment = async () => {
@@ -92,10 +95,10 @@ export const Community = () => {
 
     try {
       await addComment({ message: comment,userId:currentUserId }).unwrap();
-      isAdding = false;
+      toast.success("Comment sent!");
       setComment(""); // clear textarea
     } catch (err) {
-      toast.success("Comment sent!");
+      toast.error("Failed to send comment");
     }
   };
 
@@ -120,23 +123,25 @@ export const Community = () => {
       setShowSearchHints(false);
     }
   };
-  const hasError = error || unreadError;
+
   return (
-    <div className="bg-[#0D0056] w-[60rem] overflow-hidden lg:h-[100%] md:w-[180%] lg:w-full h-[135rem] md:min-h-[200%] lg:min-h-screen flex flex-col">
-            {hasError ? (
+
+    <div className="bg-[#0D0056] w-full h-full">
+     
+      {!openChat && <Header />}
+      {
+        hasError ? (
         <>
           <Header />
           <h1 className="text-white text-2xl font-bold">
             Failed to load community users.
           </h1>
-          <Footer />
         </>
       ) : (
         <>
-          {/* Normal Community is empty */}
         </>
-      )}
-      {!openChat && <Header />}
+      )
+      }
 
       <div className='flex gap-10 pl-[40rem]'>
         {/* Title */}
@@ -211,7 +216,7 @@ export const Community = () => {
                     {/* Profile Image */}
                     <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
                       <img
-                        src={getUserImage(communityUser?.id)}
+                        src={!communityUser?.photo ? profile : communityUser?.photo}
                         alt="profile"
                         className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
                       />
@@ -245,10 +250,12 @@ export const Community = () => {
       </div>
 
       {/* Pagination */}
-      <div className="text-white font-semibold flex flex-row mx-auto my-6 justify-around gap-3">
+      <div className="text-white font-semibold flex w-full max-w-[70rem] mx-auto my-6 gap-3 overflow-x-auto whitespace-nowrap">
         {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((n) => (
           <div
             key={n}
+            role="button"
+            aria-label={`Go to page ${n}`}
             className={`bg-[#19179B] px-3 py-1 rounded-md cursor-pointer hover:bg-[#2a28d4] transition ${currentPage === n ? "bg-[#2a28d4]" : ""}`}
             onClick={() => setCurrentPage(n)}
           >

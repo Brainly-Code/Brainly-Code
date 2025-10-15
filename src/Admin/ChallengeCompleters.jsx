@@ -5,8 +5,9 @@ import Loader from '../Components/ui/Loader';
 import dayjs from 'dayjs'
 import profile from '../assets/user.png';
 import { ThemeContext } from '../Contexts/ThemeContext';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaArrowDown, FaArrowRight, FaCheck, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { useSendMessageMutation } from '../redux/api/messageSlice';
 
 const ChallengeCompleters = () => {
   const { theme } = useContext(ThemeContext);
@@ -15,10 +16,12 @@ const ChallengeCompleters = () => {
   const { id } = useParams();
   const { data: completers = [], isLoading, error } = useGetChallengeCompletersQuery(id);
   const [correct] = useCorrectCompleterMutation();
+  const [  ] = useSendMessageMutation();
 
   const handleCorrectCompleter = async(id) => {
     try {
       const res = await correct(id).unwrap();
+      await 
       toast.success("Ticked successfully")
     } catch (error) {
       toast.error("Failed to tick")
@@ -91,13 +94,16 @@ const ChallengeCompleters = () => {
                 {  
                 completer.solution ? (
                   <Link>
-                    {console.log(completer.solution)}
-
                     <button onClick={handleShowOrHideSol} className='text-blue-500 px-3 py-5'>{showSolution ? (
-                      <p>
-                         Hide solution
+                      <p className='flex gap-10'>
+                         Hide solution 
+                         <FaArrowRight className='mt-1'/>
                       </p>
-                    ) : "Check the solution out" }</button>
+                    ) : <p className='flex gap-10'>
+                      Check the solution out
+                      <FaArrowDown className='mt-1' />
+                    </p> 
+                    }</button>
 
                     {showSolution ? (
                       <p>{completer.solution}</p>
@@ -106,7 +112,7 @@ const ChallengeCompleters = () => {
                 ) : <></>}
               </div>
               {
-              completer.solution === true ? (
+              completer.correct === "WRIGHT" ? (
                 <div className=''>
                 </div>
               ) : (

@@ -9,10 +9,9 @@ import {
   useReadMessagesMutation,
 } from "../redux/api/messageSlice";
 import { useGetUsersQuery } from "../redux/api/AdminSlice";
-import { useGetUserByIdQuery } from "../redux/api/userSlice";
+import { useGetCommunityUsersQuery, useGetUserByIdQuery } from "../redux/api/userSlice";
 import { useNotification } from "./ui/UseNotification";
 import { useSelector } from "react-redux";
-import { jwtDecode } from "jwt-decode";
 
 export const Chat = ({ chatWith }) => {
   const messagesEndRef = useRef(null);
@@ -24,7 +23,7 @@ export const Chat = ({ chatWith }) => {
   const [page, setPage] = useState(1); // For pagination
   const [hasMore, setHasMore] = useState(true); // Track if more messages are available
   const messagesPerPage = 20; // Adjust based on your backend
-  const { data: users = [], isLoading: usersLoading } = useGetUsersQuery();
+  const { data: users = [], isLoading: usersLoading } = useGetCommunityUsersQuery();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
