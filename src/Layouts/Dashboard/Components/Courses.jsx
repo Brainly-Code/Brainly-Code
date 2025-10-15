@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import { useDeleteCourseMutation, useGetCoursesQuery } from "../../../redux/api/coursesSlice";
 import { SearchContext } from '../../../Contexts/SearchContext';
 import { ThemeContext } from '../../../Contexts/ThemeContext.jsx'; // Import ThemeContext
+import BgLoader from "../../../Components/ui/Loader";
 
 const getIconForCourse = (title) => {
   const key = title.toLowerCase();
@@ -182,13 +183,13 @@ const Courses = () => {
   };
 
   if (isCreating) {
-    return <Loader />;
+    return <BgLoader />;
   }
 
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <Loader />
+        <BgLoader />
       </div>
     );
   }

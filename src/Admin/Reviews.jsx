@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { useGetCommentsQuery } from '../redux/api/commentsSlice';
 import BgLoader from '../Components/ui/BgLoader';
+import { useGetCommunityUsersQuery, useGetUserByIdQuery } from '../redux/api/userSlice';
 
 const Reviews = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -10,6 +11,12 @@ const Reviews = () => {
   const commentsPerPage = 5;
 
   const { data: comments, isLoading, error } = useGetCommentsQuery();
+  const {data: users} = useGetCommunityUsersQuery();
+
+  const handleFindUserById = (id) => { 
+    const user = users.find((user) => (user.id === id));
+    return user
+  }
 
   if(!comments) return <div className='text-center mt-[10rem] text-white p-4'>No comments available yet.</div>;
   // Sort comments based on filter
@@ -86,6 +93,7 @@ const Reviews = () => {
             key={comment.id}
             className='w-[90%] rounded-lg bg-[#1074D2] bg-opacity-35 p-[1rem] my-[0.5rem] flex mx-[3rem]'
           >
+            <p className='font-semibold px-5'>{handleFindUserById(comment.userId).username}</p>
             <p>{comment.message}</p>
             <p class="text-sm absolute mt-1 right-40">{comment.createdAt}</p>
           </div>

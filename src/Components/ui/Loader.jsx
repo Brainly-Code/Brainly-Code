@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { ThemeContext } from '../../Contexts/ThemeContext'
 
-const Loader = () => {
+const BgLoader = () => {
+  const {theme} = useContext(ThemeContext);
   return (
-    <div className='h-screen pt-[10rem] bg-[#4444e4]  opacity-0'>
+    <div className={`${theme === "light" ? "bg-white" : "bg-[#0D0056]"} bg-opacity-0 h-screen pt-[10rem]'`}>
       <div className='p-[5rem] mx-auto border-t-2 rounded-full animate-spin border-blue-500 w-[1rem] h-[1rem]'>
       
       </div>
@@ -10,4 +12,4 @@ const Loader = () => {
   )
 }
 
-export default Loader
+export default BgLoader
