@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { HiOutlineAdjustmentsHorizontal } from 'react-icons/hi2';
 import { useGetCommentsQuery } from '../redux/api/commentsSlice';
 import BgLoader from '../Components/ui/BgLoader';
 import { useGetCommunityUsersQuery, useGetUserByIdQuery } from '../redux/api/userSlice';
+import { ThemeContext } from '../Contexts/ThemeContext';
 
 const Reviews = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState('recent'); // 'recent' or 'older'
   const commentsPerPage = 5;
+  const { theme } = useContext(ThemeContext);
 
   const { data: comments, isLoading, error } = useGetCommentsQuery();
   const {data: users} = useGetCommunityUsersQuery();
 
   const handleFindUserById = (id) => { 
-    const user = users.find((user) => (user.id === id));
+    const user = users?.find((user) => (user.id === id));
     return user
   }
 
@@ -49,7 +51,7 @@ const Reviews = () => {
   }
 
   return (
-    <div className='text-white'>
+    <div className={`${theme === "light" ? "bg-gray-300 text-gray-800" : "text-white"} p-5`}>
       {/* Filter Button */}
       <div className='flex justify-end mr-12 relative'>
         <button
@@ -91,7 +93,7 @@ const Reviews = () => {
         currentComments?.map(comment => (
           <div
             key={comment.id}
-            className='w-[90%] rounded-lg bg-[#1074D2] bg-opacity-35 p-[1rem] my-[0.5rem] flex mx-[3rem]'
+            className={`${theme === "light" ? "bg-white text-gray-800" : "text-white bg-[#1074D2] bg-opacity-35"} w-[90%] rounded-lg p-[1rem] my-[0.5rem] flex mx-[3rem]`}
           >
             <p className='font-semibold px-5'>{handleFindUserById(comment.userId).username}</p>
             <p>{comment.message}</p>
