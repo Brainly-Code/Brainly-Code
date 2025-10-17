@@ -48,20 +48,30 @@ const AdminSlice = apiSlice.injectEndpoints({
         method: "GET"
       })
     }),
-
-    correctCompleter: builder.mutation({
-      query: challengeId => ({
-        url: `${ADMIN_URL}/challenge-completers/${challengeId}`,
-        method: "PATCH"
-      })
-    }),
-
+    
     getGraphStats: builder.query({
       query: () => ({
         url: `${ADMIN_URL}/graph-stats`,
         method: "GET",
       })
-    })
+    }),
+
+    correctCompleter: builder.mutation({
+  query: ({ challengeId, userId }) => ({
+    url: `/admin/challenge-completers/${challengeId}`,
+    method: "PATCH",
+    body: { userId },
+  }),
+}),
+
+rejectChallengeAnswer: builder.mutation({
+  query: (data) => ({
+    url: `/admin/reject`,
+    method: "PATCH",
+    body: data
+  }),
+}),
+
 
   }),
 });
@@ -74,5 +84,6 @@ export const {
   useCreateLessonSolutionMutation,
   useGetChallengeCompletersQuery,
   useCorrectCompleterMutation,
-  useGetGraphStatsQuery
+  useGetGraphStatsQuery,
+  useRejectChallengeAnswerMutation
 } = AdminSlice;

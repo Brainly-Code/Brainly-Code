@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useCorrectCompleterMutation, useGetChallengeCompletersQuery } from '../redux/api/AdminSlice'
+import { useCorrectCompleterMutation, useGetChallengeCompletersQuery, useRejectChallengeAnswerMutation } from '../redux/api/AdminSlice'
 import Loader from '../Components/ui/Loader';
 import dayjs from 'dayjs'
 import profile from '../assets/user.png';
@@ -14,34 +14,38 @@ const ChallengeCompleters = () => {
   const [ userSolution, setUserSolution ] = useState(null);
   const [ showSolution, setShowSolution ] = useState(false);
   const { id } = useParams();
-  const { data: completers = [], isLoading, error } = useGetChallengeCompletersQuery(id);
+  const challengeId = Number(id);
+  const { data: completers = [], isLoading, error, refetch: refetchCompleters } = useGetChallengeCompletersQuery(challengeId);
   const [correct] = useCorrectCompleterMutation();
-  const comp = completers.find(completer => completer.user.id ===1);
-  console.log(comp)
+  const [reject] = useRejectChallengeAnswerMutation();
   const findCompleter = (userId) => {
     const completer = completers.find(completer => completer?.user?.id === userId);
     return completer;
   }
 
   const handleCorrectCompleter = async(id) => {
+    const completer = findCompleter(id);
+    const userId = completer?.user?.id;
     try {
-
-      findCompleter(id);
-      // const res = await correct(id, {completer}).unwrap();
-      // toast.success("Ticked successfully")
+      
+      const res = await correct({challengeId, userId}).unwrap();
+      toast.success("Ticked successfully");
+      refetchCompleters();
     } catch (error) {
       toast.error("Failed to tick")
       console.log(error);
     }    
   }
 
-  const handleAnswerIsWrong = async (id) => {
+  const handleAnswerIsWrong = async (id, answerId) => {
     try{
-      const user = findCompleter(id);
-      console.log(user);
-      // await rejectAnswer(user).unwrap();
+
+      await reject({userId: id, id: answerId}).unwrap();
+      toast.success("Challenge rejected successfully");
+      refetchCompleters();
     }catch(error) {
       toast.error("Failed to reject answer");
+      console.log(error)
     }
   }
 
@@ -67,7 +71,7 @@ const ChallengeCompleters = () => {
   
   return (
     <div className={`${theme === 'dark' ? '' : 'bg-gray-50'} min-h-screen transition-all duration-500`}>
-      <Link to={`/admin/editChallenge/${id}`}>
+      <Link to={`/admin/editChallenge/${challengeId}`}>
         <button className={`${theme === "dark"
               ? "bg-gradient-to-r from-[#00ffff] to-purple-400 text-gray-300"
               : "bg-gradient-to-r from-blue-400 to-purple-400 text-white" } px-8 py-3 rounded-lg bg-blue-500`}>
@@ -132,10 +136,10 @@ const ChallengeCompleters = () => {
                 </div>
               ) : (
                 <div className='mx-auto gap-0 flex grid lg:grid-cols-2 grid-rows-2 sm:block lg:gap-10'>
-                  <button onClick={() => handleCorrectCompleter(completer.id)}>
+                  <button onClick={() => handleCorrectCompleter(completer?.user?.id)}>
                     <FaCheck color="green" size={25} className='hover:size-[50]  hover:cursor-pointer'/>
                   </button>
-                  <button onClick={() => handleAnswerIsWrong(completer.id)}>
+                  <button onClick={() => handleAnswerIsWrong(completer?.user?.id, completer?.id)}>
                     <FaTimes color='red' size={25} className='hover:size-[50] hover:cursor-pointer'/>
                   </button>
                 </div>

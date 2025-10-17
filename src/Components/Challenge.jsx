@@ -60,12 +60,12 @@ const Challenge = () => {
       if(challenge.takesUrl) {
         try {
           await completeChallenge({ userId, challengeId, url: userSolution }).unwrap();
-          toast.success("🎉 Congratulations, you have completed the challenge!");
+          toast.success("Thank you for your submission please wait for the mentor response the challenge!");
           navigate("/user/challenges");
+          return;
         } catch (error) {
           if (error?.data?.message?.includes("Challenge already completed")) {
             toast.error("You have already completed this challenge!");
-            return;
           }
           toast.error("Failed to complete challenge. Please try again.");
         }
