@@ -50,12 +50,11 @@ const ChallengeCompleters = () => {
 
   
   return (
-    <div className={`${theme === 'dark' ? 'bg-[#2b1edf] opacity-90' : 'bg-gray-50'} min-h-screen transition-all duration-500`}>
-      <Link to="/admin/challenges">
-        <button className={`px-8 py-3 rounded-lg transition-all duration-300 ${theme === 'dark'
-            ? 'bg-blue-500 hover:bg-blue-700 text-white'
-            : 'bg-blue-600 hover:bg-blue-700 text-white'
-          }`}>
+    <div className={`${theme === 'dark' ? '' : 'bg-gray-50'} min-h-screen transition-all duration-500`}>
+      <Link to={`/admin/editChallenge/${id}`}>
+        <button className={`${theme === "dark"
+              ? "bg-gradient-to-r from-[#00ffff] to-purple-400 text-gray-300"
+              : "bg-gradient-to-r from-blue-400 to-purple-400 text-white" } px-8 py-3 rounded-lg bg-blue-500`}>
           Back
         </button>
       </Link>

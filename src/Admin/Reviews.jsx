@@ -51,7 +51,7 @@ const Reviews = () => {
   }
 
   return (
-    <div className={`${theme === "light" ? "bg-gray-300 text-gray-800" : "text-white"} p-5`}>
+    <div className={`${theme === "light" ? "bg-gray-200 text-gray-800" : "text-white"} w-full p-5`}>
       {/* Filter Button */}
       <div className='flex justify-end mr-12 relative'>
         <button
@@ -83,7 +83,7 @@ const Reviews = () => {
         )}
       </div>
 
-      <h1 className='text-white text-xl font-bold mx-[3rem] mb-16 mt-12 mx-[40%]'>Reviews</h1>
+      <h1 className={`${theme === "light" ? "text-gray-800" : "text-white"} p-5 w- text-left px-4 py-2 text-xl font-bold mx-[3rem] mb-16 mt-12 mx-[40%]`}>Reviews</h1>
 
       {isLoading ? (
         <p>Loading comments...</p>
@@ -95,7 +95,7 @@ const Reviews = () => {
             key={comment.id}
             className={`${theme === "light" ? "bg-white text-gray-800" : "text-white bg-[#1074D2] bg-opacity-35"} w-[90%] rounded-lg p-[1rem] my-[0.5rem] flex mx-[3rem]`}
           >
-            <p className='font-semibold px-5'>{handleFindUserById(comment.userId).username}</p>
+            <p className='font-semibold px-5'>{handleFindUserById(comment?.userId)?.username}</p>
             <p>{comment.message}</p>
             <p class="text-sm absolute mt-1 right-40">{comment.createdAt}</p>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import time from '../assets/time.png';
 import star from '../assets/star.png';
 import Footer from '../Components/ui/Footer';
@@ -8,9 +8,11 @@ import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useGetChallengeByIdQuery, useGetChallengeInstructionsQuery, useCreateChallengeInstructionMutation, useUpdateChallengeInstructionMutation, useDeleteChallengeInstructionMutation, useUpdateChallengeMutation } from '../redux/api/challengeSlice.jsx';
 import { Loader } from 'lucide-react';
+import { ThemeContext } from '../Contexts/ThemeContext.jsx';
 
 const EditChallenge = () => {   
   const { id } = useParams();
+  const {theme} = useContext(ThemeContext);
   const [showAddModuleForm, setShowAddModuleForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showEditChallengeForm, setShowEditChallengeForm] = useState(false);
@@ -119,14 +121,18 @@ const EditChallenge = () => {
   }
 
   return (
-    <div className='bg-[#0D0056] min-h-screen text-white flex flex-col justify-between'>
+    <div className={`${theme === "light" ? "bg-gray-200": " text-white bg-[#0D0056]"} 'min-h-screen text-white flex flex-col justify-between'`}>
       <div className="flex mt-12 gap-[30%]">
         <Link to="/admin/challenges">
-          <button className="px-8 py-3 rounded-lg bg-blue-500">Back</button>
+          <button className={`${theme === "dark"
+              ? "bg-gradient-to-r from-[#00ffff] to-purple-400 text-gray-300"
+              : "bg-gradient-to-r from-blue-400 to-purple-400 text-white"} px-8 py-3 rounded-lg bg-blue-500`}>Back</button>
         </Link>
-        <h3 className='text-2xl font-bold text-center'>Edit challenge</h3>
+        <h3 className={`${theme === "light" ? "bg-gray-200 text-black": " text-white bg-[#0D0056]"} text-2xl font-bold text-center`}>Edit challenge</h3>
         <Link to={`/admin/completers/${id}`}>
-          <button className="px-8 py-3 rounded-lg bg-blue-500">Check out completers</button>
+          <button className={`${theme === "dark"
+              ? "bg-gradient-to-r from-[#00ffff] to-purple-400 text-gray-300"
+              : "bg-gradient-to-r from-blue-400 to-purple-400 text-white" } px-8 py-3 rounded-lg bg-blue-500`}>Check out completers</button>
         </Link>
       </div>
 
@@ -334,7 +340,6 @@ const EditChallenge = () => {
         </div>
       )}
 
-      <Footer />
     </div>
   );
 };
