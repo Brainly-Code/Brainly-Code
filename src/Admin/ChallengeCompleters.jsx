@@ -16,17 +16,33 @@ const ChallengeCompleters = () => {
   const { id } = useParams();
   const { data: completers = [], isLoading, error } = useGetChallengeCompletersQuery(id);
   const [correct] = useCorrectCompleterMutation();
-  const [  ] = useSendMessageMutation();
+  const comp = completers.find(completer => completer.user.id ===1);
+  console.log(comp)
+  const findCompleter = (userId) => {
+    const completer = completers.find(completer => completer?.user?.id === userId);
+    return completer;
+  }
 
   const handleCorrectCompleter = async(id) => {
     try {
-      const res = await correct(id).unwrap();
-      await 
-      toast.success("Ticked successfully")
+
+      findCompleter(id);
+      // const res = await correct(id, {completer}).unwrap();
+      // toast.success("Ticked successfully")
     } catch (error) {
       toast.error("Failed to tick")
       console.log(error);
     }    
+  }
+
+  const handleAnswerIsWrong = async (id) => {
+    try{
+      const user = findCompleter(id);
+      console.log(user);
+      // await rejectAnswer(user).unwrap();
+    }catch(error) {
+      toast.error("Failed to reject answer");
+    }
   }
 
   const handleShowOrHideSol = () => {
@@ -92,22 +108,22 @@ const ChallengeCompleters = () => {
 
                 {  
                 completer.solution ? (
-                  <Link>
-                    <button onClick={handleShowOrHideSol} className='text-blue-500 px-3 py-5'>{showSolution ? (
-                      <p className='flex gap-10'>
+                  <div>
+                    <p className='text-blue-500 px-3 py-5'>{showSolution ? (
+                      <button onClick={handleShowOrHideSol} className='flex gap-10'>
                          Hide solution 
                          <FaArrowRight className='mt-1'/>
-                      </p>
+                      </button>
                     ) : <p className='flex gap-10'>
                       Check the solution out
                       <FaArrowDown className='mt-1' />
                     </p> 
-                    }</button>
+                    }</p>
 
                     {showSolution ? (
                       <p>{completer.solution}</p>
                     ) : <></>}
-                  </Link>
+                  </div>
                 ) : <></>}
               </div>
               {
@@ -119,7 +135,9 @@ const ChallengeCompleters = () => {
                   <button onClick={() => handleCorrectCompleter(completer.id)}>
                     <FaCheck color="green" size={25} className='hover:size-[50]  hover:cursor-pointer'/>
                   </button>
-                  <FaTimes color='red' size={25} className='hover:size-[50] hover:cursor-pointer'/>
+                  <button onClick={() => handleAnswerIsWrong(completer.id)}>
+                    <FaTimes color='red' size={25} className='hover:size-[50] hover:cursor-pointer'/>
+                  </button>
                 </div>
               )
               }

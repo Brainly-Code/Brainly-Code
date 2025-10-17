@@ -199,7 +199,7 @@ export const Chat = ({ chatWith }) => {
 
   return (
     <div className="bg-[#0D0056] h-full flex flex-col">
-      <div className="flex flex-col sm:flex-row h-full w-full bg-[#0A1C2B] rounded-lg shadow-lg overflow-hidden">
+      <div className={`${theme === "light" ? "bg-white" : "bg-[#1a2b3c]"} flex flex-col sm:flex-row h-full w-full bg-white rounded-lg shadow-lg overflow-hidden`}>
         {/* Sidebar */}
         <div
           ref={sidebarRef}
@@ -237,10 +237,10 @@ export const Chat = ({ chatWith }) => {
                 <div className="flex items-center gap-3">
                   <img
                     src={selectedUser?.photo || userAvatar}
-                    className="bg-white rounded-full h-12 w-12"
+                    className={`bg-white rounded-full h-12 w-12`}
                     alt={selectedUser?.username}
                   />
-                  <h4 className={`${theme === "light" ? "text-[#0A1C2B]" : "text-gray-100"} text-white text-lg font-semibold"`}>{selectedUser?.username}</h4>
+                  <h4 className={`${theme === "light" ? "text-black" : "text-gray-100"} text-lg font-semibold"`}>{selectedUser?.username}</h4>
                 </div>
                 <button
                   className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
