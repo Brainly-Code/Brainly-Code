@@ -23,12 +23,9 @@ const ChallengeCompleters = () => {
     return completer;
   }
 
-  const handleCorrectCompleter = async(id) => {
-    const completer = findCompleter(id);
-    const userId = completer?.user?.id;
+  const handleCorrectCompleter = async(id, answerId) => {
     try {
-      
-      const res = await correct({challengeId, userId}).unwrap();
+      await correct({userId: id, id: answerId}).unwrap();
       toast.success("Ticked successfully");
       refetchCompleters();
     } catch (error) {
@@ -39,7 +36,6 @@ const ChallengeCompleters = () => {
 
   const handleAnswerIsWrong = async (id, answerId) => {
     try{
-
       await reject({userId: id, id: answerId}).unwrap();
       toast.success("Challenge rejected successfully");
       refetchCompleters();
@@ -60,6 +56,7 @@ const ChallengeCompleters = () => {
   if (isLoading) {
     return <Loader />;
   }
+
   if (error) {
     return (
       <div className={`text-center ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
@@ -130,17 +127,18 @@ const ChallengeCompleters = () => {
                   </div>
                 ) : <></>}
               </div>
+              {console.log(completer)}
               {
               completer.correct === "WRIGHT" ? (
                 <div className=''>
                 </div>
               ) : (
-                <div className='mx-auto gap-0 flex grid lg:grid-cols-2 grid-rows-2 sm:block lg:gap-10'>
-                  <button onClick={() => handleCorrectCompleter(completer?.user?.id)}>
+                <div className='mx-auto gap-10 grid lg:grid-cols-2 grid-rows-2  sm:block lg:gap-5'>
+                  <button onClick={() => handleCorrectCompleter(completer?.user?.id, completer?.id)}>
                     <FaCheck color="green" size={25} className='hover:size-[50]  hover:cursor-pointer'/>
                   </button>
                   <button onClick={() => handleAnswerIsWrong(completer?.user?.id, completer?.id)}>
-                    <FaTimes color='red' size={25} className='hover:size-[50] hover:cursor-pointer'/>
+                    <FaTimes color='red' size={25} className='hover:size-[50] lg:ml-[2rem] hover:cursor-pointer'/>
                   </button>
                 </div>
               )

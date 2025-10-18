@@ -8,7 +8,6 @@ import {
   useGetUnreadCountsQuery,
   useReadMessagesMutation,
 } from "../redux/api/messageSlice";
-import { useGetUsersQuery } from "../redux/api/AdminSlice";
 import { useGetCommunityUsersQuery, useGetUserByIdQuery } from "../redux/api/userSlice";
 import { useNotification } from "./ui/UseNotification";
 import { useSelector } from "react-redux";
@@ -18,13 +17,17 @@ export const Chat = ({ chatWith }) => {
   const { theme } = useContext(ThemeContext);
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const sidebarRef = useRef(null);
+  const searchRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const [page, setPage] = useState(1); // For pagination
-  const [hasMore, setHasMore] = useState(true); // Track if more messages are available
-  const messagesPerPage = 20; // Adjust based on your backend
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSearchHints, setShowSearchHints] = useState(false);
+  const messagesPerPage = 20;
   const { data: users = [], isLoading: usersLoading } = useGetCommunityUsersQuery();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
@@ -33,8 +36,13 @@ export const Chat = ({ chatWith }) => {
   const [readMessages] = useReadMessagesMutation();
   const { data: currentUser, isLoading: currentUserLoading } = useGetUserByIdQuery(userId, { skip: !userId });
 
-  const filteredUsers = users.filter((u) => u.id !== userId);
-  const [selectedUser, setSelectedUser] = useState(chatWith || (filteredUsers.length > 0 ? filteredUsers[0] : null));
+  const filteredUsers = users
+    .filter((u) => u.id !== userId)
+    .filter((u) => u.username.toLowerCase().includes(searchTerm.toLowerCase()));
+
+  const [selectedUser, setSelectedUser] = useState(
+    chatWith || (filteredUsers.length > 0 ? filteredUsers[0] : null)
+  );
 
   const { data: fetchedMessages, isFetching: isFetchingMessages } = useGetMessagesQuery(
     selectedUser
@@ -46,28 +54,28 @@ export const Chat = ({ chatWith }) => {
   const [sendMessage] = useSendMessageMutation();
   const notify = useNotification();
 
+  // Update selected user when chatWith changes
   useEffect(() => {
     if (chatWith) setSelectedUser(chatWith);
   }, [chatWith]);
 
+  // Handle fetched messages and pagination
   useEffect(() => {
     if (fetchedMessages) {
-      // Prepend older messages when fetching new pages
       setMessages((prev) => {
         const newMessages = fetchedMessages.filter((msg) => !prev.some((m) => m.id === msg.id));
         return page === 1 ? newMessages : [...newMessages, ...prev];
       });
-      setHasMore(fetchedMessages.length === messagesPerPage); // Assume more if full page returned
+      setHasMore(fetchedMessages.length === messagesPerPage);
     } else if (page === 1) {
       setMessages([]);
       setHasMore(true);
     }
   }, [fetchedMessages, page]);
 
-  // Auto-scroll to bottom unless user has scrolled up
+  // Auto-scroll to bottom
   useEffect(() => {
     if (!chatContainerRef.current) return;
-
     const chatContainer = chatContainerRef.current;
     const isScrolledToBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 50;
 
@@ -76,7 +84,7 @@ export const Chat = ({ chatWith }) => {
     }
   }, [messages]);
 
-  // Track scroll position to show/hide scroll-to-bottom button and load older messages
+  // Handle scroll for pagination and scroll-to-bottom button
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
     if (!chatContainer) return;
@@ -85,7 +93,6 @@ export const Chat = ({ chatWith }) => {
       const isScrolledToBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 50;
       setShowScrollButton(!isScrolledToBottom);
 
-      // Load older messages when scrolling near the top
       if (chatContainer.scrollTop < 100 && hasMore && !isFetchingMessages) {
         setPage((prev) => prev + 1);
       }
@@ -95,16 +102,18 @@ export const Chat = ({ chatWith }) => {
     return () => chatContainer.removeEventListener("scroll", handleScroll);
   }, [hasMore, isFetchingMessages]);
 
-  // Reset scroll and page when switching users
+  // Reset pagination and scroll when switching users
   useEffect(() => {
     if (selectedUser && chatContainerRef.current) {
-      setPage(1); // Reset pagination
+      setPage(1);
       setHasMore(true);
+      setMessages([]);
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       setShowScrollButton(false);
     }
   }, [selectedUser]);
 
+  // Handle WebSocket events
   useEffect(() => {
     if (!selectedUser || !userId) return;
     const roomId = [userId, selectedUser.id].sort().join("-");
@@ -136,6 +145,7 @@ export const Chat = ({ chatWith }) => {
     };
   }, [selectedUser, userId, notify]);
 
+  // Send message
   const handleSend = async () => {
     if (!newMessage.trim() || !selectedUser || !userId) return;
 
@@ -146,11 +156,16 @@ export const Chat = ({ chatWith }) => {
       type: "text",
     };
 
-    socket.emit("sendDM", msgData);
-    setNewMessage("");
-    await sendMessage(msgData);
+    try {
+      socket.emit("sendDM", msgData);
+      await sendMessage(msgData).unwrap();
+      setNewMessage("");
+    } catch (error) {
+      notify("Error", { body: "Failed to send message. Please try again.", icon: userAvatar });
+    }
   };
 
+  // Handle Enter key for sending messages
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -158,6 +173,7 @@ export const Chat = ({ chatWith }) => {
     }
   };
 
+  // Mark messages as read
   useEffect(() => {
     if (selectedUser && userId) {
       readMessages({ userId, otherUserId: selectedUser.id }).then(() => {
@@ -166,12 +182,13 @@ export const Chat = ({ chatWith }) => {
     }
   }, [selectedUser, userId, readMessages, refetchUnread]);
 
+  // Get unread message count for a user
   const getUnreadForUser = (uid) => {
     const found = unreadCounts.find((u) => u.senderId === uid);
     return found ? found._count.id : 0;
   };
 
-  const sidebarRef = useRef(null);
+  // Close sidebar on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
@@ -182,15 +199,23 @@ export const Chat = ({ chatWith }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Scroll to bottom
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     setShowScrollButton(false);
   };
 
-  // Format timestamp for messages
+  // Format timestamp
   const formatTimestamp = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  // Handle search key down
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter") {
+      setShowSearchHints(false);
+    }
   };
 
   if (usersLoading || currentUserLoading || !userId) {
@@ -199,28 +224,91 @@ export const Chat = ({ chatWith }) => {
 
   return (
     <div className="bg-[#0D0056] h-full flex flex-col">
-      <div className={`${theme === "light" ? "bg-white" : "bg-[#1a2b3c]"} flex flex-col sm:flex-row h-full w-full bg-white rounded-lg shadow-lg overflow-hidden`}>
+      <div
+        className={`${
+          theme === "light" ? "bg-white" : "bg-[#1a2b3c]"
+        } flex flex-col sm:flex-row h-full w-full rounded-lg shadow-lg overflow-hidden`}
+      >
         {/* Sidebar */}
         <div
           ref={sidebarRef}
-          className={`${sidebarOpen ? "block" : "hidden"} ${theme === "light" ? "bg-gray-100" : "bg-[#1a2b3c]"} sm:block w-full sm:w-1/4  text-white p-4 space-y-3 border-r border-gray-700 h-[calc(100vh-2rem)] overflow-y-auto`}
+          className={`${
+            sidebarOpen ? "block" : "hidden"
+          } ${
+            theme === "light" ? "bg-gray-100" : "bg-[#1a2b3c]"
+          } sm:block w-full sm:w-1/4 text-white p-4 space-y-3 border-r border-gray-700 h-[calc(100vh-2rem)] overflow-y-auto`}
         >
-          <h3 className={`font-bold pt-12 pl-[35%] ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}>Chats</h3>
+          <h3
+            className={`font-bold pt-12 pl-[35%] ${
+              theme === "light" ? "text-gray-700" : "text-gray-200"
+            }`}
+          >
+            Chats
+          </h3>
+          <div ref={searchRef} className="flex w-full flex-col items-center mt-10 mb-2">
+            <input
+              type="text"
+              className="w-[50rem] md:w-1/2 px-4 py-2 bg-[#6B5EDD] bg-opacity-70 focus:bg-opacity-10 text-black rounded-lg border border-[#6B5EDD] focus:outline-none focus:ring-2 focus:ring-[#2a28d4]"
+              placeholder="Search users by username..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setShowSearchHints(true);
+              }}
+              onKeyDown={handleSearchKeyDown}
+            />
+            {showSearchHints && (
+              <div className="mt-0.3 p-2 z-10">
+                {searchTerm.trim() && filteredUsers?.length > 0 && (
+                  <div className="w-full md:w-[10rem] bg-[#6B5EDD] bg-opacity-70 rounded-lg shadow mt-2 p-2 z-10">
+                    <span className="text-gray-400 text-sm font-semibold">Suggestions:</span>
+                    <ul>
+                      {filteredUsers.slice(0, 5).map((user) => (
+                        <li
+                          key={user.id}
+                          className="cursor-pointer px-2 py-1 hover:bg-[#6B5EDD] rounded text-gray-200"
+                          onClick={() => {
+                            setSearchTerm(user.username);
+                            setSelectedUser(user);
+                            setShowSearchHints(false);
+                            setSidebarOpen(false);
+                          }}
+                        >
+                          {user.username}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {searchTerm.trim() && filteredUsers?.length === 0 && (
+                  <div className="w-full md:w-1/2 bg-[#6B5EDD] bg-opacity-70 rounded-lg shadow mt-2 p-2 z-10">
+                    <span className="text-gray-300 text-sm">No users found.</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
           {filteredUsers.map((u) => (
             <div
               key={u.id}
               onClick={() => {
                 setSelectedUser(u);
                 setSidebarOpen(false);
+                setSearchTerm("");
+                setShowSearchHints(false);
               }}
-              className={`${theme === "light" ? "text-gray-900 hover:text-gray-100" : "text-gray-100"} flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${selectedUser?.id === u.id ? "bg-[#6B5EDD]" : "hover:bg-[#2a3b4c]"}`}
+              className={`${
+                theme === "light" ? "text-gray-900 hover:text-gray-100" : "text-gray-100"
+              } flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${
+                selectedUser?.id === u.id ? "bg-[#6B5EDD]" : "hover:bg-[#2a3b4c]"
+              }`}
             >
               <img
                 src={u?.photo || userAvatar}
                 className="bg-white rounded-full h-[40px] w-[40px]"
                 alt={u.username}
               />
-              <span className={` truncate`}>{u.username}</span>
+              <span className="truncate">{u.username}</span>
               {getUnreadForUser(u.id) > 0 && selectedUser?.id !== u.id && (
                 <span className="ml-auto bg-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold">
                   {getUnreadForUser(u.id)}
@@ -232,15 +320,29 @@ export const Chat = ({ chatWith }) => {
         {/* Chat Window */}
         <div className="flex-1 flex flex-col relative">
           {selectedUser ? (
-            <div className={`${theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100  h-[28.4rem] bg-[#101b2d]"}`}>
-              <div className={`${theme === "light" ? "bg-white" : "bg-[#0A1C2B]"} flex items-center justify-between p-4 border-b border-gray-700 sticky top-0 z-10`}>
+            <div
+              className={`${
+                theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100 bg-[#101b2d]"
+              } flex flex-col h-full`}
+            >
+              <div
+                className={`${
+                  theme === "light" ? "bg-white" : "bg-[#0A1C2B]"
+                } flex items-center justify-between p-4 border-b border-gray-700 sticky top-0 z-10`}
+              >
                 <div className="flex items-center gap-3">
                   <img
                     src={selectedUser?.photo || userAvatar}
-                    className={`bg-white rounded-full h-12 w-12`}
+                    className="bg-white rounded-full h-12 w-12"
                     alt={selectedUser?.username}
                   />
-                  <h4 className={`${theme === "light" ? "text-black" : "text-gray-100"} text-lg font-semibold"`}>{selectedUser?.username}</h4>
+                  <h4
+                    className={`${
+                      theme === "light" ? "text-black" : "text-gray-100"
+                    } text-lg font-semibold`}
+                  >
+                    {selectedUser?.username}
+                  </h4>
                 </div>
                 <button
                   className="sm:hidden bg-[#6B5EDD] px-3 py-1 rounded-lg text-white"
@@ -251,7 +353,9 @@ export const Chat = ({ chatWith }) => {
               </div>
               <div
                 ref={chatContainerRef}
-                className={`${theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100 bg-[#101b2d]"} flex-1  mt-[1.5rem] p-4 overflow-y-auto space-y-4 max-h-[calc(100vh-140px)] scroll-smooth`}
+                className={`${
+                  theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100 bg-[#101b2d]"
+                } flex-1 p-4 overflow-y-auto space-y-4 max-h-[calc(100vh-140px)] scroll-smooth`}
               >
                 {isFetchingMessages && page > 1 && (
                   <div className="text-center text-gray-400 text-sm">Loading older messages...</div>
@@ -259,8 +363,10 @@ export const Chat = ({ chatWith }) => {
                 {messages.length > 0 ? (
                   messages.map((msg) => (
                     <div
-                      key={msg.id} // Fallback: key={`${msg.id}-${msg.createdAt}`} if duplicates occur
-                      className={`flex items-end gap-2 ${msg.senderId === userId ? "justify-end" : "justify-start"}`}
+                      key={msg.id}
+                      className={`flex items-end gap-2 ${
+                        msg.senderId === userId ? "justify-end" : "justify-start"
+                      }`}
                     >
                       {msg.senderId !== userId && (
                         <img
@@ -270,7 +376,9 @@ export const Chat = ({ chatWith }) => {
                         />
                       )}
                       <div
-                        className={`px-4 py-2 rounded-2xl max-w-xs text-sm text-white shadow-md ${msg.senderId === userId ? "bg-[#6B5EDD] rounded-br-none" : "bg-gray-800 rounded-bl-none"}`}
+                        className={`px-4 py-2 rounded-2xl max-w-xs text-sm text-white shadow-md ${
+                          msg.senderId === userId ? "bg-[#6B5EDD] rounded-br-none" : "bg-gray-800 rounded-bl-none"
+                        }`}
                       >
                         {msg.content}
                         <div className="text-xs text-gray-400 mt-1">
@@ -287,7 +395,7 @@ export const Chat = ({ chatWith }) => {
                     </div>
                   ))
                 ) : (
-                  <div className="flex flex-col items-center justify-center text-center h-[28.4rem] text-gray-400">
+                  <div className="flex flex-col items-center justify-center text-center h-full text-gray-400">
                     <img
                       src={selectedUser?.photo || userAvatar}
                       className="bg-white rounded-full h-20 w-20 mb-3"
@@ -320,7 +428,11 @@ export const Chat = ({ chatWith }) => {
                   </svg>
                 </button>
               )}
-              <div className={`${theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100 bg-[#101b2d]"} p-3 bg-[#0A1C2B] flex items-center gap-2 border-t border-gray-700 sticky bottom-0`}>
+              <div
+                className={`${
+                  theme === "light" ? "text-[#0A1C2B] bg-gray-200" : "text-gray-100 bg-[#101b2d]"
+                } p-3 flex items-center gap-2 border-t border-gray-700 sticky bottom-0`}
+              >
                 <textarea
                   className="flex-1 rounded-lg p-2 text-sm bg-white text-black resize-none focus:outline-none h-10"
                   placeholder="Type a message..."
@@ -330,7 +442,7 @@ export const Chat = ({ chatWith }) => {
                 />
                 <button
                   onClick={handleSend}
-                  className="bg-[#6B5EDD] p-2 rounded-lg hover:bg-[#5a4dd3] transition"
+                  className="bg-[#6B5EDD] p-2 rounded-lg hover:bg-[#5a4dd3] transition disabled:opacity-50"
                   disabled={!newMessage.trim()}
                 >
                   <img src={send} className="w-5 h-5" alt="send" />

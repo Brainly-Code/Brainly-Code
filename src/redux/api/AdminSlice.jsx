@@ -57,10 +57,10 @@ const AdminSlice = apiSlice.injectEndpoints({
     }),
 
     correctCompleter: builder.mutation({
-  query: ({ challengeId, userId }) => ({
-    url: `/admin/challenge-completers/${challengeId}`,
+  query: (data) => ({
+    url: `/admin/challenge-completers`,
     method: "PATCH",
-    body: { userId },
+    body: data,
   }),
 }),
 
