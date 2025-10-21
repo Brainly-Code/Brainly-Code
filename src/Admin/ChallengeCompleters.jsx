@@ -23,7 +23,6 @@ const ChallengeCompleters = () => {
     return completer;
   }
   const {data: images} = useGetProfileImagesQuery();
-  console.log(images);
 
   const handleCorrectCompleter = async(id, answerId) => {
     try {
@@ -32,7 +31,6 @@ const ChallengeCompleters = () => {
       refetchCompleters();
     } catch (error) {
       toast.error("Failed to tick")
-      console.log(error);
     }    
   }
 
@@ -43,7 +41,6 @@ const ChallengeCompleters = () => {
       refetchCompleters();
     }catch(error) {
       toast.error("Failed to reject answer");
-      console.log(error)
     }
   }
 

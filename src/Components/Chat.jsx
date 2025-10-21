@@ -375,7 +375,6 @@ export const Chat = ({ chatWith }) => {
                         msg.senderId === userId ? "justify-end" : "justify-start"
                       }`}
                     >
-                      {console.log(msg)}
                       {msg.senderId !== userId && (
                         <img
                           src={findProfileImage(msg?.senderId)}
