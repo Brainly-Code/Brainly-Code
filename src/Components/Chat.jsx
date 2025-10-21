@@ -8,7 +8,7 @@ import {
   useGetUnreadCountsQuery,
   useReadMessagesMutation,
 } from "../redux/api/messageSlice";
-import { useGetCommunityUsersQuery, useGetUserByIdQuery } from "../redux/api/userSlice";
+import { useGetCommunityUsersQuery, useGetProfileImagesQuery, useGetUserByIdQuery } from "../redux/api/userSlice";
 import { useNotification } from "./ui/UseNotification";
 import { useSelector } from "react-redux";
 import { ThemeContext } from "../Contexts/ThemeContext";
@@ -35,6 +35,13 @@ export const Chat = ({ chatWith }) => {
   const { data: unreadCounts = [], refetch: refetchUnread } = useGetUnreadCountsQuery(userId, { skip: !userId });
   const [readMessages] = useReadMessagesMutation();
   const { data: currentUser, isLoading: currentUserLoading } = useGetUserByIdQuery(userId, { skip: !userId });
+  const {data: images} = useGetProfileImagesQuery();
+
+  const findProfileImage = (id) => {
+    const profileImage = images?.find(image => image.userId===id);
+
+    return profileImage?.path || userAvatar ;
+  }
 
   const filteredUsers = users
     .filter((u) => u.id !== userId)
@@ -184,7 +191,7 @@ export const Chat = ({ chatWith }) => {
 
   // Get unread message count for a user
   const getUnreadForUser = (uid) => {
-    const found = unreadCounts.find((u) => u.senderId === uid);
+    const found = unreadCounts?.find((u) => u.senderId === uid);
     return found ? found._count.id : 0;
   };
 
@@ -304,7 +311,7 @@ export const Chat = ({ chatWith }) => {
               }`}
             >
               <img
-                src={u?.photo || userAvatar}
+                src={findProfileImage(u?.id)}
                 className="bg-white rounded-full h-[40px] w-[40px]"
                 alt={u.username}
               />
@@ -332,7 +339,7 @@ export const Chat = ({ chatWith }) => {
               >
                 <div className="flex items-center gap-3">
                   <img
-                    src={selectedUser?.photo || userAvatar}
+                    src={findProfileImage(selectedUser?.id)}
                     className="bg-white rounded-full h-12 w-12"
                     alt={selectedUser?.username}
                   />
@@ -368,9 +375,10 @@ export const Chat = ({ chatWith }) => {
                         msg.senderId === userId ? "justify-end" : "justify-start"
                       }`}
                     >
+                      {console.log(msg)}
                       {msg.senderId !== userId && (
                         <img
-                          src={selectedUser?.photo || userAvatar}
+                          src={findProfileImage(msg?.senderId)}
                           className="bg-white rounded-full h-8 w-8"
                           alt="avatar"
                         />
@@ -382,12 +390,12 @@ export const Chat = ({ chatWith }) => {
                       >
                         {msg.content}
                         <div className="text-xs text-gray-400 mt-1">
-                          {msg.createdAt && formatTimestamp(msg.createdAt)}
+                          {msg.createdAt && formatTimestamp(msg?.createdAt)}
                         </div>
                       </div>
                       {msg.senderId === userId && (
                         <img
-                          src={currentUser?.photo || userAvatar}
+                          src={findProfileImage(msg?.senderId)}
                           className="bg-white rounded-full h-8 w-8"
                           alt="avatar"
                         />
@@ -397,7 +405,7 @@ export const Chat = ({ chatWith }) => {
                 ) : (
                   <div className="flex flex-col items-center justify-center text-center h-full text-gray-400">
                     <img
-                      src={selectedUser?.photo || userAvatar}
+                      src={findProfileImage(selectedUser?.id)}
                       className="bg-white rounded-full h-20 w-20 mb-3"
                       alt=""
                     />

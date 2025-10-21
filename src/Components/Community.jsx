@@ -12,7 +12,7 @@ import BgLoader from './ui/BgLoader'
 import { jwtDecode } from 'jwt-decode'
 import { useSelector } from 'react-redux'
 import { useAddCommentMutation } from "../redux/api/commentsSlice";
-import {useGetCommunityUsersQuery } from '../redux/api/userSlice'
+import {useGetCommunityUsersQuery, useGetProfileImagesQuery } from '../redux/api/userSlice'
 
 
 export const Community = () => {
@@ -34,7 +34,12 @@ export const Community = () => {
   const currentUserId = user?.id;
 
   const { data: unreadCounts } = useGetUnreadCountsQuery(currentUserId);
+  const {data: images} = useGetProfileImagesQuery();
+  const findProfileImage = (id) => {
+    const profileImage = images.find(image=> image.userId === id);
 
+    return profileImage?.path || profile;
+ }
   const totalUnread = unreadCounts?.reduce((sum, u) => sum + u._count.id, 0);
 
   // Comment section state
@@ -216,7 +221,7 @@ export const Community = () => {
                     {/* Profile Image */}
                     <div className="bg-[#0A1C2B] rounded-full w-[120px] h-[120px] mx-auto">
                       <img
-                        src={!communityUser?.photo ? profile : communityUser?.photo}
+                        src={findProfileImage(communityUser?.id)}
                         alt="profile"
                         className="mx-auto object-cover rounded-full h-[120px] w-[120px]"
                       />

@@ -8,10 +8,10 @@ import { ThemeContext } from '../Contexts/ThemeContext';
 import { FaArrowDown, FaArrowRight, FaCheck, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { useSendMessageMutation } from '../redux/api/messageSlice';
+import { useGetProfileImagesQuery } from '../redux/api/userSlice';
 
 const ChallengeCompleters = () => {
   const { theme } = useContext(ThemeContext);
-  const [ userSolution, setUserSolution ] = useState(null);
   const [ showSolution, setShowSolution ] = useState(false);
   const { id } = useParams();
   const challengeId = Number(id);
@@ -22,6 +22,8 @@ const ChallengeCompleters = () => {
     const completer = completers.find(completer => completer?.user?.id === userId);
     return completer;
   }
+  const {data: images} = useGetProfileImagesQuery();
+  console.log(images);
 
   const handleCorrectCompleter = async(id, answerId) => {
     try {
@@ -53,6 +55,12 @@ const ChallengeCompleters = () => {
     };
   }
 
+  const findProfileImage = (id) => {
+      const profileImage = images.find(image=> image.userId === id);
+
+      return profileImage?.path || profile ;
+  }
+
   if (isLoading) {
     return <Loader />;
   }
@@ -79,7 +87,7 @@ const ChallengeCompleters = () => {
         }`}>
         {completers.length} Student{completers.length !== 1 ? "s" : ""} completed this challenge:
       </h1>
-      <div className={`m-8 h-full w-[80%] p-[1rem] rounded-lg grid gap-4 transition-all duration-500 ${theme === 'dark' ? 'bg-[#1e1285]' : 'bg-white shadow-md border border-gray-200'
+      <div className={`m-8 h-full w-[90%] p-[1rem] rounded-lg grid gap-4 transition-all duration-500 ${theme === 'dark' ? 'bg-[#1e1285]' : 'bg-white shadow-md border border-gray-200'
         }`}>
         {completers.length > 0 ? (
           completers.map((completer, i) => (
@@ -88,11 +96,11 @@ const ChallengeCompleters = () => {
                 : 'bg-gray-100 border-gray-300 hover:bg-gray-200'
               }`}>
               <img
-                src={completer?.user?.photo || profile}
+                src={findProfileImage(completer?.user?.id)}
                 alt="avatar"
                 className="w-12 h-12 rounded-full mr-4 border border-gray-300"
               />
-              <div>
+              <div className='w-[60%] overflow-scroll-y'>
                 <h2 className={`text-lg font-bold ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'
                   }`}>
                   {completer.user?.username}
@@ -127,7 +135,6 @@ const ChallengeCompleters = () => {
                   </div>
                 ) : <></>}
               </div>
-              {console.log(completer)}
               {
               completer.correct === "WRIGHT" ? (
                 <div className=''>
