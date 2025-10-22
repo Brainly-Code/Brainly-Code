@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLogoutMutation, useUpgradeToProMutation, useGetProfileImageQuery } from '../../redux/api/userSlice';
@@ -10,8 +10,11 @@ import BrainlyCodeIcon from '../BrainlyCodeIcon';
 import profileFallback from "../../assets/profile.png";
 import {jwtDecode} from "jwt-decode";
 import Loader from './Loader';
+import { ThemeContext } from '../../Contexts/ThemeContext';
 
 const Header = () => {
+  const {theme} = useContext(ThemeContext);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -83,7 +86,7 @@ const userId = user?.id;
 
   return (
     <div>
-      <div className='py-6 rounded-none'>
+      <div className={`${theme === "light" ? "bg-white shadow-md" : ""} py-6 rounded-none`}>
         <header className="flex items-center mx-auto text-white w-5/6 justify-between">
           <FloatingNav navItems={navItems} className="" />
           <BrainlyCodeIcon className="ml-7 sm:ml-1" />

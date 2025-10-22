@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import {
   useGetCoursesQuery,
@@ -25,8 +25,11 @@ import BgLoader from './ui/BgLoader';
 import { useSelector } from 'react-redux';
 import { useGetCommunityUsersQuery } from '../redux/api/userSlice';
 import { useGetChallengesQuery } from '../redux/api/challengeSlice';
+import { ThemeContext } from '../Contexts/ThemeContext';
 
 export default function HomePage() {
+  const {theme} = useContext(ThemeContext);
+
   const getIconForCourse = (title) => {
     const key = title.toLowerCase();
     if (key.includes('js')) return <FaJs color="orange" size={30} />;
@@ -96,22 +99,22 @@ export default function HomePage() {
   if (isLoading) return <BgLoader />;
 
   return (
-    <div className="bg-[#070045] min-h-screen flex flex-col">
+    <div className={`${theme === "light" ? "bg-white shadow-md" : "bg-[#070045]"}  min-h-screen flex flex-col`}>
       <Header />
 
       {/* Hero Section */}
-      <section className="relative text-center h-screen md:pt-[25rem] lg:pt-[6rem] pt-[5rem] py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]">
+      <section className={`${theme === "light" ? "bg-gradient-to-r from-white via-gray-300 to-white" : "bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]"}"relative text-center h-screen md:pt-[25rem] lg:pt-[6rem] pt-[5rem] py-20 px-6"`}>
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col my-[5rem] md:flex-row md:justify-center md:items-center gap-4 mb-6">
             <span className="text-[#00ffee] text-2xl lg:text-5xl font-bold">
               Interactive
             </span>
             <TextGenerateEffect
-              className="text-white text-2xl lg:text-5xl font-extrabold whitespace-nowrap"
+              className={`${theme === "light" ? "text-gray-800 text-2xl lg:text-5xl font-extrabold whitespace-nowrap" : "text-white text-2xl lg:text-5xl font-extrabold whitespace-nowrap"}`}
               words={'Programming'}
             />
           </div>
-          <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-6">
+          <p className={`${theme === "light" ? "text-gray-800" : "text-gray-300"} text-lg md:text-xl max-w-2xl mx-auto mb-6`}>
             Learn to code through hands-on projects, interactive exercises, and
             real-world applications. Start your programming journey today!
           </p>
@@ -119,8 +122,8 @@ export default function HomePage() {
       </section>
 
       {/* Explore Challenges Section */}
-      <section className="relative py-20 px-6 bg-gradient-to-r from-[#0d0066] via-[#070045] to-[#0d0066] text-center">
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8">
+      <section className={`${theme === "light" ? "bg-white" : "bg-gradient-to-r from-[#0d0066] via-[#070045] to-[#0d0066]"}  relative py-20 px-6 text-center`}>
+        <h2 className={`${theme ==="light" ? "text-gray-800" : "text-white"} text-3xl lg:text-4xl font-bold mb-8`}>
            Explore Challenges
         </h2>
         <p className="text-gray-300 max-w-2xl mx-auto mb-12">
@@ -167,8 +170,8 @@ export default function HomePage() {
       </section>
 
       {/* Filter Section */}
-      <section id="courses" className="mt-12">
-        <h2 className="text-3xl lg:text-4xl font-bold text-white mb-8 text-center">
+      <section id="courses" className={`${theme === "light" ? "bg-gradient-to-r from-white via-gray-300 to-white" : "bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]"}" relative text-center h-screen md:pt-[25rem] lg:pt-[6rem] pt-[5rem] py-20 px-6"`}>
+        <h2 className={`${theme === "light" ? "text-gray-800 text-3xl lg:text-4xl font-bold mb-8 text-center" : "text-3xl lg:text-4xl font-bold mb-8 text-center"}`}>
           Courses
         </h2>
         <div className="max-w-4xl mx-auto text-center">
@@ -177,11 +180,11 @@ export default function HomePage() {
               Interactive
             </span>
             <TextGenerateEffect
-              className="text-white text-lg lg:text-xl font-extrabold whitespace-nowrap"
+              className={`${theme === "light" ? "text-gray-800 text-lg lg:text-lg lg:text-xl font-bold whitespace-nowrap" : "text-white text-lg lg:text-xl font-extrabold whitespace-nowrap"}`}
               words={'Coding courses'}
             />
           </div>
-          <p className="text-gray-300 text-md md:text-xl max-w-2xl mx-auto mt-6 mb-6">
+          <p className={`{theme === "light" ? "text-gray-800" : "text-gray-300"} text-md md:text-xl max-w-2xl mx-auto mt-6 mb-6`}>
             BrainlyCode courses provide basic, intermediate and advanced
             knowledge and skills using different programming languages
           </p>

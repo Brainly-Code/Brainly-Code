@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGetCoursesQuery, useGetUserLikedCoursesQuery, useLikeCourseMutation } from '../redux/api/coursesSlice';
 import { toast } from 'react-toastify';
@@ -18,6 +18,7 @@ import {
 import Footer from './ui/Footer';
 import Header from './ui/Header';
 import BgLoader from './ui/BgLoader';
+import { ThemeContext } from '../Contexts/ThemeContext';
 
 export default function UserCourses() {
   const getIconForCourse = (title) => {
@@ -31,6 +32,8 @@ export default function UserCourses() {
       return <FaAccessibleIcon color="purple" size={30} />;
     return <FaAccessibleIcon color="gray" size={30} />;
   };
+
+  const {theme} = useContext(ThemeContext);
 
   const { data: likedCourseIds, refetch } = useGetUserLikedCoursesQuery();
   const { data: courses, error, isLoading } = useGetCoursesQuery();
@@ -105,15 +108,15 @@ export default function UserCourses() {
   if (isLoading) return <BgLoader />;
 
   return (
-    <div className="bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045] min-h-screen flex flex-col">
+    <div className={`${theme === "light" ? "from-white via-gray-300 to-white" : "from-[#070045] via-[#0d0066] to-[#070045]"} bg-gradient-to-r min-h-screen flex flex-col`}>
       <Header />
 
       {/* Hero Section with Search */}
-      <section className="relative text-center py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]">
+      <section className={`${theme === "light" ? "from-white via-gray-300 to-white" : "from-[#070045] via-[#0d0066] to-[#070045]"} relative text-center py-20 px-6 bg-gradient-to-r from-[#070045] via-[#0d0066] to-[#070045]`}>
         <div ref={searchRef} className="flex w-[40%] mx-auto mb-[5rem] flex-col items-center">
           <input
             type="text"
-            className="w-full md:w-1/2 px-4 py-2 bg-[#6B5EDD] bg-opacity-70 focus:bg-opacity-10 text-gray-50 rounded-lg border border-[#6B5EDD] focus:outline-none focus:ring-2 focus:ring-[#2a28d4]"
+            className={`${theme === "light" ? "": "bg-[#6B5EDD]"} w-full md:w-1/2 px-4 py-2 bg-opacity-70 focus:bg-opacity-10 text-gray-50 rounded-lg border border-[#6B5EDD] focus:outline-none focus:ring-2 focus:ring-[#2a28d4]`}
             placeholder="Search courses by title..."
             value={searchTerm}
             onChange={(e) => {
