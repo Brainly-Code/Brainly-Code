@@ -165,7 +165,7 @@ export default function UserCourses() {
               words={'Coding Courses'}
             />
           </div>
-          <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto mb-6">
+          <p className={`${theme === "light" ? "text-gray-800" : "text-gray-300"} text-lg md:text-xl max-w-2xl mx-auto mb-6`}>
             Learn to code through hands-on projects, interactive exercises, and real-world
             applications. Start your programming journey today!
           </p>
@@ -181,9 +181,9 @@ export default function UserCourses() {
               onClick={() => setFilterLevel(level)}
               className={`px-5 py-2 rounded-full transition-all duration-200 font-medium text-sm sm:text-base shadow-md ${
                 filterLevel === level
-                  ? 'bg-gradient-to-r from-[#00ffee] to-purple-500 text-white'
-                  : 'bg-transparent text-gray-300 hover:bg-gray-600'
-              }`}
+                  ? 'bg-gradient-to-r from-[#00ffee] to-purple-500 text-white '
+                  : 'bg-transparent hover:bg-gray-600'
+              } ${theme === "light" ? "text-gray-700": "text-gray-300"}`}
             >
               {level === 'ALL' ? 'All Courses' : level}
             </button>
@@ -247,3 +247,4 @@ export default function UserCourses() {
     </div>
   );
 }
+

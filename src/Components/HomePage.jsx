@@ -27,7 +27,7 @@ import { useGetCommunityUsersQuery } from '../redux/api/userSlice';
 import { useGetChallengesQuery } from '../redux/api/challengeSlice';
 import { ThemeContext } from '../Contexts/ThemeContext';
 
-export default function HomePage() {
+const HomePage = () => {
   const {theme} = useContext(ThemeContext);
 
   const getIconForCourse = (title) => {
@@ -307,3 +307,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+export default HomePage;
