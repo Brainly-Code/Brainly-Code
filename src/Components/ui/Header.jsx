@@ -11,9 +11,11 @@ import profileFallback from "../../assets/profile.png";
 import {jwtDecode} from "jwt-decode";
 import Loader from './Loader';
 import { ThemeContext } from '../../Contexts/ThemeContext';
+import { BsMoonStars } from 'react-icons/bs';
+import { MdOutlineWbSunny } from 'react-icons/md';
 
 const Header = () => {
-  const {theme} = useContext(ThemeContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -92,6 +94,27 @@ const userId = user?.id;
           <BrainlyCodeIcon className="ml-7 sm:ml-1" />
 
           <ul className="flex items-center h-1/4 gap-4">
+
+             {/* Theme Toggle */}
+             <li>
+              <button
+                aria-label="Toggle Theme"
+                onClick={toggleTheme}
+                className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-all duration-300 ${
+                  theme === "dark"
+                    ? "border-white hover:bg-white/10"
+                    : "border-gray-800 hover:bg-gray-100"
+                }`}
+                title={theme === "dark" ? "Switch to light" : "Switch to dark"}
+              >
+                {theme === "dark" ? (
+                  <MdOutlineWbSunny size={20}  />
+                ) : (
+                  <BsMoonStars size={20} color='black' />
+                )}
+              </button>
+            </li>
+
             <li>
               <Link to="/user/profile">
                 <img src={imagePath} className='rounded-full h-10 w-10 object-cover' alt="Profile" />

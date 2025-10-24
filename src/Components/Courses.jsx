@@ -116,7 +116,7 @@ export default function UserCourses() {
         <div ref={searchRef} className="flex w-[40%] mx-auto mb-[5rem] flex-col items-center">
           <input
             type="text"
-            className={`${theme === "light" ? "": "bg-[#6B5EDD]"} w-full md:w-1/2 px-4 py-2 bg-opacity-70 focus:bg-opacity-10 text-gray-50 rounded-lg border border-[#6B5EDD] focus:outline-none focus:ring-2 focus:ring-[#2a28d4]`}
+            className={`${theme === "light" ? "text-gray-800 bg-gray-50 focus:bg-gray-50": "bg-[#6B5EDD]  text-gray-50"} w-full md:w-1/2 px-4 py-2 bg-opacity-40 focus:bg-opacity-10 rounded-lg border border-[#6B5EDD] focus:outline-none focus:ring-2 focus:ring-[#2a28d4]`}
             placeholder="Search courses by title..."
             value={searchTerm}
             onChange={(e) => {
@@ -136,7 +136,7 @@ export default function UserCourses() {
                     {filteredBySearch.slice(0, 5).map((course) => (
                       <li
                         key={course.id}
-                        className="cursor-pointer px-2 py-1 hover:bg-[#6B5EDD] rounded text-gray-200"
+                        className={`${theme === "light" ? "text-gray-800" : "text-gray-200"} cursor-pointer px-2 py-1 hover:bg-[#6B5EDD] rounded`}
                         onClick={() => {
                           setSearchTerm(course.title);
                           setShowSearchHints(false);
@@ -150,7 +150,7 @@ export default function UserCourses() {
               )}
               {searchTerm.trim() && filteredBySearch?.length === 0 && (
                 <div className="rounded-lg shadow mt-2 p-2 z-10">
-                  <span className="text-gray-300 text-sm">No courses with that title found.</span>
+                  <span className={`${theme === "light" ? "text-gray-800" : "text-gray-300"} text-sm`}>No courses with that title found.</span>
                 </div>
               )}
             </div>
