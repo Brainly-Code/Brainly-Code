@@ -283,7 +283,9 @@ export const Community = () => {
 
                 {/* Info */}
                 <div className="flex flex-col mt-4 mb-4">
-                  <span className="text-center text-lg font-medium">
+                  <span className={`text-center text-sm ${
+                      theme === "light" ? "text-gray-800" : "text-gray-300"
+                    } text-center text-center font-bold`}>
                     {communityUser?.username}
                   </span>
                   <span
